@@ -14,16 +14,16 @@ Recommended settings:
 
 ```txt
 Repository: i-afaqrashid/webaudio-kit
-Project root: repository root
+Project root: apps/site
 Framework preset: Next.js
 Install command: pnpm install --frozen-lockfile
-Build command: pnpm site:build
+Build command: pnpm build
 Node version: 22.x or 24.x
 Environment variables: none required
 ```
 
-Do not set the project root to `apps/site`. The site is part of the workspace
-and CI expects repository-root commands.
+The repository also has a root `pnpm site:build` helper for local and CI use.
+Use `pnpm build` in Vercel when the Vercel root directory is `apps/site`.
 
 ## Custom Domain
 

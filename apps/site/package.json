@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "next dev -p 4173",
     "build": "next build",
-    "start": "next start -p 4173"
+    "start": "next start -p 4173",
+    "site:build": "next build"
   },
   "dependencies": {
     "lucide-react": "^1.16.0",
