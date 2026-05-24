@@ -33,11 +33,23 @@ server.stderr.on("data", (chunk) => {
 
 try {
   await waitForServer(baseUrl);
+  const requestedBrowsers = new Set(
+    (process.env.DEMO_QA_BROWSERS ?? "chromium,firefox,webkit")
+      .split(",")
+      .map((browserName) => browserName.trim())
+      .filter(Boolean),
+  );
   const browsers = [
     { name: "chromium", type: chromium, artifacts: true, waitForAudioUi: true },
     { name: "firefox", type: firefox, artifacts: false, waitForAudioUi: false },
     { name: "webkit", type: webkit, artifacts: false, waitForAudioUi: true },
-  ];
+  ].filter((browser) => requestedBrowsers.has(browser.name));
+
+  if (browsers.length === 0) {
+    throw new Error(
+      `No supported browsers requested by DEMO_QA_BROWSERS=${process.env.DEMO_QA_BROWSERS}`,
+    );
+  }
 
   const results = [];
   for (const browser of browsers) {
