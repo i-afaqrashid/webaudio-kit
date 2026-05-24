@@ -60,9 +60,8 @@ Node version: 22.x or 24.x
 Open the deployed site and verify:
 
 - page loads over HTTPS
-- home page renders the demo screenshot
+- home page renders the interactive demo
 - docs page renders install and API sections
-- roadmap page renders non-goals
 - disclaimer is visible
 - mobile layout is usable
 - console has no application errors

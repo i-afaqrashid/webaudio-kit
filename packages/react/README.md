@@ -40,7 +40,25 @@ function ToneButton() {
 - `useFrequencySweep`
 - `useVolume`
 - `useAnalyser`
+- `WaveformCanvas`
 - re-exported helpers from `@webaudio-kit/core`
+
+## Waveform
+
+```tsx
+import { WaveformCanvas } from "@webaudio-kit/react";
+
+function AnalyserPanel() {
+  return (
+    <WaveformCanvas
+      backgroundColor="#10110f"
+      height={180}
+      strokeColor="#c8ea3a"
+      width={720}
+    />
+  );
+}
+```
 
 See the repository API reference:
 https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/api.md.

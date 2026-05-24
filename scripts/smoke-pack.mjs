@@ -69,7 +69,7 @@ overrides:
 await writeFile(
   join(smokeDir, "smoke.mjs"),
   `import { clampFrequency, dbToGain } from "@webaudio-kit/core";
-import { AudioProvider, useTone } from "@webaudio-kit/react";
+import { AudioProvider, WaveformCanvas, useTone } from "@webaudio-kit/react";
 
 if (clampFrequency(30_000) !== 20_000) {
   throw new Error("core clampFrequency export failed");
@@ -79,7 +79,11 @@ if (Math.abs(dbToGain(-6) - 0.501187) > 0.00001) {
   throw new Error("core dbToGain export failed");
 }
 
-if (typeof AudioProvider !== "function" || typeof useTone !== "function") {
+if (
+  typeof AudioProvider !== "function" ||
+  typeof WaveformCanvas !== "function" ||
+  typeof useTone !== "function"
+) {
   throw new Error("react exports failed");
 }
 

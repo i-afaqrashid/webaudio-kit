@@ -7,7 +7,7 @@
 - install and quick-start copy
 - package positioning
 - hosted documentation overview
-- roadmap and non-goals
+- public demo proof and non-goals
 - Vercel deployment
 
 Run it locally:
@@ -25,8 +25,8 @@ pnpm site:build
 The local site runs on `http://127.0.0.1:4173`.
 
 Keep this app useful for readers who have not cloned the repo yet. The site can
-show code, roadmap, and release status, but browser playback testing belongs in
-`apps/demo`.
+show code, the interactive demo, and release status, but deeper browser
+playback testing belongs in `apps/demo`.
 
 ## `apps/demo`
 

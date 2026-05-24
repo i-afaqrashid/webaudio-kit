@@ -1,4 +1,5 @@
 import {
+  type CanvasHTMLAttributes,
   createContext,
   type ReactNode,
   useCallback,
@@ -36,6 +37,16 @@ export type AudioProviderValue = {
 export type AudioProviderProps = {
   children: ReactNode;
   initialGain?: number;
+};
+
+export type WaveformCanvasProps = Omit<
+  CanvasHTMLAttributes<HTMLCanvasElement>,
+  "children"
+> & {
+  backgroundColor?: string;
+  idleStrokeColor?: string;
+  lineWidth?: number;
+  strokeColor?: string;
 };
 
 const AudioContextStateContext = createContext<AudioProviderValue | undefined>(
@@ -228,6 +239,98 @@ export function useAnalyser(): AnalyserNode | null {
   return useAudioContext().analyser;
 }
 
+export function WaveformCanvas({
+  backgroundColor = "#10110f",
+  height = 180,
+  idleStrokeColor,
+  lineWidth = 2,
+  strokeColor = "#c8ea3a",
+  width = 720,
+  ...canvasProps
+}: WaveformCanvasProps) {
+  const analyser = useAnalyser();
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const ariaLabel = canvasProps["aria-label"] ?? "Waveform analyser";
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) {
+      return;
+    }
+
+    const context = canvas.getContext("2d");
+    if (!context) {
+      return;
+    }
+
+    const drawIdle = () => {
+      drawBackground(context, canvas, backgroundColor);
+      context.strokeStyle = idleStrokeColor ?? strokeColor;
+      context.lineWidth = lineWidth;
+      context.beginPath();
+      context.moveTo(0, canvas.height / 2);
+      context.lineTo(canvas.width, canvas.height / 2);
+      context.stroke();
+    };
+
+    if (!analyser) {
+      drawIdle();
+      return;
+    }
+
+    const data = new Uint8Array(analyser.fftSize);
+    let frame = 0;
+
+    const draw = () => {
+      analyser.getByteTimeDomainData(data);
+      drawBackground(context, canvas, backgroundColor);
+      context.strokeStyle = strokeColor;
+      context.lineWidth = lineWidth;
+      context.beginPath();
+
+      const slice = canvas.width / data.length;
+      for (let index = 0; index < data.length; index += 1) {
+        const x = index * slice;
+        const y = (data[index] / 255) * canvas.height;
+        if (index === 0) {
+          context.moveTo(x, y);
+        } else {
+          context.lineTo(x, y);
+        }
+      }
+
+      context.stroke();
+      frame = globalThis.requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    return () => {
+      if (frame !== 0) {
+        globalThis.cancelAnimationFrame(frame);
+      }
+    };
+  }, [
+    analyser,
+    backgroundColor,
+    height,
+    idleStrokeColor,
+    lineWidth,
+    strokeColor,
+    width,
+  ]);
+
+  return (
+    <canvas
+      {...canvasProps}
+      aria-label={ariaLabel}
+      height={height}
+      ref={canvasRef}
+      width={width}
+    />
+  );
+}
+
 function useLatest<T>(value: T) {
   const ref = useRef(value);
 
@@ -297,6 +400,16 @@ function clearPlaybackTimer(timeoutRef: {
 }
 
 type PlaybackTimer = ReturnType<typeof globalThis.setTimeout>;
+
+function drawBackground(
+  context: CanvasRenderingContext2D,
+  canvas: HTMLCanvasElement,
+  backgroundColor: string,
+): void {
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = backgroundColor;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+}
 
 export type { FrequencySweepOptions, PlaybackHandle, ToneOptions };
 export { clampFrequency, dbToGain, gainToDb } from "@webaudio-kit/core";

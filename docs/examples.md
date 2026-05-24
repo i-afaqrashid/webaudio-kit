@@ -68,35 +68,17 @@ function VolumeControl() {
 ## Waveform Analyser
 
 ```tsx
-function WaveformCanvas() {
-  const analyser = useAnalyser();
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+import { WaveformCanvas } from "@webaudio-kit/react";
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || !analyser) {
-      return;
-    }
-
-    const context = canvas.getContext("2d");
-    if (!context) {
-      return;
-    }
-
-    const data = new Uint8Array(analyser.fftSize);
-    let frame = 0;
-
-    const draw = () => {
-      frame = requestAnimationFrame(draw);
-      analyser.getByteTimeDomainData(data);
-      context.clearRect(0, 0, canvas.width, canvas.height);
-    };
-
-    draw();
-    return () => cancelAnimationFrame(frame);
-  }, [analyser]);
-
-  return <canvas ref={canvasRef} width="720" height="180" />;
+function WaveformPanel() {
+  return (
+    <WaveformCanvas
+      backgroundColor="#10110f"
+      height={180}
+      strokeColor="#c8ea3a"
+      width={720}
+    />
+  );
 }
 ```
 

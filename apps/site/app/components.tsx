@@ -80,7 +80,7 @@ export function PageShell({
   active,
   children,
 }: {
-  active?: "home" | "docs" | "roadmap";
+  active?: "home" | "docs";
   children: ReactNode;
 }) {
   return (
@@ -98,12 +98,6 @@ export function PageShell({
             href="/docs"
           >
             Docs
-          </Link>
-          <Link
-            className={active === "roadmap" ? "active" : undefined}
-            href="/roadmap"
-          >
-            Roadmap
           </Link>
           <a
             className="externalNavLink"

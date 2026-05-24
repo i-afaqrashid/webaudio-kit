@@ -71,8 +71,7 @@ select {
 .brand,
 .siteHeader nav,
 .heroActions,
-.installPill,
-.roadmapTop {
+.installPill {
   align-items: center;
   display: flex;
 }
@@ -156,8 +155,7 @@ select {
 .codeTitle,
 .terminalTop,
 .installPill span,
-.toc,
-.roadmapTop span {
+.toc {
   color: var(--muted);
   font-family:
     ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
@@ -432,7 +430,6 @@ select {
 .scopeNote p,
 .infoCard p,
 .proofItem p,
-.roadmapCard li,
 .docContent p,
 .docContent li {
   color: #374035;
@@ -447,8 +444,7 @@ select {
 
 .codeCard,
 .terminal,
-.infoCard,
-.roadmapCard {
+.infoCard {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -501,8 +497,7 @@ select {
 }
 
 .packageGrid,
-.apiGrid,
-.roadmapGrid {
+.apiGrid {
   display: grid;
   gap: 18px;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -514,8 +509,7 @@ select {
   margin: 22px 0;
 }
 
-.infoCard,
-.roadmapCard {
+.infoCard {
   min-width: 0;
   padding: 22px;
 }
@@ -530,8 +524,7 @@ select {
 }
 
 .infoCard h3,
-.proofItem h3,
-.roadmapCard h2 {
+.proofItem h3 {
   font-size: 19px;
   margin: 18px 0 8px;
 }
@@ -703,23 +696,6 @@ select {
   text-underline-offset: 3px;
 }
 
-.roadmapGrid {
-  align-items: stretch;
-}
-
-.roadmapTop {
-  gap: 12px;
-}
-
-.roadmapCard h2 {
-  margin-top: 20px;
-}
-
-.roadmapCard ul {
-  margin: 14px 0 0;
-  padding-left: 19px;
-}
-
 @media (max-width: 920px) {
   .heroGrid,
   .split,
@@ -731,8 +707,7 @@ select {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .packageGrid,
-  .roadmapGrid {
+  .packageGrid {
     grid-template-columns: 1fr;
   }
 
