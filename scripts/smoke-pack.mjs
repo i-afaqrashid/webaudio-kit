@@ -120,16 +120,13 @@ console.log("smoke ok");
 run("pnpm", ["install", "--ignore-scripts"], smokeDir);
 
 run(
-  "pnpm",
-  [
-    "exec",
-    "webaudio-kit",
-    "agent-brief",
-    "--out",
-    "AGENTS.md",
-    "--target",
-    "codex",
-  ],
+  join(
+    smokeDir,
+    "node_modules",
+    ".bin",
+    process.platform === "win32" ? "webaudio-kit.cmd" : "webaudio-kit",
+  ),
+  ["agent-brief", "--out", "AGENTS.md", "--target", "codex"],
   smokeDir,
 );
 

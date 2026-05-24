@@ -1,8 +1,14 @@
-import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import { describe, expect, it } from "vitest";
-import { buildAgentBrief, parseCliArgs, runCli } from "./index";
+import {
+  buildAgentBrief,
+  isCliEntrypoint,
+  parseCliArgs,
+  runCli,
+} from "./index";
 
 describe("buildAgentBrief", () => {
   it("generates a public AI agent brief with docs, package, and safety context", () => {
@@ -99,5 +105,18 @@ describe("runCli", () => {
     await expect(readFile(join(cwd, "AGENTS.md"), "utf8")).resolves.toBe(
       "existing",
     );
+  });
+});
+
+describe("isCliEntrypoint", () => {
+  it("treats package-manager bin symlinks as direct CLI execution", async () => {
+    const cwd = await mkdtemp(join(tmpdir(), "webaudio-kit-cli-"));
+    const target = join(cwd, "dist-index.js");
+    const link = join(cwd, "webaudio-kit");
+
+    await writeFile(target, "");
+    await symlink(target, link);
+
+    expect(isCliEntrypoint(link, pathToFileURL(target).href)).toBe(true);
   });
 });

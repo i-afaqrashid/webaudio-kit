@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { realpathSync } from "node:fs";
 import { mkdir, stat, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -214,6 +215,19 @@ export async function runCli(
   }
 }
 
+export function isCliEntrypoint(
+  argvPath: string | undefined,
+  moduleUrl: string,
+): boolean {
+  if (!argvPath) {
+    return false;
+  }
+
+  return (
+    resolveRealPath(argvPath) === resolveRealPath(fileURLToPath(moduleUrl))
+  );
+}
+
 function getInstallCommand(packageManager: PackageManager): string {
   if (packageManager === "npm") {
     return "npm install @webaudio-kit/core @webaudio-kit/react";
@@ -277,6 +291,14 @@ function isIncluded<const Values extends readonly string[]>(
   return values.includes(value);
 }
 
+function resolveRealPath(path: string): string {
+  try {
+    return realpathSync(path);
+  } catch {
+    return path;
+  }
+}
+
 async function pathExists(path: string): Promise<boolean> {
   try {
     await stat(path);
@@ -304,6 +326,6 @@ async function main() {
   process.exitCode = result.exitCode;
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+if (isCliEntrypoint(process.argv[1], import.meta.url)) {
   void main();
 }
