@@ -1,3 +1,5 @@
+"use client";
+
 import {
   type CanvasHTMLAttributes,
   createContext,
@@ -47,6 +49,18 @@ export type WaveformCanvasProps = Omit<
   idleStrokeColor?: string;
   lineWidth?: number;
   strokeColor?: string;
+};
+
+export type SpectrumCanvasProps = Omit<
+  CanvasHTMLAttributes<HTMLCanvasElement>,
+  "children"
+> & {
+  backgroundColor?: string;
+  barColor?: string;
+  barCount?: number;
+  barGap?: number;
+  idleBarColor?: string;
+  minBarHeight?: number;
 };
 
 const AudioContextStateContext = createContext<AudioProviderValue | undefined>(
@@ -258,7 +272,7 @@ export function WaveformCanvas({
       return;
     }
 
-    const context = canvas.getContext("2d");
+    const context = canvas.getContext("2d", { alpha: false });
     if (!context) {
       return;
     }
@@ -317,6 +331,104 @@ export function WaveformCanvas({
     idleStrokeColor,
     lineWidth,
     strokeColor,
+    width,
+  ]);
+
+  return (
+    <canvas
+      {...canvasProps}
+      aria-label={ariaLabel}
+      height={height}
+      ref={canvasRef}
+      width={width}
+    />
+  );
+}
+
+export function SpectrumCanvas({
+  backgroundColor = "#10110f",
+  barColor = "#c8ea3a",
+  barCount = 48,
+  barGap = 2,
+  height = 180,
+  idleBarColor,
+  minBarHeight = 2,
+  width = 720,
+  ...canvasProps
+}: SpectrumCanvasProps) {
+  const analyser = useAnalyser();
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const ariaLabel = canvasProps["aria-label"] ?? "Spectrum analyser";
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) {
+      return;
+    }
+
+    const context = canvas.getContext("2d", { alpha: false });
+    if (!context) {
+      return;
+    }
+
+    const normalizedBarCount = normalizeBarCount(barCount);
+    const normalizedBarGap = normalizeCanvasNumber(barGap, 2);
+    const normalizedMinBarHeight = normalizeCanvasNumber(minBarHeight, 2);
+    const drawBars = (data: Uint8Array | null) => {
+      drawBackground(context, canvas, backgroundColor);
+      context.fillStyle = data ? barColor : (idleBarColor ?? barColor);
+
+      const totalGap = Math.max(0, normalizedBarCount - 1) * normalizedBarGap;
+      const barWidth = Math.max(
+        1,
+        (canvas.width - totalGap) / normalizedBarCount,
+      );
+
+      for (let index = 0; index < normalizedBarCount; index += 1) {
+        const value = data?.[index] ?? 0;
+        const normalizedValue = value / 255;
+        const barHeight = Math.max(
+          normalizedMinBarHeight,
+          normalizedValue * canvas.height,
+        );
+        const x = index * (barWidth + normalizedBarGap);
+        const y = canvas.height - barHeight;
+        context.fillRect(x, y, barWidth, barHeight);
+      }
+    };
+
+    if (!analyser) {
+      drawBars(null);
+      return;
+    }
+
+    const data = new Uint8Array(
+      Math.min(normalizedBarCount, analyser.frequencyBinCount),
+    );
+    let frame = 0;
+
+    const draw = () => {
+      analyser.getByteFrequencyData(data);
+      drawBars(data);
+      frame = globalThis.requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    return () => {
+      if (frame !== 0) {
+        globalThis.cancelAnimationFrame(frame);
+      }
+    };
+  }, [
+    analyser,
+    backgroundColor,
+    barColor,
+    barCount,
+    barGap,
+    height,
+    idleBarColor,
+    minBarHeight,
     width,
   ]);
 
@@ -409,6 +521,22 @@ function drawBackground(
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.fillStyle = backgroundColor;
   context.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function normalizeBarCount(value: number): number {
+  if (!Number.isFinite(value)) {
+    return 48;
+  }
+
+  return Math.max(1, Math.floor(value));
+}
+
+function normalizeCanvasNumber(value: number, fallback: number): number {
+  if (!Number.isFinite(value)) {
+    return fallback;
+  }
+
+  return Math.max(0, value);
 }
 
 export type { FrequencySweepOptions, PlaybackHandle, ToneOptions };

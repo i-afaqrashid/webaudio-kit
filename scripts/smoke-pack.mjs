@@ -69,7 +69,12 @@ overrides:
 await writeFile(
   join(smokeDir, "smoke.mjs"),
   `import { clampFrequency, dbToGain } from "@webaudio-kit/core";
-import { AudioProvider, WaveformCanvas, useTone } from "@webaudio-kit/react";
+import {
+  AudioProvider,
+  SpectrumCanvas,
+  WaveformCanvas,
+  useTone,
+} from "@webaudio-kit/react";
 
 if (clampFrequency(30_000) !== 20_000) {
   throw new Error("core clampFrequency export failed");
@@ -81,6 +86,7 @@ if (Math.abs(dbToGain(-6) - 0.501187) > 0.00001) {
 
 if (
   typeof AudioProvider !== "function" ||
+  typeof SpectrumCanvas !== "function" ||
   typeof WaveformCanvas !== "function" ||
   typeof useTone !== "function"
 ) {
@@ -92,6 +98,15 @@ console.log("smoke ok");
 );
 
 run("pnpm", ["install", "--ignore-scripts"], smokeDir);
+
+const reactEntry = await readFile(
+  join(smokeDir, "node_modules/@webaudio-kit/react/dist/index.js"),
+  "utf8",
+);
+if (!/^["']use client["'];/.test(reactEntry.trimStart())) {
+  throw new Error("react package entry must preserve the use client directive");
+}
+
 run("node", ["smoke.mjs"], smokeDir);
 
 console.log(`Packed packages smoke-tested from ${packDir}`);

@@ -17,6 +17,8 @@ pnpm add @webaudio-kit/core @webaudio-kit/react
 ```
 
 The packages target browser runtimes and Node `>=22.13` for local tooling.
+`@webaudio-kit/react` supports React `>=18.3` and ships as a client entry for
+Next.js App Router projects.
 
 ## 30-second example
 
@@ -50,7 +52,40 @@ Browsers require audio playback to begin from a user gesture. `AudioProvider`
 therefore creates and resumes `AudioContext` lazily when a hook action such as
 `tone.play()` runs from a click or similar interaction.
 
-## What 1.0 includes
+## Next.js App Router
+
+Keep controls that call hooks in a client component. The package entry includes
+`"use client"`, but your component still needs a user interaction to start
+browser audio:
+
+```tsx
+"use client";
+
+import { AudioProvider, SpectrumCanvas, useTone } from "@webaudio-kit/react";
+
+function Controls() {
+  const tone = useTone({ frequency: 440, gain: 0.15 });
+
+  return (
+    <>
+      <button onClick={() => void tone.play({ durationMs: 600 })}>
+        Play tone
+      </button>
+      <SpectrumCanvas />
+    </>
+  );
+}
+
+export function AudioIsland() {
+  return (
+    <AudioProvider>
+      <Controls />
+    </AudioProvider>
+  );
+}
+```
+
+## Current Public Surface
 
 - `@webaudio-kit/core`
   - `playTone()`
@@ -66,10 +101,11 @@ therefore creates and resumes `AudioContext` lazily when a hook action such as
   - `useVolume`
   - `useAnalyser`
   - `WaveformCanvas`
+  - `SpectrumCanvas`
 - `apps/demo`
   - tone generator
   - 250Hz to 8000Hz sweep
-  - reusable analyser waveform canvas
+  - reusable analyser waveform and spectrum canvases
 - `apps/site`
   - public landing page
   - docs overview
@@ -87,10 +123,11 @@ pnpm site:dev
 pnpm site:build
 pnpm demo:dev
 pnpm demo:qa
+pnpm examples:check
 pnpm smoke:pack
 pnpm release:check
 pnpm release:check:full
-pnpm release:verify-tag v1.0.0
+pnpm release:verify-tag v1.2.0
 pnpm release:dry-run
 pnpm verify
 ```
@@ -103,12 +140,15 @@ Playwright, then writes a demo screenshot, WebM, and GIF under `docs/assets/`.
 `pnpm smoke:pack` packs both publishable packages and imports them from a clean
 temporary app.
 
+`pnpm examples:check` builds the standalone Vite and Next examples from packed
+package tarballs so framework integration stays honest.
+
 `pnpm bench` runs local performance benchmarks for math helpers, playback graph
 scheduling, analyser frame processing, and React audio hooks. Treat benchmark
 numbers as local trend signals, not release gates.
 
-`pnpm release:check` runs the full verification gate and package smoke check
-used before tagging a release.
+`pnpm release:check` runs the full verification gate, package smoke check, and
+standalone example builds used before tagging a release.
 
 `pnpm release:check:full` adds browser demo QA on top of the release check. Run
 it before publishing when Playwright browsers and `ffmpeg` are installed.
@@ -150,13 +190,6 @@ testing headphones or hearing-test-style prototypes.
 
 This library is for building browser audio interfaces and prototypes. It is not
 a certified audiology or medical testing system.
-
-## Future Work
-
-- spectrum visualizer helpers
-- microphone input and permission helpers
-- AudioWorklet helpers for low-latency processors
-- Svelte/Vue adapters if React primitives prove useful first
 
 ## Project docs
 

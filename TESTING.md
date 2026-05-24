@@ -8,8 +8,9 @@ Run the full local gate:
 pnpm verify
 pnpm bench
 pnpm smoke:pack
+pnpm examples:check
 pnpm release:check
-pnpm release:verify-tag v1.0.0
+pnpm release:verify-tag v1.2.0
 ```
 
 `pnpm verify` runs unit tests, TypeScript, package builds, demo build, site
@@ -18,7 +19,11 @@ build, lint, and format checks.
 `pnpm smoke:pack` packs `@webaudio-kit/core` and `@webaudio-kit/react`, installs
 the tarballs into a clean temporary app, and imports the public APIs.
 
-`pnpm release:check` runs `pnpm verify` and `pnpm smoke:pack`.
+`pnpm examples:check` installs packed tarballs into clean temporary Vite and
+Next apps, then builds both standalone examples.
+
+`pnpm release:check` runs `pnpm verify`, `pnpm smoke:pack`, and
+`pnpm examples:check`.
 
 `pnpm release:verify-tag` enforces the same stable release-tag and package
 metadata checks used by the npm publish workflow.

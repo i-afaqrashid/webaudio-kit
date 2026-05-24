@@ -394,13 +394,21 @@ select {
   margin-top: 12px;
 }
 
+.visualizerLabel {
+  color: var(--muted);
+  display: block;
+  font-size: 12px;
+  font-weight: 760;
+  margin-top: 14px;
+}
+
 .waveformFrame canvas {
   background: #0f120f;
   border-radius: 6px;
   display: block;
   height: auto;
   margin-top: 10px;
-  max-height: 180px;
+  max-height: 190px;
   width: 100%;
 }
 

@@ -7,13 +7,18 @@ client-only, so the provider and controls live in a `"use client"` component.
 // app/audio-controls.tsx
 "use client";
 
-import { AudioProvider, useTone } from "@webaudio-kit/react";
+import {
+  AudioProvider,
+  SpectrumCanvas,
+  WaveformCanvas,
+  useTone,
+} from "@webaudio-kit/react";
 
 function ToneButton() {
   const tone = useTone({ frequency: 440, gain: 0.15 });
 
   return (
-    <button type="button" onClick={() => void tone.play({ durationMs: 600 })}>
+    <button type="button" onClick={() => void tone.play()}>
       Play tone
     </button>
   );
@@ -23,6 +28,8 @@ export function AudioControls() {
   return (
     <AudioProvider>
       <ToneButton />
+      <WaveformCanvas />
+      <SpectrumCanvas />
     </AudioProvider>
   );
 }

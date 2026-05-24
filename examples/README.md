@@ -11,12 +11,16 @@ source of truth.
 - wrap controls in `AudioProvider`
 - play and stop a tone with `useTone`
 - run a frequency sweep with `useFrequencySweep`
-- render a small analyser canvas with `useAnalyser`
+- render waveform and spectrum canvases with `WaveformCanvas` and
+  `SpectrumCanvas`
 
 ## Next provider example
 
 `examples/next-provider-example` shows the important Next.js boundary: the file
 that imports hooks from `@webaudio-kit/react` must be a client component.
+
+It also proves that `WaveformCanvas` and `SpectrumCanvas` work from a Next App
+Router client component while the page itself remains a server component.
 
 ## Running an example
 
@@ -25,7 +29,8 @@ Install the packages in this repository first:
 ```bash
 pnpm install --frozen-lockfile
 pnpm build
+pnpm examples:check
 ```
 
-Then copy an example into an app or install the packages from npm after the first
-public publish.
+`pnpm examples:check` installs packed package tarballs into clean temporary Vite
+and Next apps, then builds both examples.

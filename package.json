@@ -1,6 +1,6 @@
 {
   "name": "webaudio-kit-workspace",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.3.0",
@@ -23,8 +23,9 @@
     "demo:dev": "pnpm --filter @webaudio-kit/demo dev",
     "demo:build": "pnpm --filter @webaudio-kit/demo build",
     "demo:qa": "node scripts/demo-qa.mjs",
+    "examples:check": "node scripts/check-example-apps.mjs",
     "smoke:pack": "node scripts/smoke-pack.mjs",
-    "release:check": "pnpm verify && pnpm smoke:pack",
+    "release:check": "pnpm verify && pnpm smoke:pack && pnpm examples:check -- --skip-build",
     "release:check:full": "pnpm release:check && pnpm demo:qa",
     "release:check:tag": "pnpm release:verify-tag",
     "release:verify-tag": "node scripts/check-release-tag.mjs",

@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.2.0 - 2026-05-24
+
+### Added
+
+- `SpectrumCanvas` in `@webaudio-kit/react` for reusable analyser frequency
+  bar rendering with an idle state before playback starts.
+- Standalone Vite and Next example package checks that install generated
+  tarballs before building.
+
+### Changed
+
+- Demo app, public site, docs, and examples now show both waveform and spectrum
+  analyser views.
+- `@webaudio-kit/react` now preserves a package-level `"use client"` directive
+  for Next.js App Router client boundaries.
+- React peer dependency now supports React 18.3 and newer.
+- CI and npm publish workflows now build standalone examples before accepting a
+  package release.
+
 ## 1.1.0 - 2026-05-24
 
 ### Added
