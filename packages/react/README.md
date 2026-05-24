@@ -42,6 +42,9 @@ function ToneButton() {
 - `useAnalyser`
 - re-exported helpers from `@webaudio-kit/core`
 
+See the repository API reference:
+https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/api.md.
+
 `AudioProvider` lazily creates and resumes `AudioContext` when playback starts.
 This matches browser autoplay rules and keeps import-time behavior safe.
 

@@ -50,7 +50,7 @@ Browsers require audio playback to begin from a user gesture. `AudioProvider`
 therefore creates and resumes `AudioContext` lazily when a hook action such as
 `tone.play()` runs from a click or similar interaction.
 
-## What v0.1 includes
+## What 1.0 includes
 
 - `@webaudio-kit/core`
   - `playTone()`
@@ -135,8 +135,18 @@ a certified audiology or medical testing system.
 
 - [Product plan](./product-plan.md)
 - [Publicity plan](./publicity-plan.md)
+- [Technical docs](./docs/README.md)
+- [Architecture](./docs/architecture.md)
+- [API reference](./docs/api.md)
+- [Browser audio guide](./docs/browser-audio.md)
+- [Examples](./docs/examples.md)
+- [Deployment](./docs/deployment.md)
+- [Safety](./docs/safety.md)
+- [Troubleshooting](./docs/troubleshooting.md)
 - [Testing](./TESTING.md)
 - [Release checklist](./RELEASE.md)
+- [Launch checklist](./LAUNCH.md)
+- [Governance](./GOVERNANCE.md)
 - [Security policy](./SECURITY.md)
 - [Support](./SUPPORT.md)
 - [Open source expectations](./OPEN_SOURCE.md)

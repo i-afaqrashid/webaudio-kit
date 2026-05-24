@@ -34,6 +34,9 @@ handle.stop();
 - `gainToDb(gain)`
 - `clampFrequency(value, min?, max?)`
 
+See the repository API reference:
+https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/api.md.
+
 `AudioContext` is never created at module import time. Create or resume it from
 a user gesture in your app.
 

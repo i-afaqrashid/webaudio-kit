@@ -2,9 +2,8 @@
 
 ## Supported Versions
 
-Security fixes target the current unreleased `0.1.x` line until the first public
-npm release exists. After publishing, supported versions will be documented here
-by semver range.
+Security fixes target the current `1.x` line. After additional public releases,
+supported versions will be documented here by semver range.
 
 ## Reporting a Vulnerability
 
