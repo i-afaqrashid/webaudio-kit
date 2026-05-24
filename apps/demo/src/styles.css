@@ -199,6 +199,12 @@ input[type="range"] {
   grid-column: 1 / -1;
 }
 
+.visualizerLabel {
+  color: #65705e;
+  font-size: 12px;
+  font-weight: 760;
+}
+
 canvas {
   background: #10110f;
   border-radius: 8px;

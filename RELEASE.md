@@ -20,7 +20,7 @@ publish still requires access to the npm `@webaudio-kit` scope.
 ```sh
 pnpm install --frozen-lockfile
 pnpm release:check:full
-pnpm release:verify-tag v1.0.0
+pnpm release:verify-tag v1.2.0
 pnpm release:dry-run
 ```
 
@@ -35,11 +35,11 @@ Review:
 
 ## Tag Release
 
-For version `1.0.0`:
+For version `1.2.0`:
 
 ```sh
-git tag v1.0.0
-git push origin v1.0.0
+git tag v1.2.0
+git push origin v1.2.0
 ```
 
 The GitHub release workflow is tag-gated. It checks that the tag matches the
@@ -56,7 +56,7 @@ Use this only if the GitHub workflow is not configured yet.
 
 ```sh
 pnpm release:check:full
-pnpm release:verify-tag v1.0.0
+pnpm release:verify-tag v1.2.0
 pnpm release:dry-run
 npm whoami
 pnpm release:publish-tarballs .release-packages

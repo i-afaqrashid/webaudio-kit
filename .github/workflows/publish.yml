@@ -77,6 +77,9 @@ jobs:
       - name: Smoke packaged packages
         run: pnpm smoke:pack -- --skip-build
 
+      - name: Build standalone examples
+        run: pnpm examples:check -- --skip-build
+
       - name: Pack packages
         run: |
           rm -rf .release-packages

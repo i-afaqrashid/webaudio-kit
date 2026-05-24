@@ -1,6 +1,6 @@
 {
   "name": "@webaudio-kit/react",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "module",
   "description": "React primitives for browser audio apps.",
   "license": "MIT",
@@ -48,6 +48,6 @@
     "@webaudio-kit/core": "workspace:*"
   },
   "peerDependencies": {
-    "react": ">=19.2.6"
+    "react": ">=18.3.0"
   }
 }

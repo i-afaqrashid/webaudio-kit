@@ -33,6 +33,11 @@ const apiCards = [
     title: "WaveformCanvas",
     copy: "Draws provider analyser data with an idle line before playback starts.",
   },
+  {
+    icon: "activity" as const,
+    title: "SpectrumCanvas",
+    copy: "Draws frequency-domain analyser bars for compact spectrum displays.",
+  },
 ];
 
 export default function DocsPage() {

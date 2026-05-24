@@ -2,6 +2,8 @@ import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   AudioProvider,
+  SpectrumCanvas,
+  WaveformCanvas,
   dbToGain,
   useFrequencySweep,
   useTone,
@@ -62,6 +64,20 @@ function TonePanel() {
       </div>
 
       <p className="note">Master gain: {volume.gain.toFixed(2)}</p>
+      <div className="visualizers">
+        <WaveformCanvas
+          backgroundColor="#10110f"
+          height={150}
+          strokeColor="#c8ea3a"
+          width={720}
+        />
+        <SpectrumCanvas
+          backgroundColor="#10110f"
+          barColor="#8ed8ff"
+          height={120}
+          width={720}
+        />
+      </div>
     </main>
   );
 }

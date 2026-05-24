@@ -57,6 +57,11 @@ class FakeGainNode extends FakeAudioNode {
 
 class FakeAnalyserNode extends FakeAudioNode {
   fftSize = 2048;
+  frequencyBinCount = 1024;
+
+  getByteFrequencyData(data: Uint8Array) {
+    data.fill(0);
+  }
 
   getByteTimeDomainData(data: Uint8Array) {
     data.fill(128);
@@ -138,6 +143,7 @@ describe("demo app", () => {
     expect(screen.getByText("Tone generator")).toBeTruthy();
     expect(screen.getByText("Frequency sweep")).toBeTruthy();
     expect(screen.getByText("Analyser")).toBeTruthy();
+    expect(screen.getByLabelText("Spectrum analyser")).toBeTruthy();
     expect(
       screen.getByText(
         "webaudio-kit is for browser audio interfaces and prototypes. It is not a certified audiology or medical testing system.",

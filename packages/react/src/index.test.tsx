@@ -3,6 +3,7 @@ import { useState } from "react";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import {
   AudioProvider,
+  SpectrumCanvas,
   WaveformCanvas,
   useAnalyser,
   useAudioContext,
@@ -80,7 +81,16 @@ class FakeGainNode extends FakeAudioNode {
 
 class FakeAnalyserNode extends FakeAudioNode {
   fftSize = 2048;
+  frequencyBinCount = 1024;
+  frequencyDataCalls = 0;
   timeDomainCalls = 0;
+
+  getByteFrequencyData(data: Uint8Array) {
+    this.frequencyDataCalls += 1;
+    for (let index = 0; index < data.length; index += 1) {
+      data[index] = index % 255;
+    }
+  }
 
   getByteTimeDomainData(data: Uint8Array) {
     this.timeDomainCalls += 1;
@@ -581,5 +591,61 @@ describe("AudioProvider", () => {
       FakeAudioContext.instances[0]?.analysers[0]?.timeDomainCalls,
     ).toBeGreaterThan(0);
     expect(context.lineTo).toHaveBeenCalled();
+  });
+
+  test("SpectrumCanvas renders idle bars before playback creates an analyser", () => {
+    const context = createCanvasContext();
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
+      context,
+    );
+
+    render(
+      <AudioProvider>
+        <SpectrumCanvas
+          backgroundColor="#111111"
+          barColor="#eeeeee"
+          barCount={8}
+          data-testid="spectrum"
+          height={80}
+          width={320}
+        />
+      </AudioProvider>,
+    );
+
+    const canvas = screen.getByTestId("spectrum");
+    expect(canvas.getAttribute("aria-label")).toBe("Spectrum analyser");
+    expect(canvas.getAttribute("height")).toBe("80");
+    expect(canvas.getAttribute("width")).toBe("320");
+    expect(context.fillRect).toHaveBeenCalledWith(0, 0, 320, 80);
+    expect(context.fillRect).toHaveBeenCalledWith(0, 78, 38.25, 2);
+  });
+
+  test("SpectrumCanvas reads analyser frequency data after playback starts", async () => {
+    const context = createCanvasContext();
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
+      context,
+    );
+    vi.stubGlobal(
+      "requestAnimationFrame",
+      vi.fn(() => 1),
+    );
+    vi.stubGlobal("cancelAnimationFrame", vi.fn());
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <Harness />
+        <SpectrumCanvas data-testid="spectrum" />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "play tone" }).click();
+    });
+
+    expect(
+      FakeAudioContext.instances[0]?.analysers[0]?.frequencyDataCalls,
+    ).toBeGreaterThan(0);
+    expect(context.fillRect).toHaveBeenCalled();
   });
 });

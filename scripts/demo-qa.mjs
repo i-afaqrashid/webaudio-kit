@@ -98,9 +98,17 @@ async function runBrowserQa({ name, type, artifacts, waitForAudioUi }) {
     }
     await page.waitForTimeout(800);
 
-    const canvasVisible = await page.locator("canvas").isVisible();
-    if (!canvasVisible) {
+    const waveformVisible = await page
+      .getByLabel("Waveform analyser")
+      .isVisible();
+    if (!waveformVisible) {
       throw new Error("waveform canvas is not visible");
+    }
+    const spectrumVisible = await page
+      .getByLabel("Spectrum analyser")
+      .isVisible();
+    if (!spectrumVisible) {
+      throw new Error("spectrum canvas is not visible");
     }
 
     if (artifacts) {

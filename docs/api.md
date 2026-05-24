@@ -229,3 +229,32 @@ Useful props:
 
 It also accepts standard canvas attributes such as `className`, `style`, and
 `aria-label`.
+
+### `SpectrumCanvas`
+
+```tsx
+<SpectrumCanvas
+  backgroundColor="#10110f"
+  barColor="#8ed8ff"
+  height={140}
+  width={720}
+/>
+```
+
+Draws analyser frequency-domain data from the nearest `AudioProvider`. Before
+playback creates the provider graph, it renders low idle bars so the canvas does
+not appear broken.
+
+Useful props:
+
+- `width`: canvas drawing width. Defaults to `720`.
+- `height`: canvas drawing height. Defaults to `180`.
+- `backgroundColor`: fill color. Defaults to `#10110f`.
+- `barColor`: live spectrum bar color. Defaults to `#c8ea3a`.
+- `idleBarColor`: idle bar color. Defaults to `barColor`.
+- `barCount`: number of rendered bars. Defaults to `48`.
+- `barGap`: gap between bars in canvas pixels. Defaults to `2`.
+- `minBarHeight`: minimum visible bar height. Defaults to `2`.
+
+It also accepts standard canvas attributes such as `className`, `style`, and
+`aria-label`.

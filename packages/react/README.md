@@ -41,21 +41,30 @@ function ToneButton() {
 - `useVolume`
 - `useAnalyser`
 - `WaveformCanvas`
+- `SpectrumCanvas`
 - re-exported helpers from `@webaudio-kit/core`
 
-## Waveform
+## Visualizers
 
 ```tsx
-import { WaveformCanvas } from "@webaudio-kit/react";
+import { SpectrumCanvas, WaveformCanvas } from "@webaudio-kit/react";
 
 function AnalyserPanel() {
   return (
-    <WaveformCanvas
-      backgroundColor="#10110f"
-      height={180}
-      strokeColor="#c8ea3a"
-      width={720}
-    />
+    <>
+      <WaveformCanvas
+        backgroundColor="#10110f"
+        height={180}
+        strokeColor="#c8ea3a"
+        width={720}
+      />
+      <SpectrumCanvas
+        backgroundColor="#10110f"
+        barColor="#8ed8ff"
+        height={140}
+        width={720}
+      />
+    </>
   );
 }
 ```

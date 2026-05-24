@@ -3,6 +3,7 @@
 import { useState } from "react";
 import {
   AudioProvider,
+  SpectrumCanvas,
   WaveformCanvas as AudioWaveformCanvas,
   dbToGain,
   gainToDb,
@@ -208,12 +209,22 @@ function WaveformPanel() {
         <span>Analyser</span>
         <strong>{analyser ? "live" : "waiting for click"}</strong>
       </div>
+      <span className="visualizerLabel">Waveform</span>
       <AudioWaveformCanvas
         aria-label="Waveform analyser"
         backgroundColor="#0f120f"
         height="180"
         idleStrokeColor="#394135"
         strokeColor="#b9e145"
+        width="900"
+      />
+      <span className="visualizerLabel">Spectrum</span>
+      <SpectrumCanvas
+        aria-label="Spectrum analyser"
+        backgroundColor="#0f120f"
+        barColor="#8ed8ff"
+        height="130"
+        idleBarColor="#394135"
         width="900"
       />
     </div>

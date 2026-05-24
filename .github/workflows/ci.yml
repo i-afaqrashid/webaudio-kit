@@ -131,6 +131,9 @@ jobs:
       - name: Smoke packaged packages
         run: pnpm smoke:pack -- --skip-build
 
+      - name: Build standalone examples
+        run: pnpm examples:check -- --skip-build
+
   audit:
     name: Dependency audit
     runs-on: ubuntu-latest

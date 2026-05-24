@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   WaveformCanvas,
+  SpectrumCanvas,
   dbToGain,
   gainToDb,
   useAnalyser,
@@ -165,11 +166,20 @@ function WaveformPanel() {
         <span>Analyser</span>
         <strong>{analyser ? "live" : "waiting"}</strong>
       </div>
+      <span className="visualizerLabel">Waveform</span>
       <WaveformCanvas
         aria-label="Waveform analyser"
         backgroundColor="#10110f"
         height="180"
         strokeColor="#c8ea3a"
+        width="720"
+      />
+      <span className="visualizerLabel">Spectrum</span>
+      <SpectrumCanvas
+        aria-label="Spectrum analyser"
+        backgroundColor="#10110f"
+        barColor="#8ed8ff"
+        height="140"
         width="720"
       />
     </div>

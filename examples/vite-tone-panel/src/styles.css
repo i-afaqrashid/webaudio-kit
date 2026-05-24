@@ -41,6 +41,19 @@ input {
   font-size: 12px;
 }
 
+.visualizers {
+  display: grid;
+  gap: 12px;
+}
+
+canvas {
+  background: #10110f;
+  border-radius: 8px;
+  display: block;
+  height: auto;
+  width: 100%;
+}
+
 h1 {
   font-size: 48px;
   letter-spacing: 0;
