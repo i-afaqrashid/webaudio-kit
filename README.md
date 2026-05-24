@@ -69,6 +69,11 @@ therefore creates and resumes `AudioContext` lazily when a hook action such as
   - tone generator
   - 250Hz to 8000Hz sweep
   - analyser waveform canvas
+- `apps/site`
+  - public landing page
+  - docs overview
+  - roadmap page
+  - Vercel deployment config
 
 ## Local development
 
@@ -77,6 +82,8 @@ pnpm install
 pnpm test
 pnpm typecheck
 pnpm build
+pnpm site:dev
+pnpm site:build
 pnpm demo:dev
 pnpm demo:qa
 pnpm smoke:pack
@@ -87,7 +94,8 @@ pnpm release:dry-run
 pnpm verify
 ```
 
-The demo runs on `http://127.0.0.1:5173`.
+The public site runs on `http://127.0.0.1:4173`. The audio demo runs on
+`http://127.0.0.1:5173`.
 
 `pnpm demo:qa` runs the demo through Chromium, Firefox, and WebKit with
 Playwright, then writes a demo screenshot, WebM, and GIF under `docs/assets/`.
@@ -140,6 +148,8 @@ a certified audiology or medical testing system.
 - [API reference](./docs/api.md)
 - [Browser audio guide](./docs/browser-audio.md)
 - [Examples](./docs/examples.md)
+- [Example apps](./examples/README.md)
+- [Design references](./design/README.md)
 - [Deployment](./docs/deployment.md)
 - [Safety](./docs/safety.md)
 - [Troubleshooting](./docs/troubleshooting.md)

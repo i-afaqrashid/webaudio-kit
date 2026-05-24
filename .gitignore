@@ -7,3 +7,5 @@ coverage
 output
 packages/*/dist
 apps/demo/dist
+apps/site/.next
+apps/site/out

@@ -11,6 +11,8 @@ shipping `webaudio-kit`.
 - [Browser audio guide](./browser-audio.md)
 - [Examples](./examples.md)
 - [Apps](./apps.md)
+- [Example apps](../examples/README.md)
+- [Design references](../design/README.md)
 - [Safety](./safety.md)
 - [Troubleshooting](./troubleshooting.md)
 - [Deployment](./deployment.md)

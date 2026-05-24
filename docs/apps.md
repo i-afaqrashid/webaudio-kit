@@ -1,5 +1,33 @@
 # Apps
 
+## `apps/site`
+
+`apps/site` is the public web surface. It exists for:
+
+- install and quick-start copy
+- package positioning
+- hosted documentation overview
+- roadmap and non-goals
+- Vercel deployment
+
+Run it locally:
+
+```sh
+pnpm site:dev
+```
+
+Build it:
+
+```sh
+pnpm site:build
+```
+
+The local site runs on `http://127.0.0.1:4173`.
+
+Keep this app useful for readers who have not cloned the repo yet. The site can
+show code, roadmap, and release status, but browser playback testing belongs in
+`apps/demo`.
+
 ## `apps/demo`
 
 `apps/demo` is the current runnable frontend. It exists for:
@@ -41,9 +69,9 @@ The demo should stay focused on the public API:
 Do not turn `apps/demo` into a full documentation site. It should stay small
 enough to manually inspect before release.
 
-## Public Demo Deployment
+## Public Site Deployment
 
-The current public demo target is:
+The current public site target is:
 
 ```txt
 webaudio-kit.afaqrashid.com
@@ -51,38 +79,16 @@ webaudio-kit.afaqrashid.com
 
 See [deployment](./deployment.md).
 
-## Future `apps/docs`
-
-A dedicated docs app can be added later when the Markdown docs need live demos,
-routing, search, and richer API pages.
-
-Suggested routes:
-
-- `/`
-- `/quick-start`
-- `/api`
-- `/tone-generator`
-- `/frequency-sweep`
-- `/waveform`
-- `/metronome`
-- `/hearing-test-style-prototype`
-- `/safety`
-
-If `apps/docs` is added, keep it client-heavy and avoid server-only assumptions
-around Web Audio.
-
 ## Example Apps
 
-Future standalone examples can live under `examples/` or `apps/` once they are
-large enough to justify separate package manifests.
+Standalone examples live under `examples/`. They are intentionally outside the
+workspace build so they stay copy-pasteable and do not slow package release
+checks.
 
-Good candidates:
+Current examples:
 
-- `examples/tone-generator`
-- `examples/frequency-sweep`
-- `examples/metronome`
-- `examples/waveform`
-- `examples/hearing-style-prototype`
+- `examples/vite-tone-panel`
+- `examples/next-provider-example`
 
 Each example should include:
 

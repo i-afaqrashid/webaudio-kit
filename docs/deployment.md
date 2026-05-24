@@ -2,10 +2,11 @@
 
 ## What To Deploy
 
-The current deployable frontend is `apps/demo`, a Vite React app.
+The primary deployable frontend is `apps/site`, a Next.js public site. Keep
+`apps/demo` available as the local and preview audio QA surface.
 
 Keep package builds and npm publishing separate from frontend deployment. The
-demo site can deploy before the npm packages are public.
+site can deploy before the npm packages are public.
 
 ## Vercel
 
@@ -14,16 +15,15 @@ Recommended settings:
 ```txt
 Repository: i-afaqrashid/webaudio-kit
 Project root: repository root
-Framework preset: Vite
+Framework preset: Next.js
 Install command: pnpm install --frozen-lockfile
-Build command: pnpm demo:build
-Output directory: apps/demo/dist
+Build command: pnpm site:build
 Node version: 22.x or 24.x
 Environment variables: none required
 ```
 
-Do not set the project root to `apps/demo`. The demo imports workspace packages
-through pnpm.
+Do not set the project root to `apps/site`. The site is part of the workspace
+and CI expects repository-root commands.
 
 ## Custom Domain
 
@@ -50,8 +50,8 @@ Equivalent settings:
 
 ```txt
 Base directory: repository root
-Build command: pnpm demo:build
-Publish directory: apps/demo/dist
+Build command: pnpm site:build
+Publish directory: apps/site/.next
 Node version: 22.x or 24.x
 ```
 
@@ -60,21 +60,27 @@ Node version: 22.x or 24.x
 Open the deployed site and verify:
 
 - page loads over HTTPS
+- home page renders the demo screenshot
+- docs page renders install and API sections
+- roadmap page renders non-goals
+- disclaimer is visible
+- mobile layout is usable
+- console has no application errors
+
+## Demo Preview QA
+
+For a preview deployment of the audio demo, use a separate Vercel project:
+
+```txt
+Framework preset: Vite
+Build command: pnpm demo:build
+Output directory: apps/demo/dist
+```
+
+Then manually verify:
+
 - tone play button starts sound after click
 - stop button stops playback
 - sweep runs from 250 Hz to 8000 Hz
 - waveform moves during playback
 - volume starts at a safe level
-- disclaimer is visible
-- mobile layout is usable
-- console has no application errors
-
-## Future Docs Site
-
-If a dedicated docs app is added later, use:
-
-```txt
-apps/docs
-```
-
-and keep `apps/demo` as the minimal QA target.

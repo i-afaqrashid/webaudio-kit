@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>webaudio-kit docs reference</title>
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <main class="frame">
+      <nav class="nav" aria-label="Design reference navigation">
+        <div class="brand">
+          <img src="assets/icon.svg" alt="" />
+          webaudio-kit
+        </div>
+        <div class="links">
+          <span>Install</span>
+          <span>Hooks</span>
+          <span>Safety</span>
+        </div>
+      </nav>
+
+      <section>
+        <div class="kicker">Documentation</div>
+        <h1>Install, wrap, play, stop.</h1>
+        <p>
+          Focused docs for browser audio behavior, React hooks, safety notes,
+          and production release checks.
+        </p>
+        <pre class="code">
+import { AudioProvider, useTone } from "@webaudio-kit/react";</pre
+        >
+      </section>
+
+      <section class="grid" aria-label="Docs sections">
+        <article class="card">
+          <strong>Provider</strong>
+          <p>Lazy AudioContext creation and shared master graph.</p>
+        </article>
+        <article class="card">
+          <strong>Hooks</strong>
+          <p>useTone, useFrequencySweep, useVolume, and useAnalyser.</p>
+        </article>
+        <article class="card">
+          <strong>Safety</strong>
+          <p>Low defaults, frequency clamping, and non-medical product copy.</p>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

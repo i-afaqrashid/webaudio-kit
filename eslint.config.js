@@ -8,6 +8,8 @@ export default [
       "dist",
       "coverage",
       "apps/demo/dist",
+      "apps/site/.next",
+      "apps/site/out",
       "packages/*/dist",
     ],
   },
