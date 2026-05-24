@@ -34,7 +34,7 @@
     "verify": "pnpm test && pnpm typecheck && pnpm build && pnpm demo:build && pnpm lint && pnpm format:check"
   },
   "engines": {
-    "node": ">=20.19"
+    "node": ">=22.13"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

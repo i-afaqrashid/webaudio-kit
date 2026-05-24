@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Node `>=20.19`
+- Node `>=22.13`
 - pnpm `11.3.0`
 - npm account with publish access to the `@webaudio-kit` scope
 - GitHub secret `NPM_TOKEN` if using the release workflow

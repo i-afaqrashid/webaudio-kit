@@ -16,7 +16,7 @@ data without hand-managing raw Web Audio node lifecycles.
 pnpm add @webaudio-kit/core @webaudio-kit/react
 ```
 
-The packages target browser runtimes and Node `>=20.19` for local tooling.
+The packages target browser runtimes and Node `>=22.13` for local tooling.
 
 ## 30-second example
 
