@@ -144,7 +144,7 @@ pnpm examples:check
 pnpm smoke:pack
 pnpm release:check
 pnpm release:check:full
-pnpm release:verify-tag v1.5.0
+pnpm release:verify-tag v1.5.1
 pnpm release:dry-run
 pnpm verify
 ```

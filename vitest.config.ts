@@ -2,6 +2,11 @@ import { defineConfig } from "vitest/config";
 import { fileURLToPath, URL } from "node:url";
 
 export default defineConfig({
+  oxc: {
+    jsx: {
+      runtime: "automatic",
+    },
+  },
   resolve: {
     alias: {
       "@webaudio-kit/cli": fileURLToPath(
