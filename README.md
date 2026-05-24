@@ -17,6 +17,12 @@ lifecycles.
 pnpm add @webaudio-kit/core @webaudio-kit/react
 ```
 
+Optional CLI helper:
+
+```sh
+pnpm dlx @webaudio-kit/cli agent-brief
+```
+
 The packages target browser runtimes and Node `>=22.13` for local tooling.
 `@webaudio-kit/react` supports React `>=18.3` and ships as a client entry for
 Next.js App Router projects.
@@ -108,6 +114,8 @@ export function AudioIsland() {
   - `useAnalyser`
   - `WaveformCanvas`
   - `SpectrumCanvas`
+- `@webaudio-kit/cli`
+  - `webaudio-kit agent-brief`
 - `apps/demo`
   - tone generator
   - 250Hz to 8000Hz sweep
@@ -134,7 +142,7 @@ pnpm examples:check
 pnpm smoke:pack
 pnpm release:check
 pnpm release:check:full
-pnpm release:verify-tag v1.3.0
+pnpm release:verify-tag v1.4.0
 pnpm release:dry-run
 pnpm verify
 ```
@@ -144,8 +152,8 @@ The public site runs on `http://127.0.0.1:4173`. The audio demo runs on
 
 `pnpm demo:qa` runs the demo through Chromium, Firefox, and WebKit with
 Playwright, then writes a demo screenshot, WebM, and GIF under `docs/assets/`.
-`pnpm smoke:pack` packs both publishable packages and imports them from a clean
-temporary app.
+`pnpm smoke:pack` packs all publishable packages and imports them from a clean
+temporary app. It also runs the CLI bin from the packed tarball.
 
 `pnpm examples:check` builds the standalone Vite and Next examples from packed
 package tarballs so framework integration stays honest.
@@ -189,6 +197,7 @@ The intended npm packages are:
 
 - `@webaudio-kit/core`
 - `@webaudio-kit/react`
+- `@webaudio-kit/cli`
 
 ## Safety note
 
@@ -206,6 +215,7 @@ a certified audiology or medical testing system.
 - [Architecture](./docs/architecture.md)
 - [API reference](./docs/api.md)
 - [Browser audio guide](./docs/browser-audio.md)
+- [AI agent brief CLI](./docs/agent-brief.md)
 - [Examples](./docs/examples.md)
 - [Example apps](./examples/README.md)
 - [Design references](./design/README.md)

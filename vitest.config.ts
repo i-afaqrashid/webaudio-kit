@@ -4,6 +4,9 @@ import { fileURLToPath, URL } from "node:url";
 export default defineConfig({
   resolve: {
     alias: {
+      "@webaudio-kit/cli": fileURLToPath(
+        new URL("./packages/cli/src/index.ts", import.meta.url),
+      ),
       "@webaudio-kit/core": fileURLToPath(
         new URL("./packages/core/src/index.ts", import.meta.url),
       ),

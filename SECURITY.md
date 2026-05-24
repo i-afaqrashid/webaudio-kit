@@ -16,7 +16,8 @@ Use one of these channels:
 
 Include:
 
-- Affected package: `@webaudio-kit/core`, `@webaudio-kit/react`, or demo/docs.
+- Affected package: `@webaudio-kit/core`, `@webaudio-kit/react`,
+  `@webaudio-kit/cli`, or demo/docs.
 - A clear reproduction.
 - Browser and operating system.
 - Expected impact.

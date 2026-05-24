@@ -32,8 +32,11 @@ const coreTarball = tarballs.find((file) =>
 const reactTarball = tarballs.find((file) =>
   file.startsWith("webaudio-kit-react-"),
 );
+const cliTarball = tarballs.find((file) =>
+  file.startsWith("webaudio-kit-cli-"),
+);
 
-if (!coreTarball || !reactTarball) {
+if (!coreTarball || !reactTarball || !cliTarball) {
   throw new Error(`Missing packed tarballs in ${packDir}`);
 }
 
@@ -47,6 +50,7 @@ await writeFile(
       type: "module",
       packageManager: rootPackage.packageManager,
       dependencies: {
+        "@webaudio-kit/cli": `file:${join(packDir, cliTarball)}`,
         "@webaudio-kit/core": `file:${join(packDir, coreTarball)}`,
         "@webaudio-kit/react": `file:${join(packDir, reactTarball)}`,
         react: "^19.2.6",
@@ -63,12 +67,14 @@ await writeFile(
   - .
 overrides:
   "@webaudio-kit/core": "file:${join(packDir, coreTarball)}"
+  "@webaudio-kit/cli": "file:${join(packDir, cliTarball)}"
 `,
 );
 
 await writeFile(
   join(smokeDir, "smoke.mjs"),
-  `import { clampFrequency, dbToGain, frequencyToNoteName, midiToFrequency } from "@webaudio-kit/core";
+  `import { buildAgentBrief } from "@webaudio-kit/cli";
+import { clampFrequency, dbToGain, frequencyToNoteName, midiToFrequency } from "@webaudio-kit/core";
 import {
   AudioProvider,
   SpectrumCanvas,
@@ -76,6 +82,10 @@ import {
   useNoise,
   useTone,
 } from "@webaudio-kit/react";
+
+if (!buildAgentBrief().includes("webaudio-kit Agent Brief")) {
+  throw new Error("cli buildAgentBrief export failed");
+}
 
 if (clampFrequency(30_000) !== 20_000) {
   throw new Error("core clampFrequency export failed");
@@ -108,6 +118,25 @@ console.log("smoke ok");
 );
 
 run("pnpm", ["install", "--ignore-scripts"], smokeDir);
+
+run(
+  "pnpm",
+  [
+    "exec",
+    "webaudio-kit",
+    "agent-brief",
+    "--out",
+    "AGENTS.md",
+    "--target",
+    "codex",
+  ],
+  smokeDir,
+);
+
+const generatedBrief = await readFile(join(smokeDir, "AGENTS.md"), "utf8");
+if (!generatedBrief.includes("Target agent: Codex.")) {
+  throw new Error("cli bin failed to generate the requested agent brief");
+}
 
 const reactEntry = await readFile(
   join(smokeDir, "node_modules/@webaudio-kit/react/dist/index.js"),

@@ -6,6 +6,7 @@ The repository contains:
 
 - `@webaudio-kit/core`
 - `@webaudio-kit/react`
+- `@webaudio-kit/cli`
 - a Vite React demo in `apps/demo`
 - package smoke checks
 - browser demo QA
@@ -45,7 +46,8 @@ Then manually verify:
 
 Before pushing a release tag:
 
-- confirm `@webaudio-kit/core` and `@webaudio-kit/react` versions match
+- confirm `@webaudio-kit/core`, `@webaudio-kit/react`, and `@webaudio-kit/cli`
+  versions match
 - confirm package names are available or already owned by the maintainer
 - confirm npm org `@webaudio-kit` exists
 - confirm `NPM_TOKEN` can publish without an OTP prompt, or use trusted
@@ -104,6 +106,7 @@ After npm publish:
 ```sh
 npm view @webaudio-kit/core version
 npm view @webaudio-kit/react version
+npm view @webaudio-kit/cli version
 pnpm dlx create-vite@latest /tmp/webaudio-kit-install-check --template react-ts
 ```
 

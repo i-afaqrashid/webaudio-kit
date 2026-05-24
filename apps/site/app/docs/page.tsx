@@ -70,6 +70,7 @@ export default function DocsPage() {
               <a href="#sweep">Sweep hook</a>
               <a href="#noise">Noise hook</a>
               <a href="#helpers">API helpers</a>
+              <a href="#agent-brief">Agent brief</a>
               <a href="#browser">Browser behavior</a>
             </aside>
 
@@ -168,6 +169,18 @@ const frequency = clampFrequency(inputFrequency); // 20..20000 by default
 const gain = dbToGain(-14);
 const db = gainToDb(0.2);
 const note = frequencyToNoteName(440); // A4`}</CodeBlock>
+
+              <h2 id="agent-brief">AI agent brief CLI</h2>
+              <p>
+                <code>@webaudio-kit/cli</code> can generate an{" "}
+                <code>AGENTS.md</code> style file for Codex, Claude Code, Gemini
+                CLI, OpenCode, Antigravity, and similar tools. The file points
+                agents to the public docs, npm pages, examples, browser autoplay
+                rules, safe gain defaults, and non-medical scope boundary before
+                they edit app code.
+              </p>
+              <CodeBlock title="agent brief">{`pnpm dlx @webaudio-kit/cli agent-brief
+pnpm dlx @webaudio-kit/cli agent-brief --target codex --out AGENTS.md`}</CodeBlock>
 
               <h2 id="browser">Browser behavior</h2>
               <div className="noteStack">
