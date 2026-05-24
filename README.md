@@ -77,6 +77,7 @@ pnpm install
 pnpm test
 pnpm typecheck
 pnpm build
+pnpm bench
 pnpm demo:dev
 pnpm demo:qa
 pnpm smoke:pack
@@ -93,6 +94,10 @@ The demo runs on `http://127.0.0.1:5173`.
 Playwright, then writes a demo screenshot, WebM, and GIF under `docs/assets/`.
 `pnpm smoke:pack` packs both publishable packages and imports them from a clean
 temporary app.
+
+`pnpm bench` runs local performance benchmarks for math helpers, playback graph
+scheduling, analyser frame processing, and React audio hooks. Treat benchmark
+numbers as local trend signals, not release gates.
 
 `pnpm release:check` runs the full verification gate and package smoke check
 used before tagging a release.

@@ -6,6 +6,7 @@ Run the full local gate:
 
 ```sh
 pnpm verify
+pnpm bench
 pnpm smoke:pack
 pnpm release:check
 pnpm release:verify-tag v1.0.0
@@ -21,6 +22,30 @@ the tarballs into a clean temporary app, and imports the public APIs.
 
 `pnpm release:verify-tag` enforces the same stable release-tag and package
 metadata checks used by the npm publish workflow.
+
+## Benchmarks
+
+Use the benchmark suite to watch local performance trends while changing core
+audio primitives, analyser rendering, or React hook behavior:
+
+```sh
+pnpm bench
+```
+
+Current benchmark coverage:
+
+- Audio math helpers converting dB/gain values and clamping playback
+  frequencies across 4,096-value batches.
+- `playTone` graph setup, finite-duration tone scheduling, stop cleanup, and
+  mixed tone/sweep scheduling with fake Web Audio nodes.
+- `playFrequencySweep` ramp scheduling across realistic sweep ranges.
+- Analyser frame reads and waveform coordinate generation for 2,048-sample
+  frames.
+- `AudioProvider`, `useTone`, `useFrequencySweep`, and `useVolume` render and
+  control overhead with a fake `AudioContext`.
+
+Benchmark results vary by machine and current system load. Treat them as local
+comparison signals, not hard pass/fail thresholds.
 
 ## Browser Demo QA
 
