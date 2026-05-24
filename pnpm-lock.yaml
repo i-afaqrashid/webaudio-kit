@@ -116,7 +116,7 @@ importers:
         specifier: workspace:*
         version: link:../core
       react:
-        specifier: '>=18.0.0'
+        specifier: '>=19.2.6'
         version: 19.2.6
 
 packages:
