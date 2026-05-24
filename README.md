@@ -82,6 +82,7 @@ pnpm demo:qa
 pnpm smoke:pack
 pnpm release:check
 pnpm release:check:full
+pnpm release:verify-tag v0.1.0
 pnpm release:dry-run
 pnpm verify
 ```
@@ -99,8 +100,14 @@ used before tagging a release.
 `pnpm release:check:full` adds browser demo QA on top of the release check. Run
 it before publishing when Playwright browsers and `ffmpeg` are installed.
 
-`pnpm release:dry-run` runs `npm publish --dry-run` against the generated
-tarballs under `.release-packages/`.
+`pnpm release:verify-tag` is the same stable-semver tag guard used by the
+GitHub publish workflow. It rejects prerelease tags, package version drift,
+private packages, missing public publish config, and mismatched repository
+metadata.
+
+`pnpm release:dry-run` rebuilds and smoke-tests the package tarballs, checks npm
+for already-published versions, then runs `npm publish --dry-run` in the same
+package order used by the tag-gated publish workflow.
 
 ## Package Names
 

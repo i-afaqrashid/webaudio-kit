@@ -17,3 +17,5 @@
   workflow documentation.
 - Full local release rehearsal command with browser demo QA.
 - Local npm publish dry-run command for generated tarballs.
+- `cms-lab`-style CI cache, Dependabot, CodeQL, PR template, strict tag
+  verification, and ordered publish guardrails.

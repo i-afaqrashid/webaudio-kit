@@ -1,0 +1,102 @@
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish npm packages
+    if: github.repository == 'i-afaqrashid/webaudio-kit'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configure git defaults
+        run: git config --global init.defaultBranch main
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.33.4 --activate
+          pnpm --version
+
+      - name: Tool versions
+        run: |
+          node --version
+          npm --version
+          pnpm --version
+
+      - name: Prepare pnpm store
+        run: |
+          PNPM_STORE_PATH="$(pnpm store path --silent)"
+          mkdir -p "$PNPM_STORE_PATH"
+          echo "PNPM_STORE_PATH=$PNPM_STORE_PATH" >> "$GITHUB_ENV"
+
+      - name: Restore pnpm store cache
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.PNPM_STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-publish-node-24-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-publish-node-24-
+            ${{ runner.os }}-pnpm-publish-
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify release tag
+        run: pnpm release:verify-tag
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+
+      - name: Verify workspace
+        run: pnpm verify
+
+      - name: Audit dependencies
+        run: pnpm audit --audit-level moderate
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium firefox webkit
+
+      - name: Install video tooling
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Browser demo QA
+        run: pnpm demo:qa
+
+      - name: Smoke packaged packages
+        run: pnpm smoke:pack -- --skip-build
+
+      - name: Pack packages
+        run: |
+          rm -rf .release-packages
+          mkdir -p .release-packages
+          pnpm -r --filter './packages/*' pack --pack-destination .release-packages
+
+      - name: Publish packages
+        run: |
+          if [ -n "${NPM_TOKEN:-}" ]; then
+            export NODE_AUTH_TOKEN="$NPM_TOKEN"
+          fi
+          pnpm release:publish-tarballs .release-packages
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

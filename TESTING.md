@@ -8,6 +8,7 @@ Run the full local gate:
 pnpm verify
 pnpm smoke:pack
 pnpm release:check
+pnpm release:verify-tag v0.1.0
 ```
 
 `pnpm verify` runs unit tests, TypeScript, package builds, demo build, lint, and
@@ -17,6 +18,9 @@ format checks.
 the tarballs into a clean temporary app, and imports the public APIs.
 
 `pnpm release:check` runs `pnpm verify` and `pnpm smoke:pack`.
+
+`pnpm release:verify-tag` enforces the same stable release-tag and package
+metadata checks used by the npm publish workflow.
 
 ## Browser Demo QA
 
@@ -42,7 +46,8 @@ pnpm release:check:full
 pnpm release:dry-run
 ```
 
-This runs the release gate, browser demo QA, and npm publish dry-run.
+This runs the release gate, browser demo QA, package smoke test, npm registry
+republish check, and npm publish dry-run.
 
 ## Manual Audio QA
 

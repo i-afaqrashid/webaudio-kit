@@ -1,4 +1,4 @@
-name: CI
+name: PR Checks
 
 on:
   pull_request:
@@ -27,44 +27,138 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
-        with:
-          version: 10.33.4
+      - name: Configure git defaults
+        run: git config --global init.defaultBranch main
 
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-          cache: pnpm
+
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.33.4 --activate
+          pnpm --version
+
+      - name: Prepare pnpm store
+        run: |
+          PNPM_STORE_PATH="$(pnpm store path --silent)"
+          mkdir -p "$PNPM_STORE_PATH"
+          echo "PNPM_STORE_PATH=$PNPM_STORE_PATH" >> "$GITHUB_ENV"
+
+      - name: Restore pnpm store cache
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.PNPM_STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-quality-node-${{ matrix.node-version }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-quality-node-${{ matrix.node-version }}-
+            ${{ runner.os }}-pnpm-quality-
 
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      - name: Verify
-        run: pnpm verify
+      - name: Format
+        run: pnpm format:check
 
-  package-smoke:
-    name: Package smoke
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test
+
+  build:
+    name: Build and package smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configure git defaults
+        run: git config --global init.defaultBranch main
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.33.4 --activate
+          pnpm --version
+
+      - name: Prepare pnpm store
+        run: |
+          PNPM_STORE_PATH="$(pnpm store path --silent)"
+          mkdir -p "$PNPM_STORE_PATH"
+          echo "PNPM_STORE_PATH=$PNPM_STORE_PATH" >> "$GITHUB_ENV"
+
+      - name: Restore pnpm store cache
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.PNPM_STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-build-node-22-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-build-node-22-
+            ${{ runner.os }}-pnpm-build-
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Build demo
+        run: pnpm demo:build
+
+      - name: Smoke packaged packages
+        run: pnpm smoke:pack -- --skip-build
+
+  audit:
+    name: Dependency audit
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
-        with:
-          version: 10.33.4
+      - name: Configure git defaults
+        run: git config --global init.defaultBranch main
 
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: 22
-          cache: pnpm
+
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.33.4 --activate
+          pnpm --version
+
+      - name: Prepare pnpm store
+        run: |
+          PNPM_STORE_PATH="$(pnpm store path --silent)"
+          mkdir -p "$PNPM_STORE_PATH"
+          echo "PNPM_STORE_PATH=$PNPM_STORE_PATH" >> "$GITHUB_ENV"
+
+      - name: Restore pnpm store cache
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.PNPM_STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-audit-node-22-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-audit-node-22-
+            ${{ runner.os }}-pnpm-audit-
 
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      - name: Smoke package tarballs
-        run: pnpm smoke:pack
+      - name: Audit dependencies
+        run: pnpm audit --audit-level moderate
