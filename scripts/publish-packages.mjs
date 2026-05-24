@@ -83,10 +83,6 @@ for (const name of packageOrder) {
   }
 
   run("npm", publishArgs);
-
-  if (!dryRun && name.startsWith("@")) {
-    run("npm", ["access", "set", "status=public", name]);
-  }
 }
 
 console.log(

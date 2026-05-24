@@ -109,6 +109,20 @@ metadata.
 for already-published versions, then runs `npm publish --dry-run` in the same
 package order used by the tag-gated publish workflow.
 
+## Release Publishing
+
+Publishing is triggered by stable semver tags such as `v1.0.0`. The GitHub
+workflow uses Node 24, npm provenance, a cached pnpm store, release tag
+verification, workspace verification, dependency audit, package smoke testing,
+and ordered package publishing.
+
+For npm authentication, prefer npm trusted publishing for the
+`i-afaqrashid/webaudio-kit` repository and `.github/workflows/publish.yml`
+workflow. If token-based publishing is used instead, the GitHub Actions
+`NPM_TOKEN` secret must be a granular npm token with publish access to the
+`@webaudio-kit` scope and bypass 2FA enabled, otherwise npm will stop the
+release with an OTP prompt.
+
 ## Package Names
 
 The intended npm packages are:
