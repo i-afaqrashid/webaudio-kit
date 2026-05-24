@@ -4,6 +4,7 @@ dist
 coverage
 .release-packages
 .tmp
+/.playwright-cli
 output
 pnpm-lock.yaml
 packages/*/dist

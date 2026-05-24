@@ -134,17 +134,23 @@ const gain = dbToGain(-14);
 const db = gainToDb(0.2);`}</CodeBlock>
 
               <h2 id="browser">Browser behavior</h2>
-              <div className="callout">
-                <strong>Autoplay note</strong>
-                Browsers may block audio until the user clicks, taps, or presses
-                a key. Call <code>play</code> from a user action and let the
-                provider resume the context there.
-              </div>
-              <div className="callout caution">
-                <strong>Safety note</strong>
-                Keep default volume low, clamp frequencies, and avoid medical or
-                audiology claims unless a separate certified system validates
-                the whole product.
+              <div className="noteStack">
+                <div className="noteCard">
+                  <strong>Autoplay behavior</strong>
+                  <p>
+                    Browsers may block audio until the user clicks, taps, or
+                    presses a key. Call <code>play</code> from a user action and
+                    let the provider resume the context there.
+                  </p>
+                </div>
+                <div className="noteCard">
+                  <strong>Safety boundary</strong>
+                  <p>
+                    Keep default volume low, clamp frequencies, and avoid
+                    medical or audiology claims unless a separate certified
+                    system validates the whole product.
+                  </p>
+                </div>
               </div>
 
               <h2 id="more">More docs</h2>
@@ -154,7 +160,11 @@ const db = gainToDb(0.2);`}</CodeBlock>
               </p>
               <ul className="docLinks">
                 <li>
-                  <a href="https://github.com/i-afaqrashid/webaudio-kit/tree/main/docs">
+                  <a
+                    href="https://github.com/i-afaqrashid/webaudio-kit/tree/main/docs"
+                    rel="noreferrer"
+                    target="_blank"
+                  >
                     Markdown docs directory
                   </a>
                 </li>

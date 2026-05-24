@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="webaudio-kit">
+  <rect width="64" height="64" rx="14" fill="#111511"/>
+  <path d="M15 24c4 0 4-4 8-4s4 4 8 4 4-4 8-4 4 4 10 4" fill="none" stroke="#b9e145" stroke-width="4" stroke-linecap="round"/>
+  <path d="M15 32c4 0 4-4 8-4s4 4 8 4 4-4 8-4 4 4 10 4" fill="none" stroke="#b9e145" stroke-width="4" stroke-linecap="round"/>
+  <path d="M15 40c4 0 4-4 8-4s4 4 8 4 4-4 8-4 4 4 10 4" fill="none" stroke="#b9e145" stroke-width="4" stroke-linecap="round"/>
+</svg>
