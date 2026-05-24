@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.5.0 - 2026-05-25
+
+### Added
+
+- `useAudioTestMode()` and `createDefaultAudioTestModeSteps()` in
+  `@webaudio-kit/react` for safe low-gain browser audio diagnostics.
+- Test mode panels in the Vite demo and public site demo.
+- Standalone `examples/audio-test-mode` Vite example.
+
+### Changed
+
+- Package smoke checks now verify the audio test mode React exports.
+- Standalone example checks now build the new audio test mode example from
+  packed package tarballs.
+
 ## 1.4.1 - 2026-05-25
 
 ### Fixed

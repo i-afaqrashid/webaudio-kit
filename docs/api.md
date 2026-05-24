@@ -267,6 +267,39 @@ Returns:
 }
 ```
 
+### `useAudioTestMode(options?)`
+
+Runs a short, conservative diagnostic sequence through the provider graph.
+
+```tsx
+const testMode = useAudioTestMode();
+
+await testMode.run();
+testMode.stop();
+```
+
+Returns:
+
+```ts
+{
+  currentStep: AudioTestModeStep | null;
+  currentStepIndex: number;
+  isRunning: boolean;
+  run(): Promise<void>;
+  stop(): void;
+  steps: AudioTestModeStep[];
+}
+```
+
+Default steps cover centered tone output, left/right pan, a short sweep, and a
+pink-noise burst. The helper is for browser integration diagnostics only, not
+medical or audiology testing.
+
+### `createDefaultAudioTestModeSteps()`
+
+Returns a copy of the default low-gain diagnostic step list used by
+`useAudioTestMode()`.
+
 ### `useVolume()`
 
 ```tsx

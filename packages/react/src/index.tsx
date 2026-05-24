@@ -65,9 +65,111 @@ export type SpectrumCanvasProps = Omit<
   minBarHeight?: number;
 };
 
+export type AudioTestModeStep =
+  | {
+      description: string;
+      durationMs: number;
+      id: string;
+      kind: "tone";
+      label: string;
+      tone: ToneOptions;
+    }
+  | {
+      description: string;
+      durationMs: number;
+      id: string;
+      kind: "sweep";
+      label: string;
+      sweep: FrequencySweepOptions;
+    }
+  | {
+      description: string;
+      durationMs: number;
+      id: string;
+      kind: "noise";
+      label: string;
+      noise: NoiseOptions;
+    };
+
+export type AudioTestModeOptions = {
+  gapMs?: number;
+  steps?: AudioTestModeStep[];
+};
+
+export type AudioTestModeControls = {
+  currentStep: AudioTestModeStep | null;
+  currentStepIndex: number;
+  isRunning: boolean;
+  run(): Promise<void>;
+  stop(): void;
+  steps: AudioTestModeStep[];
+};
+
 const AudioContextStateContext = createContext<AudioProviderValue | undefined>(
   undefined,
 );
+
+const DEFAULT_AUDIO_TEST_STEPS: AudioTestModeStep[] = [
+  {
+    description: "Short centered sine tone for basic output verification.",
+    durationMs: 320,
+    id: "center-tone",
+    kind: "tone",
+    label: "Center tone",
+    tone: { durationMs: 320, frequency: 440, gain: 0.05, pan: 0, type: "sine" },
+  },
+  {
+    description: "Short left-panned tone for stereo routing verification.",
+    durationMs: 320,
+    id: "left-tone",
+    kind: "tone",
+    label: "Left pan",
+    tone: {
+      durationMs: 320,
+      frequency: 660,
+      gain: 0.04,
+      pan: -0.8,
+      type: "sine",
+    },
+  },
+  {
+    description: "Short right-panned tone for stereo routing verification.",
+    durationMs: 320,
+    id: "right-tone",
+    kind: "tone",
+    label: "Right pan",
+    tone: {
+      durationMs: 320,
+      frequency: 660,
+      gain: 0.04,
+      pan: 0.8,
+      type: "sine",
+    },
+  },
+  {
+    description: "Conservative low-to-mid sweep for ramp scheduling checks.",
+    durationMs: 700,
+    id: "short-sweep",
+    kind: "sweep",
+    label: "Short sweep",
+    sweep: {
+      durationMs: 700,
+      from: 250,
+      gain: 0.035,
+      pan: 0,
+      to: 2000,
+      type: "sine",
+    },
+  },
+  {
+    description: "Short pink-noise burst for buffer playback checks.",
+    durationMs: 450,
+    id: "pink-noise",
+    kind: "noise",
+    label: "Pink noise",
+    noise: { durationMs: 450, gain: 0.025, pan: 0, type: "pink" },
+  },
+];
 
 export function AudioProvider({
   children,
@@ -293,6 +395,86 @@ export function useVolume(): {
 
 export function useAnalyser(): AnalyserNode | null {
   return useAudioContext().analyser;
+}
+
+export function createDefaultAudioTestModeSteps(): AudioTestModeStep[] {
+  return DEFAULT_AUDIO_TEST_STEPS.map(cloneAudioTestModeStep);
+}
+
+export function useAudioTestMode(
+  options: AudioTestModeOptions = {},
+): AudioTestModeControls {
+  const audio = useAudioContext();
+  const steps = useMemo(
+    () =>
+      options.steps && options.steps.length > 0
+        ? options.steps
+        : createDefaultAudioTestModeSteps(),
+    [options.steps],
+  );
+  const gapMs = normalizeDurationMs(options.gapMs, 120);
+  const stepsRef = useLatest(steps);
+  const gapMsRef = useLatest(gapMs);
+  const activeHandleRef = useRef<PlaybackHandle | null>(null);
+  const runTokenRef = useRef(0);
+  const [currentStepIndex, setCurrentStepIndex] = useState(-1);
+  const [isRunning, setIsRunning] = useState(false);
+  const currentStep =
+    currentStepIndex >= 0 ? (steps[currentStepIndex] ?? null) : null;
+
+  const stop = useCallback(() => {
+    runTokenRef.current += 1;
+    activeHandleRef.current?.stop();
+    activeHandleRef.current = null;
+    setCurrentStepIndex(-1);
+    setIsRunning(false);
+  }, []);
+
+  const run = useCallback(async () => {
+    const token = runTokenRef.current + 1;
+    runTokenRef.current = token;
+    activeHandleRef.current?.stop();
+    activeHandleRef.current = null;
+    setIsRunning(true);
+
+    try {
+      const runtime = await audio.ensureAudioContext();
+      const nextSteps = stepsRef.current;
+      const nextGapMs = gapMsRef.current;
+
+      for (let index = 0; index < nextSteps.length; index += 1) {
+        if (runTokenRef.current !== token) {
+          return;
+        }
+
+        const step = nextSteps[index]!;
+        const durationMs = getAudioTestModeStepDurationMs(step);
+        setCurrentStepIndex(index);
+        activeHandleRef.current = playAudioTestModeStep(
+          runtime,
+          step,
+          durationMs,
+        );
+        await wait(durationMs);
+        activeHandleRef.current?.stop();
+        activeHandleRef.current = null;
+
+        if (index < nextSteps.length - 1 && nextGapMs > 0) {
+          await wait(nextGapMs);
+        }
+      }
+    } finally {
+      if (runTokenRef.current === token) {
+        activeHandleRef.current = null;
+        setCurrentStepIndex(-1);
+        setIsRunning(false);
+      }
+    }
+  }, [audio, gapMsRef, stepsRef]);
+
+  useEffect(() => stop, [stop]);
+
+  return { currentStep, currentStepIndex, isRunning, run, stop, steps };
 }
 
 export function WaveformCanvas({
@@ -521,6 +703,88 @@ function normalizeGain(value: number): number {
   }
 
   return Math.max(0, value);
+}
+
+function normalizeDurationMs(value: number | undefined, fallback: number) {
+  if (!Number.isFinite(value)) {
+    return fallback;
+  }
+
+  return Math.max(0, value ?? fallback);
+}
+
+function normalizePositiveDurationMs(
+  value: number | undefined,
+  fallback: number | undefined,
+): number {
+  const normalizedFallback =
+    fallback !== undefined && Number.isFinite(fallback) && fallback > 0
+      ? fallback
+      : 250;
+
+  if (!Number.isFinite(value) || value === undefined || value <= 0) {
+    return normalizedFallback;
+  }
+
+  return value;
+}
+
+function cloneAudioTestModeStep(step: AudioTestModeStep): AudioTestModeStep {
+  if (step.kind === "tone") {
+    return { ...step, tone: { ...step.tone } };
+  }
+
+  if (step.kind === "sweep") {
+    return { ...step, sweep: { ...step.sweep } };
+  }
+
+  return { ...step, noise: { ...step.noise } };
+}
+
+function getAudioTestModeStepDurationMs(step: AudioTestModeStep): number {
+  if (step.kind === "tone") {
+    return normalizePositiveDurationMs(step.durationMs, step.tone.durationMs);
+  }
+
+  if (step.kind === "sweep") {
+    return normalizePositiveDurationMs(step.durationMs, step.sweep.durationMs);
+  }
+
+  return normalizePositiveDurationMs(step.durationMs, step.noise.durationMs);
+}
+
+function playAudioTestModeStep(
+  runtime: AudioRuntime,
+  step: AudioTestModeStep,
+  durationMs: number,
+): PlaybackHandle {
+  if (step.kind === "tone") {
+    return playTone(
+      runtime.audioContext,
+      { ...step.tone, durationMs },
+      runtime.masterGain,
+    );
+  }
+
+  if (step.kind === "sweep") {
+    return playFrequencySweep(
+      runtime.audioContext,
+      { ...step.sweep, durationMs },
+      runtime.masterGain,
+    );
+  }
+
+  return playNoise(
+    runtime.audioContext,
+    { ...step.noise, durationMs },
+    runtime.masterGain,
+  );
+}
+
+function wait(durationMs: number): Promise<void> {
+  return new Promise((resolve) => {
+    globalThis.setTimeout(resolve, durationMs);
+  });
 }
 
 function schedulePlaybackEnd(

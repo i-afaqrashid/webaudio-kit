@@ -47,10 +47,12 @@ const noise = useNoise({ type: "pink", durationMs: 800, gain: 0.08 });
 - `useTone`
 - `useFrequencySweep`
 - `useNoise`
+- `useAudioTestMode`
 - `useVolume`
 - `useAnalyser`
 - `WaveformCanvas`
 - `SpectrumCanvas`
+- `createDefaultAudioTestModeSteps`
 - re-exported helpers from `@webaudio-kit/core`
 
 ## Visualizers

@@ -6,6 +6,7 @@ import {
   dbToGain,
   gainToDb,
   useAnalyser,
+  useAudioTestMode,
   useFrequencySweep,
   useNoise,
   useTone,
@@ -40,10 +41,24 @@ export default function App() {
     type: noiseType,
   });
   const volume = useVolume();
+  const audioTest = useAudioTestMode();
   const playNoise = () => {
     tone.stop();
     sweep.stop();
+    audioTest.stop();
     void noise.play();
+  };
+  const runTestMode = () => {
+    tone.stop();
+    sweep.stop();
+    noise.stop();
+    void audioTest.run();
+  };
+  const stopAll = () => {
+    tone.stop();
+    sweep.stop();
+    noise.stop();
+    audioTest.stop();
   };
 
   return (
@@ -136,7 +151,7 @@ export default function App() {
             >
               {tone.isPlaying ? "Restart tone" : "Play tone"}
             </button>
-            <button onClick={tone.stop} type="button">
+            <button onClick={stopAll} type="button">
               Stop
             </button>
           </div>
@@ -159,7 +174,7 @@ export default function App() {
             >
               {sweep.isPlaying ? "Restart sweep" : "Run sweep"}
             </button>
-            <button onClick={sweep.stop} type="button">
+            <button onClick={stopAll} type="button">
               Stop
             </button>
           </div>
@@ -190,8 +205,44 @@ export default function App() {
             <button className="primary" onClick={playNoise} type="button">
               {noise.isPlaying ? "Restart noise" : "Play noise"}
             </button>
-            <button onClick={noise.stop} type="button">
+            <button onClick={stopAll} type="button">
               Stop
+            </button>
+          </div>
+        </div>
+
+        <div className="panel testPanel">
+          <div className="panelHead">
+            <span>Audio test mode</span>
+            <strong>
+              {audioTest.currentStep
+                ? `Running: ${audioTest.currentStep.label}`
+                : "Idle"}
+            </strong>
+          </div>
+          <p>
+            Runs a short low-gain sequence through tone, pan, sweep, noise, and
+            analyser routing so integration issues show up quickly.
+          </p>
+          <ol className="stepList">
+            {audioTest.steps.map((step, index) => (
+              <li
+                className={
+                  audioTest.currentStepIndex === index ? "active" : undefined
+                }
+                key={step.id}
+              >
+                <span>{step.label}</span>
+                <small>{step.description}</small>
+              </li>
+            ))}
+          </ol>
+          <div className="buttonRow">
+            <button className="primary" onClick={runTestMode} type="button">
+              {audioTest.isRunning ? "Restart test mode" : "Run test mode"}
+            </button>
+            <button onClick={audioTest.stop} type="button">
+              Stop test mode
             </button>
           </div>
         </div>

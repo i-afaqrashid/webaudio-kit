@@ -18,7 +18,7 @@ const packages = [
   {
     icon: "waves" as const,
     name: "@webaudio-kit/react",
-    copy: "AudioProvider plus hooks for tones, sweeps, noise bursts, master volume, context state, and analyser access.",
+    copy: "AudioProvider plus hooks for tones, sweeps, noise bursts, audio test mode, master volume, context state, and analyser access.",
   },
   {
     icon: "terminal" as const,
@@ -47,6 +47,11 @@ const proofPoints = [
     label: "Signal",
     title: "Visible analyser signal",
     copy: "The demo draws analyser data so developers can verify the provider graph is live.",
+  },
+  {
+    label: "Checks",
+    title: "Safe audio test mode",
+    copy: "Short low-gain steps exercise tone, pan, sweep, noise, and analyser routing from one user action.",
   },
   {
     label: "Release",

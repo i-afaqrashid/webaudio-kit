@@ -5,8 +5,10 @@ import {
   AudioProvider,
   SpectrumCanvas,
   WaveformCanvas,
+  createDefaultAudioTestModeSteps,
   useAnalyser,
   useAudioContext,
+  useAudioTestMode,
   useFrequencySweep,
   useNoise,
   useTone,
@@ -318,6 +320,55 @@ function TimedNoiseHarness() {
   );
 }
 
+function AudioTestModeHarness() {
+  const testMode = useAudioTestMode({
+    gapMs: 20,
+    steps: [
+      {
+        description: "Short center tone",
+        durationMs: 50,
+        id: "tone-center",
+        kind: "tone",
+        label: "Center tone",
+        tone: { frequency: 440, gain: 0.05, pan: 0, durationMs: 50 },
+      },
+      {
+        description: "Short left pan tone",
+        durationMs: 50,
+        id: "tone-left",
+        kind: "tone",
+        label: "Left tone",
+        tone: { frequency: 660, gain: 0.04, pan: -0.8, durationMs: 50 },
+      },
+      {
+        description: "Short pink-noise burst",
+        durationMs: 50,
+        id: "noise",
+        kind: "noise",
+        label: "Pink noise",
+        noise: { durationMs: 50, gain: 0.03, type: "pink" },
+      },
+    ],
+  });
+
+  return (
+    <div>
+      <span data-testid="test-running">{String(testMode.isRunning)}</span>
+      <span data-testid="test-index">{testMode.currentStepIndex}</span>
+      <span data-testid="test-label">
+        {testMode.currentStep?.label ?? "idle"}
+      </span>
+      <span data-testid="test-count">{testMode.steps.length}</span>
+      <button type="button" onClick={() => void testMode.run()}>
+        run test mode
+      </button>
+      <button type="button" onClick={testMode.stop}>
+        stop test mode
+      </button>
+    </div>
+  );
+}
+
 function MissingAudioApiHarness() {
   const tone = useTone({ frequency: 440 });
   const [error, setError] = useState("");
@@ -332,6 +383,26 @@ function MissingAudioApiHarness() {
         }
       >
         play unavailable
+      </button>
+    </div>
+  );
+}
+
+function MissingAudioTestModeApiHarness() {
+  const testMode = useAudioTestMode();
+  const [error, setError] = useState("");
+
+  return (
+    <div>
+      <span data-testid="test-mode-error">{error}</span>
+      <span data-testid="test-mode-running">{String(testMode.isRunning)}</span>
+      <button
+        type="button"
+        onClick={() =>
+          void testMode.run().catch((caught) => setError(String(caught)))
+        }
+      >
+        run unavailable test mode
       </button>
     </div>
   );
@@ -595,6 +666,117 @@ describe("AudioProvider", () => {
     });
 
     expect(screen.getByTestId("timed-noise-playing").textContent).toBe("false");
+  });
+
+  test("runs audio test mode steps sequentially with conservative playback", async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <AudioTestModeHarness />
+      </AudioProvider>,
+    );
+
+    expect(screen.getByTestId("test-count").textContent).toBe("3");
+    expect(screen.getByTestId("test-label").textContent).toBe("idle");
+
+    await act(async () => {
+      screen.getByRole("button", { name: "run test mode" }).click();
+    });
+
+    expect(screen.getByTestId("test-running").textContent).toBe("true");
+    expect(screen.getByTestId("test-index").textContent).toBe("0");
+    expect(screen.getByTestId("test-label").textContent).toBe("Center tone");
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(70);
+    });
+
+    expect(screen.getByTestId("test-index").textContent).toBe("1");
+    expect(screen.getByTestId("test-label").textContent).toBe("Left tone");
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(70);
+    });
+
+    expect(screen.getByTestId("test-index").textContent).toBe("2");
+    expect(screen.getByTestId("test-label").textContent).toBe("Pink noise");
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(70);
+    });
+
+    expect(screen.getByTestId("test-running").textContent).toBe("false");
+    expect(screen.getByTestId("test-label").textContent).toBe("idle");
+
+    const context = FakeAudioContext.instances[0]!;
+    expect(context.oscillators).toHaveLength(2);
+    expect(context.bufferSources).toHaveLength(1);
+    expect(context.gains[1]?.gain.value).toBeLessThanOrEqual(0.05);
+    expect(context.panners[1]?.pan.value).toBe(-0.8);
+  });
+
+  test("returns independent default audio test mode step objects", () => {
+    const first = createDefaultAudioTestModeSteps();
+    const second = createDefaultAudioTestModeSteps();
+
+    expect(first).not.toBe(second);
+    expect(first[0]).not.toBe(second[0]);
+    expect(first[0]?.kind).toBe("tone");
+    expect(second[0]?.kind).toBe("tone");
+
+    if (first[0]?.kind === "tone" && second[0]?.kind === "tone") {
+      expect(first[0].tone).not.toBe(second[0].tone);
+      first[0].tone.gain = 1;
+      expect(second[0].tone.gain).toBe(0.05);
+    }
+  });
+
+  test("stops audio test mode and cancels active playback", async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <AudioTestModeHarness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "run test mode" }).click();
+    });
+    await act(async () => {
+      screen.getByRole("button", { name: "stop test mode" }).click();
+      await vi.advanceTimersByTimeAsync(500);
+    });
+
+    const context = FakeAudioContext.instances[0]!;
+    expect(screen.getByTestId("test-running").textContent).toBe("false");
+    expect(screen.getByTestId("test-label").textContent).toBe("idle");
+    expect(context.oscillators[0]?.stopCalls).toBeGreaterThan(0);
+    expect(context.oscillators).toHaveLength(1);
+    expect(context.bufferSources).toHaveLength(0);
+  });
+
+  test("resets audio test mode state when AudioContext creation fails", async () => {
+    vi.stubGlobal("AudioContext", undefined);
+    vi.stubGlobal("webkitAudioContext", undefined);
+
+    render(
+      <AudioProvider>
+        <MissingAudioTestModeApiHarness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "run unavailable test mode" }).click();
+    });
+
+    expect(screen.getByTestId("test-mode-error").textContent).toContain(
+      "Web Audio API is not available in this browser",
+    );
+    expect(screen.getByTestId("test-mode-running").textContent).toBe("false");
   });
 
   test("clears playback timers when stopped manually", async () => {

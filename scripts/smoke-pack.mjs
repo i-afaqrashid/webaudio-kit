@@ -79,6 +79,8 @@ import {
   AudioProvider,
   SpectrumCanvas,
   WaveformCanvas,
+  createDefaultAudioTestModeSteps,
+  useAudioTestMode,
   useNoise,
   useTone,
 } from "@webaudio-kit/react";
@@ -107,10 +109,16 @@ if (
   typeof AudioProvider !== "function" ||
   typeof SpectrumCanvas !== "function" ||
   typeof WaveformCanvas !== "function" ||
+  typeof createDefaultAudioTestModeSteps !== "function" ||
+  typeof useAudioTestMode !== "function" ||
   typeof useNoise !== "function" ||
   typeof useTone !== "function"
 ) {
   throw new Error("react exports failed");
+}
+
+if (createDefaultAudioTestModeSteps().length < 5) {
+  throw new Error("react audio test mode defaults failed");
 }
 
 console.log("smoke ok");

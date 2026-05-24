@@ -182,6 +182,9 @@ describe("demo app", () => {
     expect(screen.getByText("Tone generator")).toBeTruthy();
     expect(screen.getByText("Frequency sweep")).toBeTruthy();
     expect(screen.getByText("Noise burst")).toBeTruthy();
+    expect(screen.getByText("Audio test mode")).toBeTruthy();
+    expect(screen.getByText("Center tone")).toBeTruthy();
+    expect(screen.getByText("Short sweep")).toBeTruthy();
     expect(screen.getByText("Analyser")).toBeTruthy();
     expect(screen.getByLabelText("Spectrum analyser")).toBeTruthy();
     expect(
@@ -248,5 +251,24 @@ describe("demo app", () => {
       screen.getAllByRole("button", { name: "Stop" })[2]!.click();
     });
     expect(screen.getByRole("button", { name: "Play noise" })).toBeTruthy();
+  });
+
+  test("runs and stops the safe audio test mode", async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+    renderDemo();
+
+    await act(async () => {
+      screen.getByRole("button", { name: "Run test mode" }).click();
+    });
+
+    expect(screen.getByText("Running: Center tone")).toBeTruthy();
+
+    await act(async () => {
+      screen.getByRole("button", { name: "Stop test mode" }).click();
+      await vi.advanceTimersByTimeAsync(1200);
+    });
+
+    expect(screen.getByText("Idle")).toBeTruthy();
   });
 });

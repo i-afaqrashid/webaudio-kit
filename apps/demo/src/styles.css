@@ -108,7 +108,8 @@ h1 {
 
 .statusPanel span,
 .panelHead span,
-.hint {
+.hint,
+.stepList small {
   color: #65705e;
   font-family:
     ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
@@ -184,14 +185,16 @@ input[type="range"] {
 }
 
 .sweepPanel,
-.noisePanel {
+.noisePanel,
+.testPanel {
   align-content: start;
   display: grid;
   gap: 16px;
 }
 
 .sweepPanel p,
-.noisePanel p {
+.noisePanel p,
+.testPanel p {
   color: #2b3029;
   line-height: 1.6;
   margin: 0;
@@ -203,6 +206,35 @@ input[type="range"] {
 
 .waveformPanel {
   grid-column: 1 / -1;
+}
+
+.testPanel {
+  grid-column: 1 / -1;
+}
+
+.stepList {
+  display: grid;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.stepList li {
+  border: 1px solid #dce2d7;
+  border-radius: 8px;
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+}
+
+.stepList li.active {
+  background: #f0f8d3;
+  border-color: #c8ea3a;
+}
+
+.stepList span {
+  font-weight: 760;
 }
 
 .visualizerLabel {

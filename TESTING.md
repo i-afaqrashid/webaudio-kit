@@ -10,7 +10,7 @@ pnpm bench
 pnpm smoke:pack
 pnpm examples:check
 pnpm release:check
-pnpm release:verify-tag v1.4.1
+pnpm release:verify-tag v1.5.0
 ```
 
 `pnpm verify` runs unit tests, TypeScript, package builds, demo build, site
@@ -21,7 +21,7 @@ build, lint, and format checks.
 the public APIs, and runs the CLI bin.
 
 `pnpm examples:check` installs packed tarballs into clean temporary Vite and
-Next apps, then builds both standalone examples.
+Next apps, then builds the standalone examples.
 
 `pnpm release:check` runs `pnpm verify`, `pnpm smoke:pack`, and
 `pnpm examples:check`.

@@ -103,6 +103,15 @@ async function runBrowserQa({ name, type, artifacts, waitForAudioUi }) {
       await page.getByText("Restart noise").waitFor();
     }
     await page.waitForTimeout(500);
+    await page.getByRole("button", { name: "Run test mode" }).click();
+    if (waitForAudioUi) {
+      await page.getByText("Running: Center tone").waitFor();
+    }
+    await page.waitForTimeout(500);
+    await page.getByRole("button", { name: "Stop test mode" }).click();
+    if (waitForAudioUi) {
+      await page.getByText("Idle").waitFor();
+    }
 
     const waveformVisible = await page
       .getByLabel("Waveform analyser")

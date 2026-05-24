@@ -1,12 +1,12 @@
 {
   "private": true,
-  "name": "webaudio-kit-vite-tone-panel",
+  "name": "webaudio-kit-audio-test-mode-example",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host 127.0.0.1 --port 4273",
     "build": "vite build",
-    "preview": "vite preview --host 127.0.0.1 --port 4273"
+    "dev": "vite --host 127.0.0.1 --port 4373",
+    "preview": "vite preview --host 127.0.0.1 --port 4373"
   },
   "dependencies": {
     "@webaudio-kit/react": "^1.5.0",

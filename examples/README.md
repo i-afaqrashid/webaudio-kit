@@ -24,6 +24,16 @@ It also proves that `useNoise`, `WaveformCanvas`, and `SpectrumCanvas` work
 from a Next App Router client component while the page itself remains a server
 component.
 
+## Audio test mode
+
+`examples/audio-test-mode` shows the safe diagnostic flow:
+
+- run `useAudioTestMode()` from a user click
+- show the active test step
+- stop the sequence manually
+- keep volume conservative
+- render waveform and spectrum canvases beside the test sequence
+
 ## Running an example
 
 Install the packages in this repository first:
@@ -35,4 +45,4 @@ pnpm examples:check
 ```
 
 `pnpm examples:check` installs packed package tarballs into clean temporary Vite
-and Next apps, then builds both examples.
+and Next apps, then builds every standalone example.
