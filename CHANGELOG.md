@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.4.1 - 2026-05-25
+
+### Fixed
+
+- `webaudio-kit` CLI bin execution now works through package-manager symlinks
+  in `node_modules/.bin`.
+- CLI tests now cover symlinked bin entrypoint detection.
+
 ## 1.4.0 - 2026-05-25
 
 ### Added

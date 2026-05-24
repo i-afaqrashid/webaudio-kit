@@ -10,7 +10,7 @@ pnpm bench
 pnpm smoke:pack
 pnpm examples:check
 pnpm release:check
-pnpm release:verify-tag v1.4.0
+pnpm release:verify-tag v1.4.1
 ```
 
 `pnpm verify` runs unit tests, TypeScript, package builds, demo build, site
