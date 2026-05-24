@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.5.1 - 2026-05-25
+
+### Fixed
+
+- Prevent stale `useAudioTestMode()` runs from stopping replacement playback after a restart.
+
+### Added
+
+- Add site page tests for the home/docs pages and expanded CLI parser/runtime tests.
+
 ## 1.5.0 - 2026-05-25
 
 ### Added

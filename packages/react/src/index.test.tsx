@@ -203,6 +203,10 @@ class FakeAudioContext {
   }
 }
 
+class DelayedFakeAudioContext extends FakeAudioContext {
+  currentTime = 5;
+}
+
 afterEach(() => {
   cleanup();
   FakeAudioContext.instances = [];
@@ -364,6 +368,31 @@ function AudioTestModeHarness() {
       </button>
       <button type="button" onClick={testMode.stop}>
         stop test mode
+      </button>
+    </div>
+  );
+}
+
+function RestartingAudioTestModeHarness() {
+  const testMode = useAudioTestMode({
+    gapMs: 0,
+    steps: [
+      {
+        description: "Long center tone",
+        durationMs: 100,
+        id: "tone-center",
+        kind: "tone",
+        label: "Center tone",
+        tone: { frequency: 440, gain: 0.05, pan: 0, durationMs: 100 },
+      },
+    ],
+  });
+
+  return (
+    <div>
+      <span data-testid="restart-running">{String(testMode.isRunning)}</span>
+      <button type="button" onClick={() => void testMode.run()}>
+        restartable test mode
       </button>
     </div>
   );
@@ -757,6 +786,44 @@ describe("AudioProvider", () => {
     expect(context.oscillators[0]?.stopCalls).toBeGreaterThan(0);
     expect(context.oscillators).toHaveLength(1);
     expect(context.bufferSources).toHaveLength(0);
+  });
+
+  test("restarting audio test mode does not let a stale run stop the replacement playback", async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal("AudioContext", DelayedFakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <RestartingAudioTestModeHarness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "restartable test mode" }).click();
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(20);
+      screen.getByRole("button", { name: "restartable test mode" }).click();
+    });
+
+    const context = FakeAudioContext.instances[0]!;
+    expect(context.oscillators).toHaveLength(2);
+    expect(context.oscillators[0]?.stopCalls).toBe(2);
+    expect(context.oscillators[1]?.stopCalls).toBe(1);
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(80);
+    });
+
+    expect(context.oscillators[1]?.stopCalls).toBe(1);
+    expect(screen.getByTestId("restart-running").textContent).toBe("true");
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(20);
+    });
+
+    expect(context.oscillators[1]?.stopCalls).toBe(2);
+    expect(screen.getByTestId("restart-running").textContent).toBe("false");
   });
 
   test("resets audio test mode state when AudioContext creation fails", async () => {

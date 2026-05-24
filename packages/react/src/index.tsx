@@ -450,14 +450,17 @@ export function useAudioTestMode(
         const step = nextSteps[index]!;
         const durationMs = getAudioTestModeStepDurationMs(step);
         setCurrentStepIndex(index);
-        activeHandleRef.current = playAudioTestModeStep(
-          runtime,
-          step,
-          durationMs,
-        );
+        const handle = playAudioTestModeStep(runtime, step, durationMs);
+        activeHandleRef.current = handle;
         await wait(durationMs);
-        activeHandleRef.current?.stop();
-        activeHandleRef.current = null;
+        if (runTokenRef.current !== token) {
+          return;
+        }
+
+        handle.stop();
+        if (activeHandleRef.current === handle) {
+          activeHandleRef.current = null;
+        }
 
         if (index < nextSteps.length - 1 && nextGapMs > 0) {
           await wait(nextGapMs);

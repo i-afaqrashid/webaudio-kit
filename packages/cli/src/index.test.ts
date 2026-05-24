@@ -78,9 +78,44 @@ describe("parseCliArgs", () => {
       target: "generic",
     });
   });
+
+  it("parses help aliases without requiring a command", () => {
+    expect(parseCliArgs(["--help"]).command).toBe("help");
+    expect(parseCliArgs(["-h"]).command).toBe("help");
+  });
+
+  it("rejects unknown commands, unknown options, and missing option values", () => {
+    expect(() => parseCliArgs(["unknown"])).toThrow("Unknown command: unknown");
+    expect(() => parseCliArgs(["agent-brief", "--bad"])).toThrow(
+      "Unknown option: --bad",
+    );
+    expect(() => parseCliArgs(["agent-brief", "--out"])).toThrow(
+      "--out requires a value",
+    );
+  });
+
+  it("rejects unsupported agent targets and package managers", () => {
+    expect(() => parseCliArgs(["agent-brief", "--target", "copilot"])).toThrow(
+      "Unsupported target: copilot",
+    );
+    expect(() =>
+      parseCliArgs(["agent-brief", "--package-manager", "pip"]),
+    ).toThrow("Unsupported package manager: pip");
+  });
 });
 
 describe("runCli", () => {
+  it("returns help text without writing files", async () => {
+    const cwd = await mkdtemp(join(tmpdir(), "webaudio-kit-cli-"));
+
+    const result = await runCli(["--help"], { cwd });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("webaudio-kit");
+    expect(result.stdout).toContain("agent-brief");
+    expect(result.stderr).toBe("");
+  });
+
   it("writes the generated brief to disk", async () => {
     const cwd = await mkdtemp(join(tmpdir(), "webaudio-kit-cli-"));
     const out = "docs/AI_AGENT.md";
@@ -105,6 +140,31 @@ describe("runCli", () => {
     await expect(readFile(join(cwd, "AGENTS.md"), "utf8")).resolves.toBe(
       "existing",
     );
+  });
+
+  it("overwrites existing files when --force is provided", async () => {
+    const cwd = await mkdtemp(join(tmpdir(), "webaudio-kit-cli-"));
+    await writeFile(join(cwd, "AGENTS.md"), "existing");
+
+    const result = await runCli(["agent-brief", "--force"], { cwd });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("Wrote AGENTS.md");
+    await expect(readFile(join(cwd, "AGENTS.md"), "utf8")).resolves.toContain(
+      "# webaudio-kit Agent Brief",
+    );
+  });
+
+  it("returns parser errors through stderr", async () => {
+    const cwd = await mkdtemp(join(tmpdir(), "webaudio-kit-cli-"));
+
+    const result = await runCli(["agent-brief", "--target", "copilot"], {
+      cwd,
+    });
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stdout).toBe("");
+    expect(result.stderr).toContain("Unsupported target: copilot");
   });
 });
 
