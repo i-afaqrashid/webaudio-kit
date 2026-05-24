@@ -140,7 +140,7 @@ const db = gainToDb(0.2);`}</CodeBlock>
                 a key. Call <code>play</code> from a user action and let the
                 provider resume the context there.
               </div>
-              <div className="callout warning">
+              <div className="callout caution">
                 <strong>Safety note</strong>
                 Keep default volume low, clamp frequencies, and avoid medical or
                 audiology claims unless a separate certified system validates

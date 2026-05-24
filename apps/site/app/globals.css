@@ -8,7 +8,7 @@
   --accent: #b9e145;
   --accent-dark: #6f8e17;
   --blue: #2368a2;
-  --warn: #9a5d15;
+  --caution: #9a5d15;
   color: var(--ink);
   background: var(--bg);
   font-family:
@@ -402,7 +402,7 @@ select {
 .safetyBand .iconBadge {
   background: #fff1cc;
   border-color: #efcd88;
-  color: var(--warn);
+  color: var(--caution);
 }
 
 .safetyBand h2 {
@@ -486,7 +486,7 @@ select {
   padding: 18px;
 }
 
-.callout.warning {
+.callout.caution {
   background: #fff8e8;
   border-color: #ebd7ad;
   color: #593b11;
