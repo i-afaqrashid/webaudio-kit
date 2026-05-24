@@ -106,7 +106,15 @@ select {
 }
 
 .siteHeader nav a {
+  align-items: center;
+  display: inline-flex;
+  gap: 6px;
   font-weight: 680;
+}
+
+.githubMark {
+  height: 16px;
+  width: 16px;
 }
 
 .siteHeader nav a:hover,
@@ -116,20 +124,19 @@ select {
 
 .hero {
   border-bottom: 1px solid var(--line);
-  overflow: hidden;
   padding: 56px 0 40px;
 }
 
 .heroGrid {
   align-items: center;
   display: grid;
-  gap: 48px;
-  grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1.1fr);
+  gap: 42px;
+  grid-template-columns: minmax(440px, 0.78fr) minmax(0, 1.22fr);
 }
 
 .heroCopy h1,
 .docHero h1 {
-  font-size: clamp(48px, 6vw, 78px);
+  font-size: clamp(46px, 5.2vw, 72px);
   letter-spacing: 0;
   line-height: 0.96;
   margin: 14px 0 0;
@@ -170,10 +177,14 @@ select {
 }
 
 .button {
+  align-items: center;
+  background: transparent;
   border: 1px solid var(--line);
   border-radius: 8px;
   color: var(--ink);
+  cursor: pointer;
   display: inline-flex;
+  gap: 8px;
   font-weight: 760;
   justify-content: center;
   min-height: 42px;
@@ -229,6 +240,172 @@ select {
   width: 100%;
 }
 
+.demoShell {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.86),
+      rgba(238, 241, 233, 0.72)
+    ),
+    var(--surface);
+  border: 1px solid #b7c1af;
+  border-radius: 8px;
+  box-shadow: 0 24px 52px rgba(17, 21, 17, 0.14);
+  min-width: 0;
+  padding: 18px;
+}
+
+.demoHeader {
+  align-items: start;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.demoHeader h2 {
+  font-size: clamp(25px, 3vw, 36px);
+  line-height: 1;
+  margin: 8px 0 0;
+  max-width: 14ch;
+}
+
+.demoState {
+  background: #f9fbf4;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  min-width: 142px;
+  padding: 12px;
+}
+
+.demoState div + div {
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+
+.demoState span,
+.controlHead span,
+.rangeControl small,
+.proofLabel {
+  color: var(--muted);
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+  font-size: 11px;
+}
+
+.demoState strong {
+  display: block;
+  font-size: 18px;
+  margin-top: 4px;
+}
+
+.demoControls {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.78fr);
+  margin-top: 18px;
+}
+
+.controlPanel,
+.waveformFrame {
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  min-width: 0;
+  padding: 14px;
+}
+
+.controlHead {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.controlHead strong {
+  font-size: 12px;
+}
+
+.rangeControl {
+  display: grid;
+  gap: 7px;
+  margin-top: 14px;
+}
+
+.rangeControl > span {
+  font-size: 13px;
+  font-weight: 720;
+}
+
+.rangeControl input {
+  accent-color: var(--ink);
+  width: 100%;
+}
+
+.rangeControl.compact {
+  margin-top: 22px;
+}
+
+.sweepControls p {
+  color: #374035;
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 16px 0 0;
+}
+
+.segmentedControl {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 15px;
+}
+
+.segmentedControl button {
+  background: #f9fbf4;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  color: #30372e;
+  cursor: pointer;
+  font-size: 12px;
+  min-height: 34px;
+}
+
+.segmentedControl button.active {
+  background: var(--accent);
+  border-color: #9ac323;
+  color: var(--ink);
+  font-weight: 760;
+}
+
+.demoActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.demoActions .button {
+  cursor: pointer;
+  min-height: 38px;
+  min-width: 0;
+}
+
+.waveformFrame {
+  margin-top: 12px;
+}
+
+.waveformFrame canvas {
+  background: #0f120f;
+  border-radius: 6px;
+  display: block;
+  height: auto;
+  margin-top: 10px;
+  max-height: 180px;
+  width: 100%;
+}
+
 .section {
   padding: 76px 0;
 }
@@ -244,7 +421,7 @@ select {
 }
 
 .sectionHeader h2,
-.safetyBand h2 {
+.scopeNote h2 {
   font-size: clamp(30px, 4vw, 48px);
   line-height: 1.03;
   margin: 12px 0 0;
@@ -252,7 +429,7 @@ select {
 }
 
 .sectionHeader p,
-.safetyBand p,
+.scopeNote p,
 .infoCard p,
 .proofItem p,
 .roadmapCard li,
@@ -278,6 +455,7 @@ select {
 }
 
 .codeCard {
+  min-width: 0;
   overflow: hidden;
 }
 
@@ -328,6 +506,7 @@ select {
   display: grid;
   gap: 18px;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-width: 0;
 }
 
 .apiGrid {
@@ -337,6 +516,7 @@ select {
 
 .infoCard,
 .roadmapCard {
+  min-width: 0;
   padding: 22px;
 }
 
@@ -370,47 +550,59 @@ select {
 
 .proofGrid {
   display: grid;
-  gap: 18px;
+  border-top: 1px solid var(--line);
+  gap: 0;
 }
 
 .proofItem {
   align-items: start;
   display: grid;
-  gap: 16px;
-  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 18px;
+  grid-template-columns: 58px minmax(0, 1fr);
+  padding: 18px 0;
+}
+
+.proofItem + .proofItem {
+  border-top: 1px solid var(--line);
 }
 
 .proofItem h3 {
-  margin-top: 0;
+  margin: 5px 0 6px;
+}
+
+.proofIndex {
+  color: #83907d;
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+  font-size: 13px;
+  padding-top: 5px;
+}
+
+.proofLabel {
+  text-transform: uppercase;
 }
 
 .sectionSafety {
-  padding: 46px 0 72px;
+  padding: 0 0 78px;
 }
 
-.safetyBand {
+.scopeNote {
   align-items: start;
-  background: #fff8e8;
-  border: 1px solid #ebd7ad;
-  border-radius: 8px;
+  border-top: 1px solid var(--line);
   display: grid;
-  gap: 18px;
-  grid-template-columns: 38px minmax(0, 1fr);
-  padding: 24px;
+  gap: 28px;
+  grid-template-columns: minmax(220px, 0.42fr) minmax(0, 1fr);
+  padding-top: 30px;
 }
 
-.safetyBand .iconBadge {
-  background: #fff1cc;
-  border-color: #efcd88;
-  color: var(--caution);
-}
-
-.safetyBand h2 {
+.scopeNote h2 {
   margin: 0;
 }
 
-.safetyBand p {
-  margin: 12px 0 0;
+.scopeNote p {
+  font-size: 18px;
+  margin: 0;
   max-width: 78ch;
 }
 
@@ -423,12 +615,14 @@ select {
   align-items: start;
   display: grid;
   gap: 40px;
-  grid-template-columns: 210px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 210px) minmax(0, 1fr);
+  min-width: 0;
 }
 
 .toc {
   display: grid;
   gap: 12px;
+  min-width: 0;
   position: sticky;
   top: 96px;
 }
@@ -446,6 +640,7 @@ select {
 
 .docContent {
   max-width: 820px;
+  min-width: 0;
 }
 
 .anchorTarget {
@@ -466,6 +661,7 @@ select {
   border: 1px solid var(--line);
   border-radius: 5px;
   font-size: 0.92em;
+  overflow-wrap: anywhere;
   padding: 1px 5px;
 }
 
@@ -476,25 +672,24 @@ select {
   padding: 0;
 }
 
-.callout {
-  background: #edf5fb;
-  border: 1px solid #bcd5e8;
-  border-radius: 8px;
-  color: #223a4d;
-  line-height: 1.65;
+.noteStack {
+  display: grid;
+  gap: 14px;
   margin: 18px 0;
-  padding: 18px;
 }
 
-.callout.caution {
-  background: #fff8e8;
-  border-color: #ebd7ad;
-  color: #593b11;
+.noteCard {
+  border-left: 3px solid var(--ink);
+  padding: 4px 0 4px 16px;
 }
 
-.callout strong {
+.noteCard strong {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+}
+
+.noteCard p {
+  margin: 0;
 }
 
 .docLinks {
@@ -529,11 +724,11 @@ select {
   .heroGrid,
   .split,
   .docLayout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .heroVisual {
-    max-height: 460px;
+  .demoControls {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .packageGrid,
@@ -566,6 +761,10 @@ select {
     padding-top: 40px;
   }
 
+  .heroGrid {
+    gap: 34px;
+  }
+
   .heroCopy h1,
   .docHero h1 {
     font-size: 44px;
@@ -577,10 +776,24 @@ select {
 
   .apiGrid,
   .toc {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .safetyBand {
-    grid-template-columns: 1fr;
+  .scopeNote {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .demoHeader {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .segmentedControl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .codeCard pre,
+  .terminal pre {
+    white-space: pre-wrap;
+    word-break: break-word;
   }
 }

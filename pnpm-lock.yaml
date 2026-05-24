@@ -85,6 +85,9 @@ importers:
 
   apps/site:
     dependencies:
+      '@webaudio-kit/react':
+        specifier: workspace:*
+        version: link:../../packages/react
       lucide-react:
         specifier: ^1.16.0
         version: 1.16.0(react@19.2.6)

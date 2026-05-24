@@ -9,6 +9,13 @@ export const metadata: Metadata = {
   description:
     "Small React and TypeScript primitives for safe browser tone generation, frequency sweeps, volume control, and analyser-driven UI.",
   metadataBase: new URL("https://webaudio-kit.afaqrashid.com"),
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon.ico",
+  },
   openGraph: {
     title: "webaudio-kit",
     description:

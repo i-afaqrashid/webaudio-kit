@@ -5,11 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "next dev -p 4173",
-    "build": "next build",
+    "build": "pnpm --filter @webaudio-kit/core build && pnpm --filter @webaudio-kit/react build && next build",
     "start": "next start -p 4173",
-    "site:build": "next build"
+    "site:build": "pnpm build"
   },
   "dependencies": {
+    "@webaudio-kit/react": "workspace:*",
     "lucide-react": "^1.16.0",
     "next": "^16.2.6",
     "react": "^19.2.6",

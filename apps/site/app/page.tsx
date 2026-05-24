@@ -1,12 +1,13 @@
-import Image from "next/image";
 import Link from "next/link";
 import {
   CodeBlock,
+  GitHubMark,
   IconBadge,
   PageShell,
   SectionHeader,
   Terminal,
 } from "./components";
+import { InteractiveDemo } from "./InteractiveDemo";
 
 const packages = [
   {
@@ -28,22 +29,22 @@ const packages = [
 
 const proofPoints = [
   {
-    icon: "shield" as const,
+    label: "Runtime",
     title: "No import-time AudioContext",
     copy: "AudioContext is created lazily after user interaction so React apps avoid browser autoplay violations.",
   },
   {
-    icon: "volume" as const,
+    label: "Safety",
     title: "Safe first-run volume",
     copy: "The provider starts with a 0.2 master gain and examples keep gain controls bounded.",
   },
   {
-    icon: "activity" as const,
+    label: "Signal",
     title: "Visible analyser signal",
     copy: "The demo draws analyser data so developers can verify the provider graph is live.",
   },
   {
-    icon: "gauge" as const,
+    label: "Release",
     title: "Release smoke checks",
     copy: "Package tarballs are built and reinstalled before publish so exports match the public API.",
   },
@@ -70,7 +71,10 @@ export default function HomePage() {
                 <a
                   className="button"
                   href="https://github.com/i-afaqrashid/webaudio-kit"
+                  rel="noreferrer"
+                  target="_blank"
                 >
+                  <GitHubMark />
                   GitHub
                 </a>
               </div>
@@ -79,15 +83,7 @@ export default function HomePage() {
                 <code>pnpm add @webaudio-kit/react @webaudio-kit/core</code>
               </div>
             </div>
-            <div className="heroVisual">
-              <Image
-                alt="webaudio-kit demo showing tone controls and waveform analyser"
-                height={1339}
-                priority
-                src="/assets/demo-screenshot.png"
-                width={1280}
-              />
-            </div>
+            <InteractiveDemo />
           </div>
         </section>
 
@@ -147,10 +143,13 @@ export function App() {
                 copy="Tone and sweep nodes feed the master gain, analyser, then destination. The waveform should move while sound is playing."
               />
               <div className="proofGrid">
-                {proofPoints.map((item) => (
+                {proofPoints.map((item, index) => (
                   <article className="proofItem" key={item.title}>
-                    <IconBadge name={item.icon} />
+                    <span className="proofIndex">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
                     <div>
+                      <span className="proofLabel">{item.label}</span>
                       <h3>{item.title}</h3>
                       <p>{item.copy}</p>
                     </div>
@@ -174,10 +173,12 @@ export function App() {
         </section>
 
         <section className="section sectionSafety">
-          <div className="wrap safetyBand">
-            <IconBadge name="shield" />
+          <div className="wrap scopeNote">
             <div>
+              <span className="kicker">Scope boundary</span>
               <h2>Browser audio prototype, not medical software.</h2>
+            </div>
+            <div>
               <p>
                 webaudio-kit can help build audible UI controls and prototypes.
                 It is not certified audiology software, and it should not be

@@ -4,6 +4,7 @@ coverage
 .DS_Store
 .release-packages
 .tmp
+/.playwright-cli
 output
 packages/*/dist
 apps/demo/dist
