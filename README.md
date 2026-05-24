@@ -65,14 +65,14 @@ therefore creates and resumes `AudioContext` lazily when a hook action such as
   - `useFrequencySweep`
   - `useVolume`
   - `useAnalyser`
+  - `WaveformCanvas`
 - `apps/demo`
   - tone generator
   - 250Hz to 8000Hz sweep
-  - analyser waveform canvas
+  - reusable analyser waveform canvas
 - `apps/site`
   - public landing page
   - docs overview
-  - roadmap page
   - Vercel deployment config
 
 ## Local development
@@ -151,9 +151,9 @@ testing headphones or hearing-test-style prototypes.
 This library is for building browser audio interfaces and prototypes. It is not
 a certified audiology or medical testing system.
 
-## Roadmap
+## Future Work
 
-- richer waveform and spectrum visualizers
+- spectrum visualizer helpers
 - microphone input and permission helpers
 - AudioWorklet helpers for low-latency processors
 - Svelte/Vue adapters if React primitives prove useful first

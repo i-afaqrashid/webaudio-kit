@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import {
+  WaveformCanvas,
   dbToGain,
   gainToDb,
   useAnalyser,
@@ -157,50 +158,6 @@ export default function App() {
 
 function WaveformPanel() {
   const analyser = useAnalyser();
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || !analyser) {
-      return;
-    }
-
-    const context = canvas.getContext("2d");
-    if (!context) {
-      return;
-    }
-
-    const data = new Uint8Array(analyser.fftSize);
-    let frame = 0;
-
-    const draw = () => {
-      frame = requestAnimationFrame(draw);
-      analyser.getByteTimeDomainData(data);
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      context.fillStyle = "#10110f";
-      context.fillRect(0, 0, canvas.width, canvas.height);
-      context.strokeStyle = "#c8ea3a";
-      context.lineWidth = 2;
-      context.beginPath();
-
-      const slice = canvas.width / data.length;
-      for (let index = 0; index < data.length; index += 1) {
-        const x = index * slice;
-        const y = (data[index] / 255) * canvas.height;
-        if (index === 0) {
-          context.moveTo(x, y);
-        } else {
-          context.lineTo(x, y);
-        }
-      }
-
-      context.stroke();
-    };
-
-    draw();
-
-    return () => cancelAnimationFrame(frame);
-  }, [analyser]);
 
   return (
     <div className="panel waveformPanel">
@@ -208,10 +165,11 @@ function WaveformPanel() {
         <span>Analyser</span>
         <strong>{analyser ? "live" : "waiting"}</strong>
       </div>
-      <canvas
+      <WaveformCanvas
         aria-label="Waveform analyser"
+        backgroundColor="#10110f"
         height="180"
-        ref={canvasRef}
+        strokeColor="#c8ea3a"
         width="720"
       />
     </div>

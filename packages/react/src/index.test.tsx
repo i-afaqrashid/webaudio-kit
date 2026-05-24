@@ -3,6 +3,7 @@ import { useState } from "react";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import {
   AudioProvider,
+  WaveformCanvas,
   useAnalyser,
   useAudioContext,
   useFrequencySweep,
@@ -79,8 +80,10 @@ class FakeGainNode extends FakeAudioNode {
 
 class FakeAnalyserNode extends FakeAudioNode {
   fftSize = 2048;
+  timeDomainCalls = 0;
 
   getByteTimeDomainData(data: Uint8Array) {
+    this.timeDomainCalls += 1;
     data.fill(128);
   }
 }
@@ -245,6 +248,20 @@ function MissingAudioApiHarness() {
       </button>
     </div>
   );
+}
+
+function createCanvasContext() {
+  return {
+    beginPath: vi.fn(),
+    clearRect: vi.fn(),
+    fillRect: vi.fn(),
+    lineTo: vi.fn(),
+    moveTo: vi.fn(),
+    stroke: vi.fn(),
+    fillStyle: "",
+    lineWidth: 1,
+    strokeStyle: "",
+  } as unknown as CanvasRenderingContext2D;
 }
 
 describe("AudioProvider", () => {
@@ -506,5 +523,63 @@ describe("AudioProvider", () => {
     expect(screen.getByTestId("play-error").textContent).toContain(
       "Web Audio API is not available in this browser",
     );
+  });
+
+  test("WaveformCanvas renders an idle waveform before playback creates an analyser", () => {
+    const context = createCanvasContext();
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
+      context,
+    );
+
+    render(
+      <AudioProvider>
+        <WaveformCanvas
+          backgroundColor="#111111"
+          data-testid="waveform"
+          height={80}
+          lineWidth={3}
+          strokeColor="#eeeeee"
+          width={320}
+        />
+      </AudioProvider>,
+    );
+
+    const canvas = screen.getByTestId("waveform");
+    expect(canvas.getAttribute("aria-label")).toBe("Waveform analyser");
+    expect(canvas.getAttribute("height")).toBe("80");
+    expect(canvas.getAttribute("width")).toBe("320");
+    expect(context.fillRect).toHaveBeenCalledWith(0, 0, 320, 80);
+    expect(context.moveTo).toHaveBeenCalledWith(0, 40);
+    expect(context.lineTo).toHaveBeenCalledWith(320, 40);
+    expect(context.stroke).toHaveBeenCalled();
+  });
+
+  test("WaveformCanvas reads analyser data after playback starts", async () => {
+    const context = createCanvasContext();
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
+      context,
+    );
+    vi.stubGlobal(
+      "requestAnimationFrame",
+      vi.fn(() => 1),
+    );
+    vi.stubGlobal("cancelAnimationFrame", vi.fn());
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <Harness />
+        <WaveformCanvas data-testid="waveform" />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "play tone" }).click();
+    });
+
+    expect(
+      FakeAudioContext.instances[0]?.analysers[0]?.timeDomainCalls,
+    ).toBeGreaterThan(0);
+    expect(context.lineTo).toHaveBeenCalled();
   });
 });

@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import {
   AudioProvider,
+  WaveformCanvas as AudioWaveformCanvas,
   dbToGain,
   gainToDb,
   useAnalyser,
@@ -193,63 +194,13 @@ function DemoControls() {
         </div>
       </div>
 
-      <WaveformCanvas />
+      <WaveformPanel />
     </div>
   );
 }
 
-function WaveformCanvas() {
+function WaveformPanel() {
   const analyser = useAnalyser();
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) {
-      return;
-    }
-
-    const context = canvas.getContext("2d");
-    if (!context) {
-      return;
-    }
-
-    const data = new Uint8Array(analyser?.fftSize ?? 2048);
-    let frame = 0;
-
-    const draw = () => {
-      frame = requestAnimationFrame(draw);
-      if (analyser) {
-        analyser.getByteTimeDomainData(data);
-      } else {
-        data.fill(128);
-      }
-
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      context.fillStyle = "#0f120f";
-      context.fillRect(0, 0, canvas.width, canvas.height);
-      context.strokeStyle = "#b9e145";
-      context.lineWidth = 2;
-      context.beginPath();
-
-      const slice = canvas.width / data.length;
-      for (let index = 0; index < data.length; index += 1) {
-        const x = index * slice;
-        const centered = (data[index] - 128) * 2.4;
-        const y = canvas.height / 2 + (centered / 128) * (canvas.height / 2);
-        if (index === 0) {
-          context.moveTo(x, y);
-        } else {
-          context.lineTo(x, y);
-        }
-      }
-
-      context.stroke();
-    };
-
-    draw();
-
-    return () => cancelAnimationFrame(frame);
-  }, [analyser]);
 
   return (
     <div className="waveformFrame">
@@ -257,10 +208,12 @@ function WaveformCanvas() {
         <span>Analyser</span>
         <strong>{analyser ? "live" : "waiting for click"}</strong>
       </div>
-      <canvas
+      <AudioWaveformCanvas
         aria-label="Waveform analyser"
+        backgroundColor="#0f120f"
         height="180"
-        ref={canvasRef}
+        idleStrokeColor="#394135"
+        strokeColor="#b9e145"
         width="900"
       />
     </div>

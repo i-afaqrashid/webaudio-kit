@@ -41,10 +41,12 @@ The current public surface is intentionally small:
 - `useFrequencySweep`
 - `useVolume`
 - `useAnalyser`
+- `WaveformCanvas`
 - `playTone`
 - `playFrequencySweep`
 - `dbToGain`
 - `gainToDb`
 - `clampFrequency`
 
-Microphone support, AudioWorklets, and visualizer packages are future work.
+Microphone support, AudioWorklets, and larger visualizer packages are future
+work.

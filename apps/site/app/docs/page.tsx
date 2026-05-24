@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { CodeBlock, IconBadge, PageShell, SectionHeader } from "../components";
 
 export const metadata: Metadata = {
@@ -29,6 +28,11 @@ const apiCards = [
     title: "useAnalyser",
     copy: "Returns the analyser node so UI can render waveform or spectrum data.",
   },
+  {
+    icon: "waves" as const,
+    title: "WaveformCanvas",
+    copy: "Draws provider analyser data with an idle line before playback starts.",
+  },
 ];
 
 export default function DocsPage() {
@@ -54,7 +58,7 @@ export default function DocsPage() {
               <a href="#provider">Provider</a>
               <a href="#tone">Tone hook</a>
               <a href="#sweep">Sweep hook</a>
-              <a href="#helpers">Math helpers</a>
+              <a href="#helpers">API helpers</a>
               <a href="#browser">Browser behavior</a>
             </aside>
 
@@ -117,7 +121,7 @@ tone.stop();`}</CodeBlock>
 await sweep.play();
 sweep.stop();`}</CodeBlock>
 
-              <h2 id="helpers">Core helpers</h2>
+              <h2 id="helpers">React surfaces and helpers</h2>
               <div className="apiGrid">
                 {apiCards.map((card) => (
                   <article className="infoCard" key={card.title}>
@@ -167,9 +171,6 @@ const db = gainToDb(0.2);`}</CodeBlock>
                   >
                     Markdown docs directory
                   </a>
-                </li>
-                <li>
-                  <Link href="/roadmap">Roadmap</Link>
                 </li>
               </ul>
             </article>

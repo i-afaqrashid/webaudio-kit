@@ -202,3 +202,30 @@ const analyser = useAnalyser();
 ```
 
 Returns the current `AnalyserNode`, or `null` before the audio context exists.
+
+### `WaveformCanvas`
+
+```tsx
+<WaveformCanvas
+  backgroundColor="#10110f"
+  height={180}
+  strokeColor="#c8ea3a"
+  width={720}
+/>
+```
+
+Draws analyser time-domain data from the nearest `AudioProvider`. Before
+playback creates the provider graph, it renders an idle center line instead of a
+blank canvas.
+
+Useful props:
+
+- `width`: canvas drawing width. Defaults to `720`.
+- `height`: canvas drawing height. Defaults to `180`.
+- `backgroundColor`: fill color. Defaults to `#10110f`.
+- `strokeColor`: live waveform color. Defaults to `#c8ea3a`.
+- `idleStrokeColor`: idle center-line color. Defaults to `strokeColor`.
+- `lineWidth`: canvas stroke width. Defaults to `2`.
+
+It also accepts standard canvas attributes such as `className`, `style`, and
+`aria-label`.
