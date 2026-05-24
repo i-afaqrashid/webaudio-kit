@@ -20,6 +20,8 @@
     "demo:build": "pnpm --filter @webaudio-kit/demo build",
     "demo:qa": "node scripts/demo-qa.mjs",
     "smoke:pack": "node scripts/smoke-pack.mjs",
+    "release:check": "pnpm verify && pnpm smoke:pack",
+    "release:check:tag": "node scripts/check-release-tag.mjs",
     "typecheck": "tsc -p tsconfig.base.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",

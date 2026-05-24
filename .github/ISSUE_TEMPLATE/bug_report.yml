@@ -1,0 +1,47 @@
+name: Bug report
+description: Report a reproducible problem with webaudio-kit.
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Do not include private medical, audiology, or sensitive audio data.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Provide the smallest React/Web Audio example that shows the issue.
+      render: tsx
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      placeholder: "Chrome 126, Firefox 127, Safari 18"
+    validations:
+      required: true
+  - type: input
+    id: package-version
+    attributes:
+      label: Package version
+      placeholder: "@webaudio-kit/react@0.1.0"
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I started playback from a user gesture.
+          required: true
+        - label: This is not a medical/audiology support request.
+          required: true

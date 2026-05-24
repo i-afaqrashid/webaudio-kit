@@ -1,0 +1,29 @@
+name: Feature request
+description: Suggest a focused browser audio feature.
+title: "feat: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use case
+      description: What browser audio interface are you trying to build?
+    validations:
+      required: true
+  - type: textarea
+    id: api
+    attributes:
+      label: Proposed API
+      description: Show the React or core API you would want to use.
+      render: tsx
+    validations:
+      required: false
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - label: This request does not require medical/audiology claims.
+          required: true
+        - label: This request can work with browser autoplay/user-gesture rules.
+          required: true

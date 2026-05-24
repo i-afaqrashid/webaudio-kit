@@ -42,6 +42,10 @@ pnpm demo:qa
 `demo:qa` uses Playwright to exercise the demo in Chromium, Firefox, and
 WebKit when those browser engines are installed locally.
 
+See `TESTING.md` for the manual audio QA checklist.
+
 ## Release Notes
 
 Update `CHANGELOG.md` for user-facing changes.
+
+Release work should follow `RELEASE.md`.

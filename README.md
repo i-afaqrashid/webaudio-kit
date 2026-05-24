@@ -80,6 +80,7 @@ pnpm build
 pnpm demo:dev
 pnpm demo:qa
 pnpm smoke:pack
+pnpm release:check
 pnpm verify
 ```
 
@@ -89,6 +90,9 @@ The demo runs on `http://127.0.0.1:5173`.
 Playwright, then writes a demo screenshot, WebM, and GIF under `docs/assets/`.
 `pnpm smoke:pack` packs both publishable packages and imports them from a clean
 temporary app.
+
+`pnpm release:check` runs the full verification gate and package smoke check
+used before tagging a release.
 
 ## Package Names
 
@@ -112,7 +116,13 @@ a certified audiology or medical testing system.
 - AudioWorklet helpers for low-latency processors
 - Svelte/Vue adapters if React primitives prove useful first
 
-## Planning docs
+## Project docs
 
 - [Product plan](./product-plan.md)
 - [Publicity plan](./publicity-plan.md)
+- [Testing](./TESTING.md)
+- [Release checklist](./RELEASE.md)
+- [Security policy](./SECURITY.md)
+- [Support](./SUPPORT.md)
+- [Open source expectations](./OPEN_SOURCE.md)
+- [Code of conduct](./CODE_OF_CONDUCT.md)

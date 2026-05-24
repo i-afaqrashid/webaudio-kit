@@ -14,6 +14,11 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
-    include: ["packages/**/*.test.ts", "packages/**/*.test.tsx"],
+    include: [
+      "apps/**/*.test.ts",
+      "apps/**/*.test.tsx",
+      "packages/**/*.test.ts",
+      "packages/**/*.test.tsx",
+    ],
   },
 });

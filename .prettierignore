@@ -1,4 +1,5 @@
 node_modules
+.github/CODEOWNERS
 dist
 coverage
 .release-packages
