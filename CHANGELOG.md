@@ -19,3 +19,5 @@
 - Local npm publish dry-run command for generated tarballs.
 - `cms-lab`-style CI cache, Dependabot, CodeQL, PR template, strict tag
   verification, and ordered publish guardrails.
+- Latest dependency/tooling pins, including `pnpm@11.3.0`, `jsdom@29.1.1`,
+  React `19.2.6`, and latest GitHub Action tag pins.

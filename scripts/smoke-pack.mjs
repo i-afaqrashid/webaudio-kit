@@ -49,7 +49,7 @@ await writeFile(
       dependencies: {
         "@webaudio-kit/core": `file:${join(packDir, coreTarball)}`,
         "@webaudio-kit/react": `file:${join(packDir, reactTarball)}`,
-        react: "^19.0.0",
+        react: "^19.2.6",
       },
     },
     null,

@@ -25,20 +25,20 @@ jobs:
         node-version: [20, 22, 24]
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.2
 
       - name: Configure git defaults
         run: git config --global init.defaultBranch main
 
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v6.4.0
         with:
           node-version: ${{ matrix.node-version }}
 
       - name: Setup pnpm
         run: |
           corepack enable
-          corepack prepare pnpm@10.33.4 --activate
+          corepack prepare pnpm@11.3.0 --activate
           pnpm --version
 
       - name: Prepare pnpm store
@@ -48,7 +48,7 @@ jobs:
           echo "PNPM_STORE_PATH=$PNPM_STORE_PATH" >> "$GITHUB_ENV"
 
       - name: Restore pnpm store cache
-        uses: actions/cache@v5
+        uses: actions/cache@v5.0.5
         with:
           path: ${{ env.PNPM_STORE_PATH }}
           key: ${{ runner.os }}-pnpm-quality-node-${{ matrix.node-version }}-${{ hashFiles('pnpm-lock.yaml') }}
@@ -77,20 +77,20 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.2
 
       - name: Configure git defaults
         run: git config --global init.defaultBranch main
 
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v6.4.0
         with:
           node-version: 22
 
       - name: Setup pnpm
         run: |
           corepack enable
-          corepack prepare pnpm@10.33.4 --activate
+          corepack prepare pnpm@11.3.0 --activate
           pnpm --version
 
       - name: Prepare pnpm store
@@ -100,7 +100,7 @@ jobs:
           echo "PNPM_STORE_PATH=$PNPM_STORE_PATH" >> "$GITHUB_ENV"
 
       - name: Restore pnpm store cache
-        uses: actions/cache@v5
+        uses: actions/cache@v5.0.5
         with:
           path: ${{ env.PNPM_STORE_PATH }}
           key: ${{ runner.os }}-pnpm-build-node-22-${{ hashFiles('pnpm-lock.yaml') }}
@@ -126,20 +126,20 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.2
 
       - name: Configure git defaults
         run: git config --global init.defaultBranch main
 
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v6.4.0
         with:
           node-version: 22
 
       - name: Setup pnpm
         run: |
           corepack enable
-          corepack prepare pnpm@10.33.4 --activate
+          corepack prepare pnpm@11.3.0 --activate
           pnpm --version
 
       - name: Prepare pnpm store
@@ -149,7 +149,7 @@ jobs:
           echo "PNPM_STORE_PATH=$PNPM_STORE_PATH" >> "$GITHUB_ENV"
 
       - name: Restore pnpm store cache
-        uses: actions/cache@v5
+        uses: actions/cache@v5.0.5
         with:
           path: ${{ env.PNPM_STORE_PATH }}
           key: ${{ runner.os }}-pnpm-audit-node-22-${{ hashFiles('pnpm-lock.yaml') }}

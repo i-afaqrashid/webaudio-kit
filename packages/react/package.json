@@ -34,7 +34,7 @@
     "README.md"
   ],
   "engines": {
-    "node": ">=20.10"
+    "node": ">=20.19"
   },
   "publishConfig": {
     "access": "public"
