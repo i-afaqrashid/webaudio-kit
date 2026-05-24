@@ -16,5 +16,5 @@ landing page composition, docs page copy, icon treatment, and social previews.
 
 - Keep the product practical and technical, not medical.
 - Lead with real demo proof: tone controls, sweep controls, waveform output.
-- Keep warnings direct: this is browser audio prototype software, not certified
+- Keep cautions direct: this is browser audio prototype software, not certified
   audiology software.
