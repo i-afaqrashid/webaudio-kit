@@ -50,7 +50,7 @@ Browsers require audio playback to begin from a user gesture. `AudioProvider`
 therefore creates and resumes `AudioContext` lazily when a hook action such as
 `tone.play()` runs from a click or similar interaction.
 
-## What v0.1 includes
+## What 1.0 includes
 
 - `@webaudio-kit/core`
   - `playTone()`
@@ -69,6 +69,11 @@ therefore creates and resumes `AudioContext` lazily when a hook action such as
   - tone generator
   - 250Hz to 8000Hz sweep
   - analyser waveform canvas
+- `apps/site`
+  - public landing page
+  - docs overview
+  - roadmap page
+  - Vercel deployment config
 
 ## Local development
 
@@ -78,6 +83,8 @@ pnpm test
 pnpm typecheck
 pnpm build
 pnpm bench
+pnpm site:dev
+pnpm site:build
 pnpm demo:dev
 pnpm demo:qa
 pnpm smoke:pack
@@ -88,7 +95,8 @@ pnpm release:dry-run
 pnpm verify
 ```
 
-The demo runs on `http://127.0.0.1:5173`.
+The public site runs on `http://127.0.0.1:4173`. The audio demo runs on
+`http://127.0.0.1:5173`.
 
 `pnpm demo:qa` runs the demo through Chromium, Firefox, and WebKit with
 Playwright, then writes a demo screenshot, WebM, and GIF under `docs/assets/`.
@@ -154,8 +162,20 @@ a certified audiology or medical testing system.
 
 - [Product plan](./product-plan.md)
 - [Publicity plan](./publicity-plan.md)
+- [Technical docs](./docs/README.md)
+- [Architecture](./docs/architecture.md)
+- [API reference](./docs/api.md)
+- [Browser audio guide](./docs/browser-audio.md)
+- [Examples](./docs/examples.md)
+- [Example apps](./examples/README.md)
+- [Design references](./design/README.md)
+- [Deployment](./docs/deployment.md)
+- [Safety](./docs/safety.md)
+- [Troubleshooting](./docs/troubleshooting.md)
 - [Testing](./TESTING.md)
 - [Release checklist](./RELEASE.md)
+- [Launch checklist](./LAUNCH.md)
+- [Governance](./GOVERNANCE.md)
 - [Security policy](./SECURITY.md)
 - [Support](./SUPPORT.md)
 - [Open source expectations](./OPEN_SOURCE.md)

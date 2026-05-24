@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>webaudio-kit landing reference</title>
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <main class="frame">
+      <nav class="nav" aria-label="Design reference navigation">
+        <div class="brand">
+          <img src="assets/icon.svg" alt="" />
+          webaudio-kit
+        </div>
+        <div class="links">
+          <span>Docs</span>
+          <span>Roadmap</span>
+          <span>GitHub</span>
+        </div>
+      </nav>
+
+      <section class="hero">
+        <div>
+          <div class="kicker">React Web Audio Toolkit</div>
+          <h1>Browser tones and sweeps without fighting AudioContext.</h1>
+          <p>
+            A small React package set for tone generators, frequency sweeps,
+            safe volume defaults, and analyser-driven UI in browser prototypes.
+          </p>
+          <pre class="code">
+pnpm add @webaudio-kit/react @webaudio-kit/core</pre
+          >
+        </div>
+
+        <div class="visual" aria-label="Waveform reference">
+          <div class="wave">
+            <svg
+              viewBox="0 0 600 180"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M10 92C50 18 90 18 130 92C170 166 210 166 250 92C290 18 330 18 370 92C410 166 450 166 490 92C530 18 570 18 590 74"
+                stroke="#B9E145"
+                stroke-width="9"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+          <div class="controls">
+            <div class="control"></div>
+            <div class="control"></div>
+            <div class="control"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid" aria-label="Package summary">
+        <article class="card">
+          <strong>@webaudio-kit/core</strong>
+          <p>Playback helpers, clamping, and math utilities.</p>
+        </article>
+        <article class="card">
+          <strong>@webaudio-kit/react</strong>
+          <p>Provider and hooks for tone, sweep, volume, and analyser state.</p>
+        </article>
+        <article class="card">
+          <strong>apps/demo</strong>
+          <p>Manual browser QA surface with visible waveform output.</p>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

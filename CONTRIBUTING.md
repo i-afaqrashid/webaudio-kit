@@ -15,9 +15,19 @@ The demo runs at `http://127.0.0.1:5173`:
 pnpm demo:dev
 ```
 
+## Repository Map
+
+```txt
+apps/demo        Manual browser demo and demo QA target
+docs             Technical guides, examples, safety, and deployment notes
+packages/core    Browser-safe Web Audio primitives and math helpers
+packages/react   React provider and hook ergonomics
+scripts          Release, demo QA, and package smoke scripts
+```
+
 ## Development Rules
 
-- Keep v0.1 focused on browser-safe tone generation, frequency sweeps, volume,
+- Keep 1.0 focused on browser-safe tone generation, frequency sweeps, volume,
   panning, and analyser data.
 - Do not create `AudioContext` at module import time.
 - Keep default playback gain quiet. The current default is `0.2`.
@@ -52,6 +62,14 @@ pnpm demo:qa
 WebKit when those browser engines are installed locally.
 
 See `TESTING.md` for the manual audio QA checklist.
+
+## Docs And Copy
+
+- Put user-facing technical docs in `docs/`.
+- Keep package-specific API notes in `packages/*/README.md`.
+- Keep release and governance docs at the repository root.
+- Any hearing-test-style example must include the non-medical disclaimer.
+- Prefer concrete code samples over broad marketing copy.
 
 ## Release Notes
 

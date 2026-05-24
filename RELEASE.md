@@ -5,7 +5,7 @@
 - Node `>=22.13`
 - pnpm `11.3.0`
 - npm account with publish access to the `@webaudio-kit` scope
-- GitHub secret `NPM_TOKEN` if using the release workflow
+- GitHub secret `NPM_TOKEN` with bypass 2FA enabled, or npm trusted publishing
 
 The package names are:
 
@@ -63,3 +63,17 @@ pnpm release:publish-tarballs .release-packages
 ```
 
 Do not publish if manual audio QA has not been completed.
+
+## Trusted Publishing
+
+If npm trusted publishing is configured, it should point to:
+
+```txt
+GitHub owner: i-afaqrashid
+Repository: webaudio-kit
+Workflow filename: publish.yml
+Allowed action: npm publish
+```
+
+The publish workflow already includes `id-token: write`. If token publishing is
+used instead, the token must be able to publish without an OTP prompt.

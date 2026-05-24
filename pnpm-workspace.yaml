@@ -3,5 +3,8 @@ packages:
   - "apps/*"
 allowBuilds:
   esbuild: true
+  sharp: true
+overrides:
+  postcss: ^8.5.15
 minimumReleaseAgeExclude:
   - tinyexec@1.2.2

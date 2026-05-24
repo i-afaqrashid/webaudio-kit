@@ -16,7 +16,10 @@
   "author": "i-afaqrashid <i.afaqrashid@gmail.com>",
   "scripts": {
     "build": "pnpm -r --filter './packages/*' build",
-    "bench": "vitest bench --run",
+    "bench": "node scripts/run-benchmarks.mjs",
+    "site:dev": "pnpm --filter @webaudio-kit/site dev",
+    "site:build": "pnpm --filter @webaudio-kit/site build",
+    "site:start": "pnpm --filter @webaudio-kit/site start",
     "demo:dev": "pnpm --filter @webaudio-kit/demo dev",
     "demo:build": "pnpm --filter @webaudio-kit/demo build",
     "demo:qa": "node scripts/demo-qa.mjs",
@@ -32,7 +35,7 @@
     "test:watch": "vitest",
     "lint": "eslint . --max-warnings=0",
     "format:check": "prettier --check .",
-    "verify": "pnpm test && pnpm typecheck && pnpm build && pnpm demo:build && pnpm lint && pnpm format:check"
+    "verify": "pnpm test && pnpm typecheck && pnpm build && pnpm demo:build && pnpm site:build && pnpm lint && pnpm format:check"
   },
   "engines": {
     "node": ">=22.13"

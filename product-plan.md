@@ -140,7 +140,7 @@ webaudio-kit/
 
 ## MVP
 
-Version 0.1 should include only:
+The first public release should include only:
 
 - `AudioProvider`
 - `useAudioContext`

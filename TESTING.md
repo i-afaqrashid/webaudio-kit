@@ -12,8 +12,8 @@ pnpm release:check
 pnpm release:verify-tag v1.0.0
 ```
 
-`pnpm verify` runs unit tests, TypeScript, package builds, demo build, lint, and
-format checks.
+`pnpm verify` runs unit tests, TypeScript, package builds, demo build, site
+build, lint, and format checks.
 
 `pnpm smoke:pack` packs `@webaudio-kit/core` and `@webaudio-kit/react`, installs
 the tarballs into a clean temporary app, and imports the public APIs.
