@@ -15,3 +15,5 @@
   the demo app.
 - Release, security, support, testing, conduct, issue template, and npm publish
   workflow documentation.
+- Full local release rehearsal command with browser demo QA.
+- Local npm publish dry-run command for generated tarballs.

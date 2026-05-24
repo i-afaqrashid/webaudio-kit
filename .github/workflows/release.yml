@@ -50,8 +50,27 @@ jobs:
         env:
           RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
 
+      - name: Check npm authentication
+        run: npm whoami
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Release check
         run: pnpm release:check
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium firefox webkit
+
+      - name: Install video tooling
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Browser demo QA
+        run: pnpm demo:qa
+
+      - name: Dry-run publish tarballs
+        run: pnpm release:dry-run
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish core
         shell: bash

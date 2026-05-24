@@ -81,6 +81,8 @@ pnpm demo:dev
 pnpm demo:qa
 pnpm smoke:pack
 pnpm release:check
+pnpm release:check:full
+pnpm release:dry-run
 pnpm verify
 ```
 
@@ -93,6 +95,12 @@ temporary app.
 
 `pnpm release:check` runs the full verification gate and package smoke check
 used before tagging a release.
+
+`pnpm release:check:full` adds browser demo QA on top of the release check. Run
+it before publishing when Playwright browsers and `ffmpeg` are installed.
+
+`pnpm release:dry-run` runs `npm publish --dry-run` against the generated
+tarballs under `.release-packages/`.
 
 ## Package Names
 

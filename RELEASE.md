@@ -19,9 +19,9 @@ publish still requires access to the npm `@webaudio-kit` scope.
 
 ```sh
 pnpm install --frozen-lockfile
-pnpm verify
-pnpm smoke:pack
-pnpm demo:qa
+pnpm release:check:full
+pnpm release:check:tag v0.1.0
+pnpm release:dry-run
 ```
 
 Review:
@@ -54,7 +54,10 @@ this order:
 Use this only if the GitHub workflow is not configured yet.
 
 ```sh
-pnpm release:check
+pnpm release:check:full
+pnpm release:check:tag v0.1.0
+pnpm release:dry-run
+npm whoami
 npm publish .release-packages/webaudio-kit-core-0.1.0.tgz --access public
 npm publish .release-packages/webaudio-kit-react-0.1.0.tgz --access public
 ```

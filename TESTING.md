@@ -7,6 +7,7 @@ Run the full local gate:
 ```sh
 pnpm verify
 pnpm smoke:pack
+pnpm release:check
 ```
 
 `pnpm verify` runs unit tests, TypeScript, package builds, demo build, lint, and
@@ -14,6 +15,8 @@ format checks.
 
 `pnpm smoke:pack` packs `@webaudio-kit/core` and `@webaudio-kit/react`, installs
 the tarballs into a clean temporary app, and imports the public APIs.
+
+`pnpm release:check` runs `pnpm verify` and `pnpm smoke:pack`.
 
 ## Browser Demo QA
 
@@ -31,6 +34,15 @@ pnpm demo:qa
 
 This starts the demo, exercises it in Chromium, Firefox, and WebKit, and writes
 demo artifacts under `docs/assets/`.
+
+For a full local release rehearsal:
+
+```sh
+pnpm release:check:full
+pnpm release:dry-run
+```
+
+This runs the release gate, browser demo QA, and npm publish dry-run.
 
 ## Manual Audio QA
 
