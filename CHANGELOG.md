@@ -1,6 +1,20 @@
 # Changelog
 
-## 1.0.0 - Unreleased
+## 1.1.0 - 2026-05-24
+
+### Added
+
+- `WaveformCanvas` in `@webaudio-kit/react` for reusable analyser waveform
+  rendering with an idle state before playback starts.
+- Package smoke coverage for the new `WaveformCanvas` public export.
+
+### Changed
+
+- Vite demo and public site now use the shared `WaveformCanvas` component
+  instead of duplicating canvas drawing logic.
+- Public site navigation no longer includes a roadmap page.
+
+## 1.0.0 - 2026-05-24
 
 ### Added
 
