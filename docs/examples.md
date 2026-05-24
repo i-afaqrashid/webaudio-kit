@@ -121,6 +121,30 @@ function AnalyserPanel() {
 }
 ```
 
+## Safe Audio Test Mode
+
+```tsx
+function AudioTestModePanel() {
+  const testMode = useAudioTestMode();
+
+  return (
+    <section>
+      <p>{testMode.currentStep?.label ?? "Idle"}</p>
+      <button onClick={() => void testMode.run()}>Run test mode</button>
+      <button onClick={testMode.stop}>Stop</button>
+      <ol>
+        {testMode.steps.map((step) => (
+          <li key={step.id}>{step.label}</li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+```
+
+`useAudioTestMode()` is a developer diagnostic helper. It runs only after a user
+action and uses conservative default gains.
+
 ## Metronome Prototype
 
 ```tsx

@@ -285,7 +285,8 @@ select {
 .demoState span,
 .controlHead span,
 .rangeControl small,
-.proofLabel {
+.proofLabel,
+.testStepList small {
   color: var(--muted);
   font-family:
     ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
@@ -347,15 +348,47 @@ select {
 }
 
 .sweepControls p,
-.noiseControls p {
+.noiseControls p,
+.testModeControls p {
   color: #374035;
   font-size: 14px;
   line-height: 1.55;
   margin: 16px 0 0;
 }
 
-.noiseControls {
+.noiseControls,
+.testModeControls {
   grid-column: 1 / -1;
+}
+
+.testStepList {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  list-style: none;
+  margin: 15px 0 0;
+  padding: 0;
+}
+
+.testStepList li {
+  background: #f9fbf4;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 9px;
+}
+
+.testStepList li.active {
+  background: #f0f8d3;
+  border-color: #9ac323;
+}
+
+.testStepList span {
+  font-size: 12px;
+  font-weight: 760;
+  overflow-wrap: anywhere;
 }
 
 .segmentedControl {
@@ -722,6 +755,10 @@ select {
 
   .demoControls {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .testStepList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .packageGrid {

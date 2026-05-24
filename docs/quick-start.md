@@ -111,6 +111,29 @@ function VolumeReset() {
 }
 ```
 
+## Run Safe Test Mode
+
+```tsx
+import { useAudioTestMode } from "@webaudio-kit/react";
+
+function AudioSelfCheck() {
+  const testMode = useAudioTestMode();
+
+  return (
+    <>
+      <button onClick={() => void testMode.run()}>
+        {testMode.isRunning ? "Restart test mode" : "Run test mode"}
+      </button>
+      <button onClick={testMode.stop}>Stop</button>
+      <p>{testMode.currentStep?.label ?? "Idle"}</p>
+    </>
+  );
+}
+```
+
+The default sequence uses short low-gain steps for tone output, stereo pan,
+sweep scheduling, noise buffers, and analyser routing.
+
 ## Important Browser Rule
 
 Browsers normally block audio until playback starts from a user gesture. Call

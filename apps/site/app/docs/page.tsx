@@ -29,6 +29,11 @@ const apiCards = [
     copy: "Plays short white, pink, or brown noise buffers through the provider graph.",
   },
   {
+    icon: "shield" as const,
+    title: "useAudioTestMode",
+    copy: "Runs short low-gain checks for tone, pan, sweep, noise, and analyser routing.",
+  },
+  {
     icon: "activity" as const,
     title: "useAnalyser",
     copy: "Returns the analyser node so UI can render waveform or spectrum data.",
@@ -69,6 +74,7 @@ export default function DocsPage() {
               <a href="#tone">Tone hook</a>
               <a href="#sweep">Sweep hook</a>
               <a href="#noise">Noise hook</a>
+              <a href="#test-mode">Test mode</a>
               <a href="#helpers">API helpers</a>
               <a href="#agent-brief">Agent brief</a>
               <a href="#browser">Browser behavior</a>
@@ -147,6 +153,17 @@ sweep.stop();`}</CodeBlock>
 
 await noise.play();
 noise.stop();`}</CodeBlock>
+
+              <h2 id="test-mode">Audio test mode</h2>
+              <p>
+                <code>useAudioTestMode</code> runs a short low-gain diagnostic
+                sequence for tone output, stereo pan, sweep scheduling, noise
+                buffers, and analyser routing.
+              </p>
+              <CodeBlock title="test mode">{`const testMode = useAudioTestMode();
+
+await testMode.run();
+testMode.stop();`}</CodeBlock>
 
               <h2 id="helpers">React surfaces and helpers</h2>
               <div className="apiGrid">

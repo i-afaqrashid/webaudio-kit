@@ -89,6 +89,7 @@ Current examples:
 
 - `examples/vite-tone-panel`
 - `examples/next-provider-example`
+- `examples/audio-test-mode`
 
 Each example should include:
 

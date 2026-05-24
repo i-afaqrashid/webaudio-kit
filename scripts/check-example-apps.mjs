@@ -10,7 +10,11 @@ const root = dirname(
 );
 const packDir = join(root, ".release-packages");
 const skipBuild = process.argv.includes("--skip-build");
-const examples = ["vite-tone-panel", "next-provider-example"];
+const examples = [
+  "vite-tone-panel",
+  "next-provider-example",
+  "audio-test-mode",
+];
 
 if (!skipBuild) {
   run("pnpm", ["build"], root);

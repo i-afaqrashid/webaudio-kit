@@ -41,10 +41,12 @@ The current public surface is intentionally small:
 - `useTone`
 - `useFrequencySweep`
 - `useNoise`
+- `useAudioTestMode`
 - `useVolume`
 - `useAnalyser`
 - `WaveformCanvas`
 - `SpectrumCanvas`
+- `createDefaultAudioTestModeSteps`
 
 The React package entry preserves `"use client"` for Next.js App Router
 projects. Keep hook usage in client components and trigger playback from click,

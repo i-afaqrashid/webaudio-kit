@@ -10,6 +10,7 @@ import {
   gainToDb,
   useAnalyser,
   useAudioContext,
+  useAudioTestMode,
   useFrequencySweep,
   useNoise,
   useTone,
@@ -38,6 +39,7 @@ function DemoControls() {
   const noteName = frequencyToNoteName(frequency);
   const audio = useAudioContext();
   const volume = useVolume();
+  const audioTest = useAudioTestMode();
   const tone = useTone({ frequency, gain, pan, type });
   const sweep = useFrequencySweep({
     from: 250,
@@ -57,25 +59,36 @@ function DemoControls() {
   const playTone = async () => {
     sweep.stop();
     noise.stop();
+    audioTest.stop();
     await tone.play();
   };
 
   const runSweep = async () => {
     tone.stop();
     noise.stop();
+    audioTest.stop();
     await sweep.play();
   };
 
   const playNoise = async () => {
     tone.stop();
     sweep.stop();
+    audioTest.stop();
     await noise.play();
+  };
+
+  const runTestMode = async () => {
+    tone.stop();
+    sweep.stop();
+    noise.stop();
+    await audioTest.run();
   };
 
   const stopAll = () => {
     tone.stop();
     sweep.stop();
     noise.stop();
+    audioTest.stop();
   };
   const signalState = tone.isPlaying
     ? "tone"
@@ -83,7 +96,9 @@ function DemoControls() {
       ? "sweep"
       : noise.isPlaying
         ? "noise"
-        : "idle";
+        : audioTest.isRunning
+          ? "test"
+          : "idle";
 
   return (
     <div className="demoShell" aria-label="Interactive Web Audio demo">
@@ -251,6 +266,42 @@ function DemoControls() {
               type="button"
             >
               {noise.isPlaying ? "Restart noise" : "Play noise"}
+            </button>
+            <button className="button" onClick={stopAll} type="button">
+              Stop
+            </button>
+          </div>
+        </div>
+
+        <div className="controlPanel testModeControls">
+          <div className="controlHead">
+            <span>Test mode</span>
+            <strong>{audioTest.currentStep?.label ?? "ready"}</strong>
+          </div>
+          <p>
+            A short low-gain sequence checks center tone, stereo pan, sweep,
+            noise, and analyser routing without making medical claims.
+          </p>
+          <ol className="testStepList">
+            {audioTest.steps.map((step, index) => (
+              <li
+                className={
+                  audioTest.currentStepIndex === index ? "active" : undefined
+                }
+                key={step.id}
+              >
+                <span>{step.label}</span>
+                <small>{step.durationMs}ms</small>
+              </li>
+            ))}
+          </ol>
+          <div className="demoActions">
+            <button
+              className="button buttonPrimary"
+              onClick={runTestMode}
+              type="button"
+            >
+              {audioTest.isRunning ? "Restart test" : "Run test"}
             </button>
             <button className="button" onClick={stopAll} type="button">
               Stop
