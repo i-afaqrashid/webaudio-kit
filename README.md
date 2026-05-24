@@ -82,6 +82,7 @@ pnpm install
 pnpm test
 pnpm typecheck
 pnpm build
+pnpm bench
 pnpm site:dev
 pnpm site:build
 pnpm demo:dev
@@ -102,6 +103,10 @@ Playwright, then writes a demo screenshot, WebM, and GIF under `docs/assets/`.
 `pnpm smoke:pack` packs both publishable packages and imports them from a clean
 temporary app.
 
+`pnpm bench` runs local performance benchmarks for math helpers, playback graph
+scheduling, analyser frame processing, and React audio hooks. Treat benchmark
+numbers as local trend signals, not release gates.
+
 `pnpm release:check` runs the full verification gate and package smoke check
 used before tagging a release.
 
@@ -116,6 +121,20 @@ metadata.
 `pnpm release:dry-run` rebuilds and smoke-tests the package tarballs, checks npm
 for already-published versions, then runs `npm publish --dry-run` in the same
 package order used by the tag-gated publish workflow.
+
+## Release Publishing
+
+Publishing is triggered by stable semver tags such as `v1.0.0`. The GitHub
+workflow uses Node 24, npm provenance, a cached pnpm store, release tag
+verification, workspace verification, dependency audit, package smoke testing,
+and ordered package publishing.
+
+For npm authentication, prefer npm trusted publishing for the
+`i-afaqrashid/webaudio-kit` repository and `.github/workflows/publish.yml`
+workflow. If token-based publishing is used instead, the GitHub Actions
+`NPM_TOKEN` secret must be a granular npm token with publish access to the
+`@webaudio-kit` scope and bypass 2FA enabled, otherwise npm will stop the
+release with an OTP prompt.
 
 ## Package Names
 
