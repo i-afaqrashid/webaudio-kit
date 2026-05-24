@@ -1,0 +1,11 @@
+node_modules
+dist
+coverage
+.release-packages
+.tmp
+output
+pnpm-lock.yaml
+packages/*/dist
+apps/demo/dist
+product-plan.md
+publicity-plan.md

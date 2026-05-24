@@ -1,0 +1,53 @@
+{
+  "name": "@webaudio-kit/react",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "React primitives for browser audio apps.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/i-afaqrashid/webaudio-kit.git",
+    "directory": "packages/react"
+  },
+  "homepage": "https://github.com/i-afaqrashid/webaudio-kit#readme",
+  "bugs": {
+    "url": "https://github.com/i-afaqrashid/webaudio-kit/issues"
+  },
+  "keywords": [
+    "react",
+    "web-audio",
+    "webaudio",
+    "audio",
+    "typescript",
+    "hooks",
+    "tone",
+    "frequency-sweep"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20.10"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "i-afaqrashid <i.afaqrashid@gmail.com>",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup src/index.tsx --format esm --dts --clean --external react --tsconfig ../../tsconfig.base.json"
+  },
+  "dependencies": {
+    "@webaudio-kit/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  }
+}

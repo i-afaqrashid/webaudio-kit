@@ -1,0 +1,46 @@
+{
+  "name": "@webaudio-kit/core",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Core browser audio primitives for webaudio-kit.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/i-afaqrashid/webaudio-kit.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/i-afaqrashid/webaudio-kit#readme",
+  "bugs": {
+    "url": "https://github.com/i-afaqrashid/webaudio-kit/issues"
+  },
+  "keywords": [
+    "web-audio",
+    "webaudio",
+    "audio",
+    "typescript",
+    "tone",
+    "frequency-sweep",
+    "browser"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20.10"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "i-afaqrashid <i.afaqrashid@gmail.com>",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean --tsconfig ../../tsconfig.base.json"
+  }
+}
