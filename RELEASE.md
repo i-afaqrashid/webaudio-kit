@@ -43,9 +43,9 @@ git push origin v1.0.0
 ```
 
 The GitHub release workflow is tag-gated. It checks that the tag matches the
-package versions, verifies the workspace, audits dependencies, runs browser demo
-QA, refuses to republish versions already present on npm, then publishes the
-packed tarballs in this order:
+package versions, verifies the workspace, audits dependencies, refuses to
+republish versions already present on npm, then publishes the packed tarballs in
+this order:
 
 1. `@webaudio-kit/core`
 2. `@webaudio-kit/react`
