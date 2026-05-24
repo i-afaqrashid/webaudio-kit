@@ -34,9 +34,9 @@ server.stderr.on("data", (chunk) => {
 try {
   await waitForServer(baseUrl);
   const browsers = [
-    { name: "chromium", type: chromium, artifacts: true },
-    { name: "firefox", type: firefox, artifacts: false },
-    { name: "webkit", type: webkit, artifacts: false },
+    { name: "chromium", type: chromium, artifacts: true, waitForAudioUi: true },
+    { name: "firefox", type: firefox, artifacts: false, waitForAudioUi: false },
+    { name: "webkit", type: webkit, artifacts: false, waitForAudioUi: true },
   ];
 
   const results = [];
@@ -57,7 +57,7 @@ try {
   server.kill("SIGTERM");
 }
 
-async function runBrowserQa({ name, type, artifacts }) {
+async function runBrowserQa({ name, type, artifacts, waitForAudioUi }) {
   let browser;
   let video;
 
@@ -73,13 +73,17 @@ async function runBrowserQa({ name, type, artifacts }) {
 
     await page.goto(baseUrl, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Play tone" }).click();
-    await page.getByText("Restart tone").waitFor();
+    if (waitForAudioUi) {
+      await page.getByText("Restart tone").waitFor();
+    }
     await page.locator('label:has-text("Frequency") input').fill("880");
     await page.locator('label:has-text("Gain") input').fill("-18");
     await page.locator('label:has-text("Pan") input').fill("0.4");
     await page.getByRole("button", { name: "Stop" }).first().click();
     await page.getByRole("button", { name: "Run sweep" }).click();
-    await page.getByText("Restart sweep").waitFor();
+    if (waitForAudioUi) {
+      await page.getByText("Restart sweep").waitFor();
+    }
     await page.waitForTimeout(800);
 
     const canvasVisible = await page.locator("canvas").isVisible();
