@@ -79,7 +79,7 @@ for (const name of packageOrder) {
   ];
 
   if (dryRun) {
-    publishArgs.push("--dry-run");
+    publishArgs.push("--dry-run", "--loglevel=error");
   }
 
   run("npm", publishArgs);

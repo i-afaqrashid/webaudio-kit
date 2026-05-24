@@ -29,7 +29,7 @@
     "typecheck": "tsc -p tsconfig.base.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings=0",
     "format:check": "prettier --check .",
     "verify": "pnpm test && pnpm typecheck && pnpm build && pnpm demo:build && pnpm lint && pnpm format:check"
   },
