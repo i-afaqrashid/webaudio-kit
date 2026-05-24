@@ -43,6 +43,37 @@ function SweepDemo() {
 }
 ```
 
+## Noise Burst
+
+```tsx
+function NoiseBurst() {
+  const noise = useNoise({
+    type: "pink",
+    durationMs: 800,
+    gain: 0.08,
+  });
+
+  return (
+    <>
+      <button onClick={() => void noise.play()}>Play pink noise</button>
+      <button onClick={noise.stop}>Stop</button>
+    </>
+  );
+}
+```
+
+## Pitch Labels
+
+```tsx
+function PitchReadout({ frequency }: { frequency: number }) {
+  return (
+    <span>
+      {frequency} Hz / {frequencyToNoteName(frequency)}
+    </span>
+  );
+}
+```
+
 ## Volume Control
 
 ```tsx

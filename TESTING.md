@@ -10,7 +10,7 @@ pnpm bench
 pnpm smoke:pack
 pnpm examples:check
 pnpm release:check
-pnpm release:verify-tag v1.2.0
+pnpm release:verify-tag v1.3.0
 ```
 
 `pnpm verify` runs unit tests, TypeScript, package builds, demo build, site
@@ -40,14 +40,14 @@ pnpm bench
 Current benchmark coverage:
 
 - Audio math helpers converting dB/gain values and clamping playback
-  frequencies across 4,096-value batches.
+  frequencies across 4,096-value batches, plus note-name formatting.
 - `playTone` graph setup, finite-duration tone scheduling, stop cleanup, and
-  mixed tone/sweep scheduling with fake Web Audio nodes.
+  mixed tone/sweep/noise scheduling with fake Web Audio nodes.
 - `playFrequencySweep` ramp scheduling across realistic sweep ranges.
 - Analyser frame reads and waveform coordinate generation for 2,048-sample
   frames.
-- `AudioProvider`, `useTone`, `useFrequencySweep`, and `useVolume` render and
-  control overhead with a fake `AudioContext`.
+- `AudioProvider`, `useTone`, `useFrequencySweep`, `useNoise`, and `useVolume`
+  render and control overhead with a fake `AudioContext`.
 
 Benchmark results vary by machine and current system load. Treat them as local
 comparison signals, not hard pass/fail thresholds.
@@ -92,6 +92,7 @@ Checklist:
 - Confirm `Stop` silences playback.
 - Move frequency, gain, and pan controls.
 - Run the 250Hz to 8000Hz sweep.
+- Play the pink-noise burst.
 - Confirm the analyser visibly reacts.
 - Confirm the disclaimer is visible.
 

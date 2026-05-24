@@ -97,6 +97,12 @@ async function runBrowserQa({ name, type, artifacts, waitForAudioUi }) {
       await page.getByText("Restart sweep").waitFor();
     }
     await page.waitForTimeout(800);
+    await page.getByRole("button", { name: "pink" }).click();
+    await page.getByRole("button", { name: "Play noise" }).click();
+    if (waitForAudioUi) {
+      await page.getByText("Restart noise").waitFor();
+    }
+    await page.waitForTimeout(500);
 
     const waveformVisible = await page
       .getByLabel("Waveform analyser")

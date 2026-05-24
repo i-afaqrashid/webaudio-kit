@@ -15,13 +15,43 @@ export type FrequencySweepOptions = {
   pan?: number;
 };
 
+export type NoiseType = "white" | "pink" | "brown";
+
+export type NoiseOptions = {
+  durationMs: number;
+  gain?: number;
+  pan?: number;
+  type?: NoiseType;
+};
+
 export type PlaybackHandle = {
   stop(): void;
+};
+
+export type NoteNameOptions = {
+  concertA?: number;
+  includeCents?: boolean;
 };
 
 export const DEFAULT_GAIN = 0.2;
 export const DEFAULT_MIN_FREQUENCY = 20;
 export const DEFAULT_MAX_FREQUENCY = 20_000;
+export const DEFAULT_CONCERT_A = 440;
+
+const NOTE_NAMES = [
+  "C",
+  "C#",
+  "D",
+  "D#",
+  "E",
+  "F",
+  "F#",
+  "G",
+  "G#",
+  "A",
+  "A#",
+  "B",
+];
 
 export function dbToGain(db: number): number {
   return 10 ** (db / 20);
@@ -50,23 +80,73 @@ export function clampFrequency(
   return Math.min(high, Math.max(low, value));
 }
 
+export function midiToFrequency(
+  midiNote: number,
+  concertA = DEFAULT_CONCERT_A,
+): number {
+  if (!Number.isFinite(midiNote) || !isPositiveFinite(concertA)) {
+    return Number.NaN;
+  }
+
+  return concertA * 2 ** ((midiNote - 69) / 12);
+}
+
+export function frequencyToMidi(
+  frequency: number,
+  concertA = DEFAULT_CONCERT_A,
+): number {
+  if (!isPositiveFinite(frequency) || !isPositiveFinite(concertA)) {
+    return Number.NaN;
+  }
+
+  return 69 + 12 * Math.log2(frequency / concertA);
+}
+
+export function frequencyToNoteName(
+  frequency: number,
+  options: NoteNameOptions = {},
+): string {
+  const midi = frequencyToMidi(frequency, options.concertA);
+  if (!Number.isFinite(midi)) {
+    return "unknown";
+  }
+
+  const roundedMidi = Math.round(midi);
+  const noteName = NOTE_NAMES[positiveModulo(roundedMidi, 12)]!;
+  const octave = Math.floor(roundedMidi / 12) - 1;
+  const base = `${noteName}${octave}`;
+
+  if (!options.includeCents) {
+    return base;
+  }
+
+  const cents = Math.round((midi - roundedMidi) * 100);
+  if (cents === 0) {
+    return base;
+  }
+
+  return `${base} ${cents > 0 ? "+" : ""}${cents}c`;
+}
+
 export function playTone(
   context: AudioContext,
   options: ToneOptions,
   destination: AudioNode = context.destination,
 ): PlaybackHandle {
-  const graph = createPlaybackGraph(context, options, destination);
+  const graph = createSourcePlaybackGraph(
+    context,
+    context.createOscillator(),
+    options,
+    destination,
+  );
   const now = context.currentTime;
 
-  graph.oscillator.frequency.setValueAtTime(
-    clampFrequency(options.frequency),
-    now,
-  );
-  graph.oscillator.start(now);
+  graph.source.frequency.setValueAtTime(clampFrequency(options.frequency), now);
+  graph.source.start(now);
 
   const durationSeconds = durationToSeconds(options.durationMs);
   if (durationSeconds !== undefined) {
-    graph.oscillator.stop(now + durationSeconds);
+    graph.source.stop(now + durationSeconds);
   }
 
   return createPlaybackHandle(context, graph);
@@ -77,35 +157,68 @@ export function playFrequencySweep(
   options: FrequencySweepOptions,
   destination: AudioNode = context.destination,
 ): PlaybackHandle {
-  const graph = createPlaybackGraph(context, options, destination);
+  const graph = createSourcePlaybackGraph(
+    context,
+    context.createOscillator(),
+    options,
+    destination,
+  );
   const now = context.currentTime;
   const sweepDurationSeconds = durationToSeconds(options.durationMs, true);
   const end = now + sweepDurationSeconds;
 
-  graph.oscillator.frequency.cancelScheduledValues(now);
-  graph.oscillator.frequency.setValueAtTime(clampFrequency(options.from), now);
-  graph.oscillator.frequency.linearRampToValueAtTime(
+  graph.source.frequency.cancelScheduledValues(now);
+  graph.source.frequency.setValueAtTime(clampFrequency(options.from), now);
+  graph.source.frequency.linearRampToValueAtTime(
     clampFrequency(options.to),
     end,
   );
-  graph.oscillator.start(now);
-  graph.oscillator.stop(end);
+  graph.source.start(now);
+  graph.source.stop(end);
 
   return createPlaybackHandle(context, graph);
 }
 
-type PlaybackGraph = {
-  oscillator: OscillatorNode;
+export function playNoise(
+  context: AudioContext,
+  options: NoiseOptions,
+  destination: AudioNode = context.destination,
+): PlaybackHandle {
+  const durationSeconds = durationToSeconds(options.durationMs, true);
+  const source = context.createBufferSource();
+  source.buffer = createNoiseBuffer(
+    context,
+    normalizeNoiseType(options.type),
+    durationSeconds,
+  );
+
+  const graph = createSourcePlaybackGraph(
+    context,
+    source,
+    options,
+    destination,
+  );
+  const now = context.currentTime;
+  const end = now + durationSeconds;
+
+  graph.source.start(now);
+  graph.source.stop(end);
+
+  return createPlaybackHandle(context, graph);
+}
+
+type PlaybackGraph<TSource extends AudioScheduledSourceNode> = {
+  source: TSource;
   gain: GainNode;
   panner?: StereoPannerNode;
 };
 
-function createPlaybackGraph(
+function createSourcePlaybackGraph<TSource extends AudioScheduledSourceNode>(
   context: AudioContext,
-  options: Pick<ToneOptions, "gain" | "type" | "pan">,
+  source: TSource,
+  options: PlaybackGraphOptions,
   destination: AudioNode,
-): PlaybackGraph {
-  const oscillator = context.createOscillator();
+): PlaybackGraph<TSource> {
   const gain = context.createGain();
   const panner =
     typeof context.createStereoPanner === "function"
@@ -113,10 +226,12 @@ function createPlaybackGraph(
       : undefined;
   const now = context.currentTime;
 
-  oscillator.type = options.type ?? "sine";
+  if ("type" in source && typeof options.type === "string") {
+    source.type = options.type;
+  }
   gain.gain.setValueAtTime(normalizeGain(options.gain), now);
 
-  oscillator.connect(gain);
+  source.connect(gain);
   if (panner) {
     panner.pan.setValueAtTime(normalizePan(options.pan), now);
     gain.connect(panner);
@@ -125,25 +240,31 @@ function createPlaybackGraph(
     gain.connect(destination);
   }
 
-  return { oscillator, gain, panner };
+  return { source, gain, panner };
 }
 
-function createPlaybackHandle(
+type PlaybackGraphOptions = {
+  gain?: number;
+  pan?: number;
+  type?: string;
+};
+
+function createPlaybackHandle<TSource extends AudioScheduledSourceNode>(
   context: AudioContext,
-  graph: PlaybackGraph,
+  graph: PlaybackGraph<TSource>,
 ): PlaybackHandle {
   let stopped = false;
 
   const cleanup = () => {
     stopped = true;
-    safeDisconnect(graph.oscillator);
+    safeDisconnect(graph.source);
     safeDisconnect(graph.gain);
     if (graph.panner) {
       safeDisconnect(graph.panner);
     }
   };
 
-  graph.oscillator.onended = cleanup;
+  graph.source.onended = cleanup;
 
   return {
     stop() {
@@ -152,12 +273,71 @@ function createPlaybackHandle(
       }
 
       try {
-        graph.oscillator.stop(context.currentTime);
+        graph.source.stop(context.currentTime);
       } catch {
         cleanup();
       }
     },
   };
+}
+
+function createNoiseBuffer(
+  context: AudioContext,
+  type: NoiseType,
+  durationSeconds: number,
+): AudioBuffer {
+  const length = Math.max(1, Math.ceil(context.sampleRate * durationSeconds));
+  const buffer = context.createBuffer(1, length, context.sampleRate);
+  const samples = buffer.getChannelData(0);
+
+  if (type === "pink") {
+    fillPinkNoise(samples);
+  } else if (type === "brown") {
+    fillBrownNoise(samples);
+  } else {
+    fillWhiteNoise(samples);
+  }
+
+  return buffer;
+}
+
+function fillWhiteNoise(samples: Float32Array): void {
+  for (let index = 0; index < samples.length; index += 1) {
+    samples[index] = randomBipolar();
+  }
+}
+
+function fillPinkNoise(samples: Float32Array): void {
+  let b0 = 0;
+  let b1 = 0;
+  let b2 = 0;
+  let b3 = 0;
+  let b4 = 0;
+  let b5 = 0;
+  let b6 = 0;
+
+  for (let index = 0; index < samples.length; index += 1) {
+    const white = randomBipolar();
+    b0 = 0.99886 * b0 + white * 0.0555179;
+    b1 = 0.99332 * b1 + white * 0.0750759;
+    b2 = 0.969 * b2 + white * 0.153852;
+    b3 = 0.8665 * b3 + white * 0.3104856;
+    b4 = 0.55 * b4 + white * 0.5329522;
+    b5 = -0.7616 * b5 - white * 0.016898;
+    const pink = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+    b6 = white * 0.115926;
+    samples[index] = clampSample(pink * 0.11);
+  }
+}
+
+function fillBrownNoise(samples: Float32Array): void {
+  let last = 0;
+
+  for (let index = 0; index < samples.length; index += 1) {
+    const white = randomBipolar();
+    last = (last + 0.02 * white) / 1.02;
+    samples[index] = clampSample(last * 3.5);
+  }
 }
 
 function normalizeGain(value: number | undefined): number {
@@ -178,6 +358,30 @@ function normalizePan(value: number | undefined): number {
   }
 
   return Math.min(1, Math.max(-1, value));
+}
+
+function normalizeNoiseType(value: NoiseType | undefined): NoiseType {
+  if (value === "pink" || value === "brown") {
+    return value;
+  }
+
+  return "white";
+}
+
+function randomBipolar(): number {
+  return Math.random() * 2 - 1;
+}
+
+function clampSample(value: number): number {
+  return Math.max(-1, Math.min(1, value));
+}
+
+function isPositiveFinite(value: number): boolean {
+  return Number.isFinite(value) && value > 0;
+}
+
+function positiveModulo(value: number, divisor: number): number {
+  return ((value % divisor) + divisor) % divisor;
 }
 
 function durationToSeconds(durationMs: number, required: true): number;

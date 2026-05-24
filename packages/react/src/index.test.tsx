@@ -8,6 +8,7 @@ import {
   useAnalyser,
   useAudioContext,
   useFrequencySweep,
+  useNoise,
   useTone,
   useVolume,
 } from "./index";
@@ -75,6 +76,43 @@ class FakeOscillatorNode extends FakeAudioNode {
   }
 }
 
+class FakeAudioBuffer {
+  channelData: Float32Array[];
+
+  constructor(
+    public numberOfChannels: number,
+    public length: number,
+    public sampleRate: number,
+  ) {
+    this.channelData = Array.from(
+      { length: numberOfChannels },
+      () => new Float32Array(length),
+    );
+  }
+
+  getChannelData(channel: number) {
+    return this.channelData[channel]!;
+  }
+}
+
+class FakeAudioBufferSourceNode extends FakeAudioNode {
+  buffer: AudioBuffer | null = null;
+  startedAt?: number;
+  stoppedAt?: number;
+  stopCalls = 0;
+  onended: (() => void) | null = null;
+
+  start(time?: number) {
+    this.startedAt = time;
+  }
+
+  stop(time?: number) {
+    this.stopCalls += 1;
+    this.stoppedAt = time;
+    this.onended?.();
+  }
+}
+
 class FakeGainNode extends FakeAudioNode {
   gain = new FakeAudioParam(1);
 }
@@ -106,6 +144,7 @@ class FakeAudioContext {
   static instances: FakeAudioContext[] = [];
 
   currentTime = 0;
+  sampleRate = 48_000;
   destination = new FakeAudioNode();
   state: AudioContextState = "suspended";
   resume = vi.fn(async () => {
@@ -115,6 +154,8 @@ class FakeAudioContext {
     this.state = "closed";
   });
   oscillators: FakeOscillatorNode[] = [];
+  bufferSources: FakeAudioBufferSourceNode[] = [];
+  buffers: FakeAudioBuffer[] = [];
   gains: FakeGainNode[] = [];
   analysers: FakeAnalyserNode[] = [];
   panners: FakeStereoPannerNode[] = [];
@@ -127,6 +168,18 @@ class FakeAudioContext {
     const oscillator = new FakeOscillatorNode();
     this.oscillators.push(oscillator);
     return oscillator;
+  }
+
+  createBuffer(numberOfChannels: number, length: number, sampleRate: number) {
+    const buffer = new FakeAudioBuffer(numberOfChannels, length, sampleRate);
+    this.buffers.push(buffer);
+    return buffer;
+  }
+
+  createBufferSource() {
+    const source = new FakeAudioBufferSourceNode();
+    this.bufferSources.push(source);
+    return source;
   }
 
   createGain() {
@@ -159,6 +212,7 @@ function Harness() {
   const audio = useAudioContext();
   const tone = useTone({ frequency: 440 });
   const sweep = useFrequencySweep({ from: 250, to: 8000, durationMs: 1000 });
+  const noise = useNoise({ durationMs: 500, gain: 0.05, type: "white" });
   const volume = useVolume();
   const analyser = useAnalyser();
 
@@ -169,6 +223,7 @@ function Harness() {
       </span>
       <span data-testid="tone-playing">{String(tone.isPlaying)}</span>
       <span data-testid="sweep-playing">{String(sweep.isPlaying)}</span>
+      <span data-testid="noise-playing">{String(noise.isPlaying)}</span>
       <span data-testid="volume">{volume.gain.toFixed(1)}</span>
       <span data-testid="analyser-ready">{String(Boolean(analyser))}</span>
       <button type="button" onClick={() => void tone.play()}>
@@ -182,6 +237,12 @@ function Harness() {
       </button>
       <button type="button" onClick={() => sweep.stop()}>
         stop sweep
+      </button>
+      <button type="button" onClick={() => void noise.play()}>
+        play noise
+      </button>
+      <button type="button" onClick={() => noise.stop()}>
+        stop noise
       </button>
       <button type="button" onClick={() => void volume.setGain(0.4)}>
         set volume
@@ -236,6 +297,22 @@ function TimedToneHarness() {
       </button>
       <button type="button" onClick={() => tone.stop()}>
         stop timed
+      </button>
+    </div>
+  );
+}
+
+function TimedNoiseHarness() {
+  const noise = useNoise({ durationMs: 50, type: "brown" });
+
+  return (
+    <div>
+      <span data-testid="timed-noise-playing">{String(noise.isPlaying)}</span>
+      <button type="button" onClick={() => void noise.play()}>
+        play timed noise
+      </button>
+      <button type="button" onClick={() => noise.stop()}>
+        stop timed noise
       </button>
     </div>
   );
@@ -357,6 +434,28 @@ describe("AudioProvider", () => {
     ]);
   });
 
+  test("starts noise playback through the provider graph", async () => {
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <Harness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "play noise" }).click();
+    });
+
+    const context = FakeAudioContext.instances[0]!;
+    expect(screen.getByTestId("noise-playing").textContent).toBe("true");
+    expect(context.bufferSources).toHaveLength(1);
+    expect(context.buffers[0]?.length).toBe(24_000);
+    expect(context.bufferSources[0]?.connections).toEqual([context.gains[1]]);
+    expect(context.gains[1]?.connections).toEqual([context.panners[0]]);
+    expect(context.panners[0]?.connections).toEqual([context.gains[0]]);
+  });
+
   test("normalizes initial and updated volume values", async () => {
     vi.stubGlobal("AudioContext", FakeAudioContext);
 
@@ -473,6 +572,29 @@ describe("AudioProvider", () => {
     });
 
     expect(screen.getByTestId("timed-playing").textContent).toBe("false");
+  });
+
+  test("clears timed noise state after the requested duration", async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <TimedNoiseHarness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "play timed noise" }).click();
+    });
+
+    expect(screen.getByTestId("timed-noise-playing").textContent).toBe("true");
+
+    await act(async () => {
+      vi.advanceTimersByTime(50);
+    });
+
+    expect(screen.getByTestId("timed-noise-playing").textContent).toBe("false");
   });
 
   test("clears playback timers when stopped manually", async () => {

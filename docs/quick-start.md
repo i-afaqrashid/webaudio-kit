@@ -79,6 +79,22 @@ function SweepButton() {
 }
 ```
 
+## Play Noise
+
+```tsx
+import { useNoise } from "@webaudio-kit/react";
+
+function NoiseButton() {
+  const noise = useNoise({
+    type: "pink",
+    durationMs: 800,
+    gain: 0.08,
+  });
+
+  return <button onClick={() => void noise.play()}>Play pink noise</button>;
+}
+```
+
 ## Set Master Volume
 
 ```tsx

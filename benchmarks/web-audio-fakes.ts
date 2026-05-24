@@ -55,6 +55,41 @@ export class BenchmarkOscillatorNode extends BenchmarkAudioNode {
   }
 }
 
+export class BenchmarkAudioBuffer {
+  private readonly data: Float32Array[];
+
+  constructor(
+    public numberOfChannels: number,
+    public length: number,
+    public sampleRate: number,
+  ) {
+    this.data = Array.from(
+      { length: numberOfChannels },
+      () => new Float32Array(length),
+    );
+  }
+
+  getChannelData(channel: number) {
+    return this.data[channel]!;
+  }
+}
+
+export class BenchmarkAudioBufferSourceNode extends BenchmarkAudioNode {
+  buffer: AudioBuffer | null = null;
+  onended: (() => void) | null = null;
+  startCount = 0;
+  stopCount = 0;
+
+  start() {
+    this.startCount += 1;
+  }
+
+  stop() {
+    this.stopCount += 1;
+    this.onended?.();
+  }
+}
+
 export class BenchmarkGainNode extends BenchmarkAudioNode {
   gain = new BenchmarkAudioParam(1);
 }
@@ -79,8 +114,11 @@ export class BenchmarkAnalyserNode extends BenchmarkAudioNode {
 export class BenchmarkAudioContext {
   currentTime = 0;
   destination = new BenchmarkAudioNode();
+  sampleRate = 48_000;
   state: AudioContextState = "suspended";
   analysers = 0;
+  bufferSources = 0;
+  buffers = 0;
   gains = 0;
   oscillators = 0;
   panners = 0;
@@ -92,6 +130,16 @@ export class BenchmarkAudioContext {
   createAnalyser() {
     this.analysers += 1;
     return new BenchmarkAnalyserNode();
+  }
+
+  createBuffer(numberOfChannels: number, length: number, sampleRate: number) {
+    this.buffers += 1;
+    return new BenchmarkAudioBuffer(numberOfChannels, length, sampleRate);
+  }
+
+  createBufferSource() {
+    this.bufferSources += 1;
+    return new BenchmarkAudioBufferSourceNode();
   }
 
   createGain() {

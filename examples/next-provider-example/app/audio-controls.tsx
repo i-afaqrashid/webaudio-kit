@@ -5,6 +5,7 @@ import {
   SpectrumCanvas,
   WaveformCanvas,
   useFrequencySweep,
+  useNoise,
   useTone,
 } from "@webaudio-kit/react";
 
@@ -16,6 +17,7 @@ function Controls() {
     durationMs: 2400,
     gain: 0.12,
   });
+  const noise = useNoise({ durationMs: 800, gain: 0.08, type: "pink" });
 
   return (
     <div>
@@ -27,6 +29,9 @@ function Controls() {
       </button>
       <button type="button" onClick={() => void sweep.play()}>
         Run sweep
+      </button>
+      <button type="button" onClick={() => void noise.play()}>
+        Play pink noise
       </button>
       <WaveformCanvas
         backgroundColor="#10110f"

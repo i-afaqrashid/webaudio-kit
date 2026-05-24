@@ -32,12 +32,21 @@ function ToneButton() {
 }
 ```
 
+Noise bursts use the same provider graph:
+
+```tsx
+const noise = useNoise({ type: "pink", durationMs: 800, gain: 0.08 });
+
+<button onClick={() => void noise.play()}>Play pink noise</button>;
+```
+
 ## API
 
 - `AudioProvider`
 - `useAudioContext`
 - `useTone`
 - `useFrequencySweep`
+- `useNoise`
 - `useVolume`
 - `useAnalyser`
 - `WaveformCanvas`

@@ -1,5 +1,10 @@
 import { bench, describe } from "vitest";
-import { clampFrequency, dbToGain, gainToDb } from "@webaudio-kit/core";
+import {
+  clampFrequency,
+  dbToGain,
+  frequencyToNoteName,
+  gainToDb,
+} from "@webaudio-kit/core";
 
 const options = {
   time: 250,
@@ -75,6 +80,20 @@ describe("core math helpers", () => {
         const gain = dbToGain(dbValues[index]);
         total += gainToDb(gain);
         total += clampFrequency(frequencies[index]);
+      }
+
+      sink = total;
+    },
+    options,
+  );
+
+  bench(
+    "frequencyToNoteName: format 4,096 pitch labels",
+    () => {
+      let total = 0;
+
+      for (const value of frequencies) {
+        total += frequencyToNoteName(clampFrequency(value)).length;
       }
 
       sink = total;

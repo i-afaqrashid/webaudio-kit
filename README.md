@@ -5,8 +5,9 @@ React and TypeScript primitives for serious browser audio apps.
 > Build browser audio interfaces in React without fighting AudioContext.
 
 `webaudio-kit` is a small browser audio toolkit for React apps that need tone
-generation, frequency sweeps, volume controls, stereo panning, and analyser
-data without hand-managing raw Web Audio node lifecycles.
+generation, frequency sweeps, noise bursts, volume controls, stereo panning,
+pitch helpers, and analyser data without hand-managing raw Web Audio node
+lifecycles.
 
 ![webaudio-kit demo](./docs/assets/demo.gif)
 
@@ -90,14 +91,19 @@ export function AudioIsland() {
 - `@webaudio-kit/core`
   - `playTone()`
   - `playFrequencySweep()`
+  - `playNoise()`
   - `dbToGain()`
   - `gainToDb()`
   - `clampFrequency()`
+  - `midiToFrequency()`
+  - `frequencyToMidi()`
+  - `frequencyToNoteName()`
 - `@webaudio-kit/react`
   - `AudioProvider`
   - `useAudioContext`
   - `useTone`
   - `useFrequencySweep`
+  - `useNoise`
   - `useVolume`
   - `useAnalyser`
   - `WaveformCanvas`
@@ -105,6 +111,7 @@ export function AudioIsland() {
 - `apps/demo`
   - tone generator
   - 250Hz to 8000Hz sweep
+  - white, pink, and brown noise bursts
   - reusable analyser waveform and spectrum canvases
 - `apps/site`
   - public landing page
@@ -127,7 +134,7 @@ pnpm examples:check
 pnpm smoke:pack
 pnpm release:check
 pnpm release:check:full
-pnpm release:verify-tag v1.2.0
+pnpm release:verify-tag v1.3.0
 pnpm release:dry-run
 pnpm verify
 ```

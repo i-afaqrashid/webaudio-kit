@@ -1,9 +1,13 @@
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 import {
   clampFrequency,
   dbToGain,
+  frequencyToMidi,
+  frequencyToNoteName,
   gainToDb,
+  midiToFrequency,
   playFrequencySweep,
+  playNoise,
   playTone,
 } from "./index";
 
@@ -78,6 +82,50 @@ class FakeOscillatorNode extends FakeAudioNode {
     }
 
     this.stoppedAt = time;
+    if (time === undefined || time <= 5) {
+      this.onended?.();
+    }
+  }
+}
+
+class FakeAudioBuffer {
+  channelData: Float32Array[];
+
+  constructor(
+    public numberOfChannels: number,
+    public length: number,
+    public sampleRate: number,
+  ) {
+    this.channelData = Array.from(
+      { length: numberOfChannels },
+      () => new Float32Array(length),
+    );
+  }
+
+  getChannelData(channel: number) {
+    return this.channelData[channel]!;
+  }
+}
+
+class FakeAudioBufferSourceNode extends FakeAudioNode {
+  buffer: AudioBuffer | null = null;
+  startedAt?: number;
+  stoppedAt?: number;
+  stopCalls = 0;
+  throwOnStop = false;
+  onended: (() => void) | null = null;
+
+  start(time?: number) {
+    this.startedAt = time;
+  }
+
+  stop(time?: number) {
+    this.stopCalls += 1;
+    if (this.throwOnStop) {
+      throw new Error("stop failed");
+    }
+
+    this.stoppedAt = time;
     this.onended?.();
   }
 }
@@ -92,8 +140,11 @@ class FakeStereoPannerNode extends FakeAudioNode {
 
 class FakeAudioContext {
   currentTime = 5;
+  sampleRate = 48_000;
   destination = new FakeAudioNode();
   oscillators: FakeOscillatorNode[] = [];
+  bufferSources: FakeAudioBufferSourceNode[] = [];
+  buffers: FakeAudioBuffer[] = [];
   gains: FakeGainNode[] = [];
   panners: FakeStereoPannerNode[] = [];
 
@@ -101,6 +152,18 @@ class FakeAudioContext {
     const oscillator = new FakeOscillatorNode();
     this.oscillators.push(oscillator);
     return oscillator;
+  }
+
+  createBuffer(numberOfChannels: number, length: number, sampleRate: number) {
+    const buffer = new FakeAudioBuffer(numberOfChannels, length, sampleRate);
+    this.buffers.push(buffer);
+    return buffer;
+  }
+
+  createBufferSource() {
+    const source = new FakeAudioBufferSourceNode();
+    this.bufferSources.push(source);
+    return source;
   }
 
   createGain() {
@@ -115,6 +178,10 @@ class FakeAudioContext {
     return panner;
   }
 }
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 describe("audio math helpers", () => {
   test("converts between decibels and linear gain", () => {
@@ -145,6 +212,27 @@ describe("audio math helpers", () => {
     expect(clampFrequency(440, 1000, 100)).toBe(440);
     expect(clampFrequency(2000, 1000, 100)).toBe(1000);
     expect(clampFrequency(Number.POSITIVE_INFINITY, 1000, 100)).toBe(100);
+  });
+
+  test("converts MIDI note numbers and frequencies", () => {
+    expect(midiToFrequency(69)).toBeCloseTo(440);
+    expect(midiToFrequency(60)).toBeCloseTo(261.625565, 5);
+    expect(frequencyToMidi(440)).toBeCloseTo(69);
+    expect(frequencyToMidi(261.625565)).toBeCloseTo(60, 4);
+  });
+
+  test("formats nearest note names with optional cent offsets", () => {
+    expect(frequencyToNoteName(440)).toBe("A4");
+    expect(frequencyToNoteName(261.625565)).toBe("C4");
+    expect(frequencyToNoteName(445, { includeCents: true })).toBe("A4 +20c");
+    expect(frequencyToNoteName(435, { includeCents: true })).toBe("A4 -20c");
+  });
+
+  test("returns NaN or unknown note names for invalid pitch inputs", () => {
+    expect(midiToFrequency(Number.NaN)).toBeNaN();
+    expect(frequencyToMidi(0)).toBeNaN();
+    expect(frequencyToMidi(Number.POSITIVE_INFINITY)).toBeNaN();
+    expect(frequencyToNoteName(-1)).toBe("unknown");
   });
 });
 
@@ -362,5 +450,103 @@ describe("playFrequencySweep", () => {
         durationMs: Number.POSITIVE_INFINITY,
       }),
     ).toThrow("durationMs must be a positive number");
+  });
+});
+
+describe("playNoise", () => {
+  test("creates a timed white-noise graph with safe defaults", () => {
+    const context = new FakeAudioContext();
+    const destination = new FakeAudioNode();
+
+    playNoise(
+      context as unknown as AudioContext,
+      { durationMs: 250 },
+      destination as unknown as AudioNode,
+    );
+
+    expect(context.bufferSources).toHaveLength(1);
+    expect(context.buffers).toHaveLength(1);
+    expect(context.gains).toHaveLength(1);
+    expect(context.panners).toHaveLength(1);
+    expect(context.buffers[0]?.length).toBe(12_000);
+    expect(context.buffers[0]?.sampleRate).toBe(48_000);
+    expect(context.bufferSources[0]?.buffer).toBe(context.buffers[0]);
+    expect(context.gains[0]?.gain.events).toContainEqual({
+      method: "setValueAtTime",
+      value: 0.2,
+      time: 5,
+    });
+    expect(context.panners[0]?.pan.events).toContainEqual({
+      method: "setValueAtTime",
+      value: 0,
+      time: 5,
+    });
+    expect(context.bufferSources[0]?.connections).toEqual([context.gains[0]]);
+    expect(context.gains[0]?.connections).toEqual([context.panners[0]]);
+    expect(context.panners[0]?.connections).toEqual([destination]);
+    expect(context.bufferSources[0]?.startedAt).toBe(5);
+    expect(context.bufferSources[0]?.stoppedAt).toBe(5.25);
+
+    const samples = Array.from(context.buffers[0]!.getChannelData(0));
+    expect(samples.some((sample) => sample !== 0)).toBe(true);
+    expect(Math.max(...samples)).toBeLessThanOrEqual(1);
+    expect(Math.min(...samples)).toBeGreaterThanOrEqual(-1);
+  });
+
+  test("supports pink and brown noise buffers with graph options", () => {
+    const context = new FakeAudioContext();
+
+    playNoise(context as unknown as AudioContext, {
+      durationMs: 100,
+      gain: 0.05,
+      pan: -2,
+      type: "pink",
+    });
+    playNoise(context as unknown as AudioContext, {
+      durationMs: 100,
+      gain: 0.08,
+      pan: 2,
+      type: "brown",
+    });
+
+    expect(context.gains[0]?.gain.value).toBe(0.05);
+    expect(context.panners[0]?.pan.value).toBe(-1);
+    expect(context.gains[1]?.gain.value).toBe(0.08);
+    expect(context.panners[1]?.pan.value).toBe(1);
+
+    for (const buffer of context.buffers) {
+      const samples = Array.from(buffer.getChannelData(0));
+      expect(samples.some((sample) => sample !== 0)).toBe(true);
+      expect(Math.max(...samples)).toBeLessThanOrEqual(1);
+      expect(Math.min(...samples)).toBeGreaterThanOrEqual(-1);
+    }
+  });
+
+  test("requires a positive finite noise duration", () => {
+    const context = new FakeAudioContext();
+
+    expect(() =>
+      playNoise(context as unknown as AudioContext, { durationMs: 0 }),
+    ).toThrow("durationMs must be a positive number");
+    expect(() =>
+      playNoise(context as unknown as AudioContext, {
+        durationMs: Number.NaN,
+      }),
+    ).toThrow("durationMs must be a positive number");
+  });
+
+  test("cleans up the noise graph if manual stop throws", () => {
+    const context = new FakeAudioContext();
+    const handle = playNoise(context as unknown as AudioContext, {
+      durationMs: 250,
+    });
+    context.bufferSources[0]!.throwOnStop = true;
+    context.bufferSources[0]!.onended = null;
+
+    expect(() => handle.stop()).not.toThrow();
+
+    expect(context.bufferSources[0]?.disconnected).toBe(true);
+    expect(context.gains[0]?.disconnected).toBe(true);
+    expect(context.panners[0]?.disconnected).toBe(true);
   });
 });

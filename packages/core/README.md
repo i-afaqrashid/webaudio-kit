@@ -3,7 +3,8 @@
 Core browser audio primitives for `webaudio-kit`.
 
 This package has no React dependency. It exposes small helpers for safe Web
-Audio tone playback, frequency sweeps, and audio math.
+Audio tone playback, frequency sweeps, short noise buffers, pitch helpers, and
+audio math.
 
 ## Install
 
@@ -30,9 +31,13 @@ handle.stop();
 
 - `playTone(context, options, destination?)`
 - `playFrequencySweep(context, options, destination?)`
+- `playNoise(context, options, destination?)`
 - `dbToGain(db)`
 - `gainToDb(gain)`
 - `clampFrequency(value, min?, max?)`
+- `midiToFrequency(midiNote, concertA?)`
+- `frequencyToMidi(frequency, concertA?)`
+- `frequencyToNoteName(frequency, options?)`
 
 See the repository API reference:
 https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/api.md.

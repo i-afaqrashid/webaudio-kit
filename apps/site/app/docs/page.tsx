@@ -4,7 +4,7 @@ import { CodeBlock, IconBadge, PageShell, SectionHeader } from "../components";
 export const metadata: Metadata = {
   title: "Docs",
   description:
-    "Install webaudio-kit, wire AudioProvider, use tone and sweep hooks, and understand browser audio safety constraints.",
+    "Install webaudio-kit, wire AudioProvider, use tone, sweep, and noise hooks, and understand browser audio safety constraints.",
 };
 
 const apiCards = [
@@ -22,6 +22,11 @@ const apiCards = [
     icon: "radio" as const,
     title: "useFrequencySweep",
     copy: "Ramps frequency between two clamped values over a controlled duration.",
+  },
+  {
+    icon: "waves" as const,
+    title: "useNoise",
+    copy: "Plays short white, pink, or brown noise buffers through the provider graph.",
   },
   {
     icon: "activity" as const,
@@ -49,9 +54,9 @@ export default function DocsPage() {
             <span className="kicker">Documentation</span>
             <h1>Install, wrap, play, stop.</h1>
             <p>
-              The first release is deliberately small: it proves safe tone
-              playback, frequency sweeps, volume control, and analyser output
-              for React applications.
+              The public API stays focused: safe tone playback, frequency
+              sweeps, short noise bursts, pitch helpers, volume control, and
+              analyser output for React applications.
             </p>
           </div>
         </section>
@@ -63,6 +68,7 @@ export default function DocsPage() {
               <a href="#provider">Provider</a>
               <a href="#tone">Tone hook</a>
               <a href="#sweep">Sweep hook</a>
+              <a href="#noise">Noise hook</a>
               <a href="#helpers">API helpers</a>
               <a href="#browser">Browser behavior</a>
             </aside>
@@ -113,7 +119,7 @@ tone.stop();`}</CodeBlock>
               <h2 id="sweep">Sweep hook</h2>
               <p>
                 <code>useFrequencySweep</code> clamps both frequency endpoints
-                and schedules an exponential ramp from <code>from</code> to{" "}
+                and schedules a linear ramp from <code>from</code> to{" "}
                 <code>to</code>. Keep sweep controls conservative in demos.
               </p>
               <CodeBlock title="sweep control">{`const sweep = useFrequencySweep({
@@ -126,6 +132,21 @@ tone.stop();`}</CodeBlock>
 await sweep.play();
 sweep.stop();`}</CodeBlock>
 
+              <h2 id="noise">Noise hook</h2>
+              <p>
+                <code>useNoise</code> creates short white, pink, or brown noise
+                buffers per play call. Keep burst duration short and default
+                gain conservative.
+              </p>
+              <CodeBlock title="noise control">{`const noise = useNoise({
+  type: "pink",
+  durationMs: 800,
+  gain: 0.08,
+});
+
+await noise.play();
+noise.stop();`}</CodeBlock>
+
               <h2 id="helpers">React surfaces and helpers</h2>
               <div className="apiGrid">
                 {apiCards.map((card) => (
@@ -136,11 +157,17 @@ sweep.stop();`}</CodeBlock>
                   </article>
                 ))}
               </div>
-              <CodeBlock title="math helpers">{`import { clampFrequency, dbToGain, gainToDb } from "@webaudio-kit/core";
+              <CodeBlock title="math helpers">{`import {
+  clampFrequency,
+  dbToGain,
+  frequencyToNoteName,
+  gainToDb,
+} from "@webaudio-kit/core";
 
 const frequency = clampFrequency(inputFrequency); // 20..20000 by default
 const gain = dbToGain(-14);
-const db = gainToDb(0.2);`}</CodeBlock>
+const db = gainToDb(0.2);
+const note = frequencyToNoteName(440); // A4`}</CodeBlock>
 
               <h2 id="browser">Browser behavior</h2>
               <div className="noteStack">

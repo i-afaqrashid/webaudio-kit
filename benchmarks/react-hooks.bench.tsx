@@ -3,6 +3,7 @@ import { afterAll, beforeAll, bench, describe } from "vitest";
 import {
   AudioProvider,
   useFrequencySweep,
+  useNoise,
   useTone,
   useVolume,
 } from "@webaudio-kit/react";
@@ -17,8 +18,10 @@ const options = {
 
 type Controls = {
   playSweep(): Promise<void>;
+  playNoise(): Promise<void>;
   playTone(): Promise<void>;
   setGain(value: number): Promise<void>;
+  stopNoise(): void;
   stopSweep(): void;
   stopTone(): void;
 };
@@ -53,7 +56,7 @@ describe("react audio hooks", () => {
   );
 
   bench(
-    "useTone/useFrequencySweep/useVolume: play, stop, and update gain",
+    "useTone/useFrequencySweep/useNoise/useVolume: play, stop, and update gain",
     async () => {
       let controls: Controls | undefined;
       const rendered = render(
@@ -77,6 +80,8 @@ describe("react audio hooks", () => {
         await readyControls.setGain(0.35);
         await readyControls.playSweep();
         readyControls.stopSweep();
+        await readyControls.playNoise();
+        readyControls.stopNoise();
       });
 
       sink += 1;
@@ -103,11 +108,19 @@ function BenchmarkControls({ onReady }: { onReady(controls: Controls): void }) {
     type: "sine",
   });
   const volume = useVolume();
+  const noise = useNoise({
+    durationMs: 80,
+    gain: 0.08,
+    pan: 0,
+    type: "pink",
+  });
 
   onReady({
+    playNoise: noise.play,
     playSweep: sweep.play,
     playTone: tone.play,
     setGain: volume.setGain,
+    stopNoise: noise.stop,
     stopSweep: sweep.stop,
     stopTone: tone.stop,
   });
