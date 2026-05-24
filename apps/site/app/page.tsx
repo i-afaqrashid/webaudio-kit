@@ -13,12 +13,12 @@ const packages = [
   {
     icon: "package" as const,
     name: "@webaudio-kit/core",
-    copy: "Browser-safe playback helpers, math utilities, frequency clamping, and per-call node cleanup.",
+    copy: "Browser-safe playback helpers, pitch utilities, frequency clamping, noise buffers, and per-call node cleanup.",
   },
   {
     icon: "waves" as const,
     name: "@webaudio-kit/react",
-    copy: "AudioProvider plus hooks for tones, sweeps, master volume, context state, and analyser access.",
+    copy: "AudioProvider plus hooks for tones, sweeps, noise bursts, master volume, context state, and analyser access.",
   },
   {
     icon: "terminal" as const,
@@ -61,8 +61,9 @@ export default function HomePage() {
               <h1>Browser tones and sweeps without fighting AudioContext.</h1>
               <p>
                 webaudio-kit is a small React + TypeScript package set for tone
-                generators, frequency sweeps, safe volume defaults, and
-                analyser-driven UI in browser prototypes.
+                generators, frequency sweeps, noise bursts, safe volume
+                defaults, pitch labels, and analyser-driven UI in browser
+                prototypes.
               </p>
               <div className="heroActions">
                 <Link className="button buttonPrimary" href="/docs">
@@ -140,7 +141,7 @@ export function App() {
               <SectionHeader
                 kicker="Manual proof"
                 title="The demo exercises the real provider graph."
-                copy="Tone and sweep nodes feed the master gain, analyser, then destination. The waveform should move while sound is playing."
+                copy="Tone, sweep, and noise nodes feed the master gain, analyser, then destination. The waveform should move while sound is playing."
               />
               <div className="proofGrid">
                 {proofPoints.map((item, index) => (

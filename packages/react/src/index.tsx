@@ -14,8 +14,10 @@ import {
 import {
   DEFAULT_GAIN,
   type FrequencySweepOptions,
+  type NoiseOptions,
   type PlaybackHandle,
   playFrequencySweep,
+  playNoise,
   playTone,
   type ToneOptions,
 } from "@webaudio-kit/core";
@@ -222,6 +224,46 @@ export function useFrequencySweep(options: FrequencySweepOptions): {
 
       stop();
       handleRef.current = playFrequencySweep(
+        runtime.audioContext,
+        nextOptions,
+        runtime.masterGain,
+      );
+      setIsPlaying(true);
+      schedulePlaybackEnd(nextOptions.durationMs, timeoutRef, setIsPlaying);
+    },
+    [audio, optionsRef, stop],
+  );
+
+  useEffect(() => stop, [stop]);
+
+  return { play, stop, isPlaying };
+}
+
+export function useNoise(options: NoiseOptions): {
+  play(overrides?: Partial<NoiseOptions>): Promise<void>;
+  stop(): void;
+  isPlaying: boolean;
+} {
+  const audio = useAudioContext();
+  const optionsRef = useLatest(options);
+  const handleRef = useRef<PlaybackHandle | null>(null);
+  const timeoutRef = useRef<PlaybackTimer | undefined>(undefined);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const stop = useCallback(() => {
+    clearPlaybackTimer(timeoutRef);
+    handleRef.current?.stop();
+    handleRef.current = null;
+    setIsPlaying(false);
+  }, []);
+
+  const play = useCallback(
+    async (overrides: Partial<NoiseOptions> = {}) => {
+      const runtime = await audio.ensureAudioContext();
+      const nextOptions = { ...optionsRef.current, ...overrides };
+
+      stop();
+      handleRef.current = playNoise(
         runtime.audioContext,
         nextOptions,
         runtime.masterGain,
@@ -539,5 +581,19 @@ function normalizeCanvasNumber(value: number, fallback: number): number {
   return Math.max(0, value);
 }
 
-export type { FrequencySweepOptions, PlaybackHandle, ToneOptions };
-export { clampFrequency, dbToGain, gainToDb } from "@webaudio-kit/core";
+export type {
+  FrequencySweepOptions,
+  NoiseOptions,
+  NoiseType,
+  NoteNameOptions,
+  PlaybackHandle,
+  ToneOptions,
+} from "@webaudio-kit/core";
+export {
+  clampFrequency,
+  dbToGain,
+  frequencyToMidi,
+  frequencyToNoteName,
+  gainToDb,
+  midiToFrequency,
+} from "@webaudio-kit/core";

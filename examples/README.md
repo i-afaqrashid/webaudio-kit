@@ -11,6 +11,7 @@ source of truth.
 - wrap controls in `AudioProvider`
 - play and stop a tone with `useTone`
 - run a frequency sweep with `useFrequencySweep`
+- play a short pink-noise burst with `useNoise`
 - render waveform and spectrum canvases with `WaveformCanvas` and
   `SpectrumCanvas`
 
@@ -19,8 +20,9 @@ source of truth.
 `examples/next-provider-example` shows the important Next.js boundary: the file
 that imports hooks from `@webaudio-kit/react` must be a client component.
 
-It also proves that `WaveformCanvas` and `SpectrumCanvas` work from a Next App
-Router client component while the page itself remains a server component.
+It also proves that `useNoise`, `WaveformCanvas`, and `SpectrumCanvas` work
+from a Next App Router client component while the page itself remains a server
+component.
 
 ## Running an example
 

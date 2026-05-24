@@ -36,6 +36,23 @@ type FrequencySweepOptions = {
 
 `durationMs` is required for sweeps and must be a positive finite number.
 
+### `NoiseOptions`
+
+```ts
+type NoiseType = "white" | "pink" | "brown";
+
+type NoiseOptions = {
+  durationMs: number;
+  gain?: number;
+  pan?: number;
+  type?: NoiseType;
+};
+```
+
+`durationMs` is required for noise playback and must be a positive finite
+number. Noise is generated into a short mono buffer per play call, then routed
+through the same gain and optional stereo panner graph as tones and sweeps.
+
 ### `PlaybackHandle`
 
 ```ts
@@ -76,6 +93,21 @@ playFrequencySweep(audioContext, {
 });
 ```
 
+### `playNoise(context, options, destination?)`
+
+Creates a fresh `AudioBufferSourceNode`, fills a mono noise buffer, and routes it
+through gain and stereo pan nodes.
+
+```ts
+playNoise(audioContext, {
+  type: "pink",
+  durationMs: 800,
+  gain: 0.08,
+});
+```
+
+Supported noise types are `white`, `pink`, and `brown`.
+
 ### `dbToGain(db)`
 
 ```ts
@@ -106,6 +138,32 @@ clampFrequency(30000); // 20000
 
 Defaults to `20..20000` Hz.
 
+### `midiToFrequency(midiNote, concertA?)`
+
+```ts
+midiToFrequency(69); // 440
+midiToFrequency(60); // 261.625...
+```
+
+`concertA` defaults to `440`.
+
+### `frequencyToMidi(frequency, concertA?)`
+
+```ts
+frequencyToMidi(440); // 69
+```
+
+Returns `Number.NaN` for zero, negative, or non-finite frequencies.
+
+### `frequencyToNoteName(frequency, options?)`
+
+```ts
+frequencyToNoteName(440); // "A4"
+frequencyToNoteName(445, { includeCents: true }); // "A4 +20c"
+```
+
+Returns `"unknown"` for invalid frequencies.
+
 ## `@webaudio-kit/react`
 
 ### `AudioProvider`
@@ -119,7 +177,7 @@ Defaults to `20..20000` Hz.
 Creates the provider graph lazily:
 
 ```txt
-tone/sweep -> masterGain -> analyser -> destination
+tone/sweep/noise -> masterGain -> analyser -> destination
 ```
 
 ### `useAudioContext()`
@@ -181,6 +239,29 @@ Returns:
 ```ts
 {
   play(overrides?: Partial<FrequencySweepOptions>): Promise<void>;
+  stop(): void;
+  isPlaying: boolean;
+}
+```
+
+### `useNoise(options)`
+
+```tsx
+const noise = useNoise({
+  type: "pink",
+  durationMs: 800,
+  gain: 0.08,
+});
+
+await noise.play();
+noise.stop();
+```
+
+Returns:
+
+```ts
+{
+  play(overrides?: Partial<NoiseOptions>): Promise<void>;
   stop(): void;
   isPlaying: boolean;
 }

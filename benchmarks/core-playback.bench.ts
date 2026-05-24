@@ -1,8 +1,10 @@
 import { bench, describe } from "vitest";
 import {
   playFrequencySweep,
+  playNoise,
   playTone,
   type FrequencySweepOptions,
+  type NoiseOptions,
   type ToneOptions,
 } from "@webaudio-kit/core";
 import { BenchmarkAudioContext } from "./web-audio-fakes";
@@ -36,6 +38,13 @@ const sweeps: FrequencySweepOptions[] = Array.from(
     type: waveforms[index % waveforms.length],
   }),
 );
+const noiseTypes: NoiseOptions["type"][] = ["white", "pink", "brown"];
+const noises: NoiseOptions[] = Array.from({ length: 48 }, (_, index) => ({
+  durationMs: 20 + (index % 20),
+  gain: 0.04 + (index % 8) / 100,
+  pan: -0.5 + (index % 100) / 100,
+  type: noiseTypes[index % noiseTypes.length],
+}));
 
 let sink = 0;
 
@@ -93,7 +102,24 @@ describe("core playback scheduling", () => {
   );
 
   bench(
-    "mixed playback: interleave tone and sweep graph setup",
+    "playNoise: generate and schedule 48 short noise buffers",
+    () => {
+      const context = new BenchmarkAudioContext();
+      let count = 0;
+
+      for (const noise of noises) {
+        playNoise(context as unknown as AudioContext, noise);
+        context.currentTime += 0.002;
+        count += 1;
+      }
+
+      sink = count;
+    },
+    options,
+  );
+
+  bench(
+    "mixed playback: interleave tone, sweep, and noise setup",
     () => {
       const context = new BenchmarkAudioContext();
       let count = 0;
@@ -107,6 +133,10 @@ describe("core playback scheduling", () => {
 
         if (index < sweeps.length) {
           playFrequencySweep(context as unknown as AudioContext, sweeps[index]);
+        }
+
+        if (index < noises.length) {
+          playNoise(context as unknown as AudioContext, noises[index]);
         }
 
         context.currentTime += 0.002;

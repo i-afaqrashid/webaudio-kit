@@ -5,7 +5,9 @@ import {
   SpectrumCanvas,
   WaveformCanvas,
   dbToGain,
+  frequencyToNoteName,
   useFrequencySweep,
+  useNoise,
   useTone,
   useVolume,
 } from "@webaudio-kit/react";
@@ -15,6 +17,7 @@ function TonePanel() {
   const [frequency, setFrequency] = useState(440);
   const [gainDb, setGainDb] = useState(-16);
   const gain = dbToGain(gainDb);
+  const noteName = frequencyToNoteName(frequency);
   const tone = useTone({ frequency, gain, type: "sine" });
   const sweep = useFrequencySweep({
     from: 250,
@@ -22,6 +25,7 @@ function TonePanel() {
     durationMs: 2400,
     gain,
   });
+  const noise = useNoise({ durationMs: 800, gain: 0.08, type: "pink" });
   const volume = useVolume();
 
   return (
@@ -30,7 +34,10 @@ function TonePanel() {
       <h1>Vite tone panel</h1>
 
       <label>
-        Frequency <strong>{frequency} Hz</strong>
+        Frequency{" "}
+        <strong>
+          {frequency} Hz / {noteName}
+        </strong>
         <input
           min="20"
           max="20000"
@@ -60,6 +67,9 @@ function TonePanel() {
         </button>
         <button onClick={() => void sweep.play()} type="button">
           {sweep.isPlaying ? "Restart sweep" : "Run sweep"}
+        </button>
+        <button onClick={() => void noise.play()} type="button">
+          {noise.isPlaying ? "Restart noise" : "Play pink noise"}
         </button>
       </div>
 

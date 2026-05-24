@@ -68,11 +68,12 @@ overrides:
 
 await writeFile(
   join(smokeDir, "smoke.mjs"),
-  `import { clampFrequency, dbToGain } from "@webaudio-kit/core";
+  `import { clampFrequency, dbToGain, frequencyToNoteName, midiToFrequency } from "@webaudio-kit/core";
 import {
   AudioProvider,
   SpectrumCanvas,
   WaveformCanvas,
+  useNoise,
   useTone,
 } from "@webaudio-kit/react";
 
@@ -84,10 +85,19 @@ if (Math.abs(dbToGain(-6) - 0.501187) > 0.00001) {
   throw new Error("core dbToGain export failed");
 }
 
+if (Math.abs(midiToFrequency(69) - 440) > 0.00001) {
+  throw new Error("core midiToFrequency export failed");
+}
+
+if (frequencyToNoteName(440) !== "A4") {
+  throw new Error("core frequencyToNoteName export failed");
+}
+
 if (
   typeof AudioProvider !== "function" ||
   typeof SpectrumCanvas !== "function" ||
   typeof WaveformCanvas !== "function" ||
+  typeof useNoise !== "function" ||
   typeof useTone !== "function"
 ) {
   throw new Error("react exports failed");

@@ -346,11 +346,16 @@ select {
   margin-top: 22px;
 }
 
-.sweepControls p {
+.sweepControls p,
+.noiseControls p {
   color: #374035;
   font-size: 14px;
   line-height: 1.55;
   margin: 16px 0 0;
+}
+
+.noiseControls {
+  grid-column: 1 / -1;
 }
 
 .segmentedControl {
@@ -375,6 +380,10 @@ select {
   border-color: #9ac323;
   color: var(--ink);
   font-weight: 760;
+}
+
+.noiseTypeControl {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .demoActions {

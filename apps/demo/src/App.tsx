@@ -1,23 +1,29 @@
 import { useState } from "react";
 import {
   WaveformCanvas,
+  frequencyToNoteName,
   SpectrumCanvas,
   dbToGain,
   gainToDb,
   useAnalyser,
   useFrequencySweep,
+  useNoise,
   useTone,
   useVolume,
 } from "@webaudio-kit/react";
 
 const waveforms: OscillatorType[] = ["sine", "square", "sawtooth", "triangle"];
+const noiseTypes = ["white", "pink", "brown"] as const;
 
 export default function App() {
   const [frequency, setFrequency] = useState(440);
   const [gainDb, setGainDb] = useState(-14);
   const [type, setType] = useState<OscillatorType>("sine");
+  const [noiseType, setNoiseType] =
+    useState<(typeof noiseTypes)[number]>("white");
   const [pan, setPan] = useState(0);
   const gain = dbToGain(gainDb);
+  const noteName = frequencyToNoteName(frequency);
   const tone = useTone({ frequency, gain, type, pan });
   const sweep = useFrequencySweep({
     from: 250,
@@ -27,7 +33,18 @@ export default function App() {
     type,
     pan,
   });
+  const noise = useNoise({
+    durationMs: 900,
+    gain: Math.min(gain, 0.12),
+    pan,
+    type: noiseType,
+  });
   const volume = useVolume();
+  const playNoise = () => {
+    tone.stop();
+    sweep.stop();
+    void noise.play();
+  };
 
   return (
     <main className="shell">
@@ -36,8 +53,8 @@ export default function App() {
           <p className="eyebrow">React + Web Audio primitives</p>
           <h1>Build browser audio interfaces without fighting AudioContext.</h1>
           <p className="lede">
-            This demo plays a tone, runs a frequency sweep, and draws analyser
-            data using the first webaudio-kit React hooks.
+            This demo plays a tone, runs a frequency sweep, creates noise
+            bursts, and draws analyser data using webaudio-kit React hooks.
           </p>
         </div>
         <div className="statusPanel">
@@ -53,7 +70,9 @@ export default function App() {
         <div className="panel controlsPanel">
           <div className="panelHead">
             <span>Tone generator</span>
-            <strong>{frequency} Hz</strong>
+            <strong>
+              {frequency} Hz / {noteName}
+            </strong>
           </div>
 
           <label>
@@ -141,6 +160,37 @@ export default function App() {
               {sweep.isPlaying ? "Restart sweep" : "Run sweep"}
             </button>
             <button onClick={sweep.stop} type="button">
+              Stop
+            </button>
+          </div>
+        </div>
+
+        <div className="panel noisePanel">
+          <div className="panelHead">
+            <span>Noise burst</span>
+            <strong>{noiseType}</strong>
+          </div>
+          <p>
+            White, pink, and brown noise are generated into short buffers and
+            routed through the same gain, pan, master volume, and analyser path.
+          </p>
+          <div className="segmented" aria-label="Noise type">
+            {noiseTypes.map((nextNoiseType) => (
+              <button
+                className={nextNoiseType === noiseType ? "active" : undefined}
+                key={nextNoiseType}
+                onClick={() => setNoiseType(nextNoiseType)}
+                type="button"
+              >
+                {nextNoiseType}
+              </button>
+            ))}
+          </div>
+          <div className="buttonRow">
+            <button className="primary" onClick={playNoise} type="button">
+              {noise.isPlaying ? "Restart noise" : "Play noise"}
+            </button>
+            <button onClick={noise.stop} type="button">
               Stop
             </button>
           </div>

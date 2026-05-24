@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     template: "%s | webaudio-kit",
   },
   description:
-    "Small React and TypeScript primitives for safe browser tone generation, frequency sweeps, volume control, and analyser-driven UI.",
+    "Small React and TypeScript primitives for safe browser tone generation, frequency sweeps, noise bursts, volume control, and analyser-driven UI.",
   metadataBase: new URL("https://webaudio-kit.afaqrashid.com"),
   icons: {
     icon: [
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "webaudio-kit",
     description:
-      "React hooks and browser-safe Web Audio primitives for tone tools and frequency sweep prototypes.",
+      "React hooks and browser-safe Web Audio primitives for tone tools, frequency sweeps, and noise-burst prototypes.",
     images: ["/assets/demo-screenshot.png"],
   },
 };

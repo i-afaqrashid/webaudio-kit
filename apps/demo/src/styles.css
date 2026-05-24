@@ -183,16 +183,22 @@ input[type="range"] {
   gap: 10px;
 }
 
-.sweepPanel {
+.sweepPanel,
+.noisePanel {
   align-content: start;
   display: grid;
   gap: 16px;
 }
 
-.sweepPanel p {
+.sweepPanel p,
+.noisePanel p {
   color: #2b3029;
   line-height: 1.6;
   margin: 0;
+}
+
+.noisePanel .segmented {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .waveformPanel {

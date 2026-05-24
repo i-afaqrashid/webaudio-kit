@@ -6,15 +6,18 @@ import {
   SpectrumCanvas,
   WaveformCanvas as AudioWaveformCanvas,
   dbToGain,
+  frequencyToNoteName,
   gainToDb,
   useAnalyser,
   useAudioContext,
   useFrequencySweep,
+  useNoise,
   useTone,
   useVolume,
 } from "@webaudio-kit/react";
 
 const waveforms: OscillatorType[] = ["sine", "square", "sawtooth", "triangle"];
+const noiseTypes = ["white", "pink", "brown"] as const;
 
 export function InteractiveDemo() {
   return (
@@ -29,7 +32,10 @@ function DemoControls() {
   const [gainDb, setGainDb] = useState(-18);
   const [pan, setPan] = useState(0);
   const [type, setType] = useState<OscillatorType>("sine");
+  const [noiseType, setNoiseType] =
+    useState<(typeof noiseTypes)[number]>("white");
   const gain = dbToGain(gainDb);
+  const noteName = frequencyToNoteName(frequency);
   const audio = useAudioContext();
   const volume = useVolume();
   const tone = useTone({ frequency, gain, pan, type });
@@ -41,33 +47,50 @@ function DemoControls() {
     pan,
     type,
   });
+  const noise = useNoise({
+    durationMs: 900,
+    gain: Math.min(gain, 0.12),
+    pan,
+    type: noiseType,
+  });
 
   const playTone = async () => {
     sweep.stop();
+    noise.stop();
     await tone.play();
   };
 
   const runSweep = async () => {
     tone.stop();
+    noise.stop();
     await sweep.play();
+  };
+
+  const playNoise = async () => {
+    tone.stop();
+    sweep.stop();
+    await noise.play();
   };
 
   const stopAll = () => {
     tone.stop();
     sweep.stop();
+    noise.stop();
   };
   const signalState = tone.isPlaying
     ? "tone"
     : sweep.isPlaying
       ? "sweep"
-      : "idle";
+      : noise.isPlaying
+        ? "noise"
+        : "idle";
 
   return (
     <div className="demoShell" aria-label="Interactive Web Audio demo">
       <div className="demoHeader">
         <div>
           <span className="kicker">Live demo</span>
-          <h2>Play a tone. Sweep a range. Watch the graph move.</h2>
+          <h2>Play a tone. Sweep a range. Burst noise.</h2>
         </div>
         <div className="demoState">
           <div>
@@ -85,7 +108,9 @@ function DemoControls() {
         <div className="controlPanel">
           <div className="controlHead">
             <span>Tone generator</span>
-            <strong>{frequency} Hz</strong>
+            <strong>
+              {frequency} Hz / {noteName}
+            </strong>
           </div>
 
           <label className="rangeControl">
@@ -192,6 +217,45 @@ function DemoControls() {
             />
             <small>{volume.gain.toFixed(2)}</small>
           </label>
+        </div>
+
+        <div className="controlPanel noiseControls">
+          <div className="controlHead">
+            <span>Noise burst</span>
+            <strong>{noiseType}</strong>
+          </div>
+          <p>
+            Noise buffers use the same safe routing: source, gain, pan, master
+            volume, analyser, then destination.
+          </p>
+          <div
+            className="segmentedControl noiseTypeControl"
+            aria-label="Noise type"
+          >
+            {noiseTypes.map((nextNoiseType) => (
+              <button
+                className={nextNoiseType === noiseType ? "active" : undefined}
+                key={nextNoiseType}
+                onClick={() => setNoiseType(nextNoiseType)}
+                aria-pressed={nextNoiseType === noiseType}
+                type="button"
+              >
+                {nextNoiseType}
+              </button>
+            ))}
+          </div>
+          <div className="demoActions">
+            <button
+              className="button buttonPrimary"
+              onClick={playNoise}
+              type="button"
+            >
+              {noise.isPlaying ? "Restart noise" : "Play noise"}
+            </button>
+            <button className="button" onClick={stopAll} type="button">
+              Stop
+            </button>
+          </div>
         </div>
       </div>
 

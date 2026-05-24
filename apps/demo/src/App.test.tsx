@@ -51,6 +51,36 @@ class FakeOscillatorNode extends FakeAudioNode {
   }
 }
 
+class FakeAudioBuffer {
+  channelData: Float32Array[];
+
+  constructor(
+    public numberOfChannels: number,
+    public length: number,
+    public sampleRate: number,
+  ) {
+    this.channelData = Array.from(
+      { length: numberOfChannels },
+      () => new Float32Array(length),
+    );
+  }
+
+  getChannelData(channel: number) {
+    return this.channelData[channel]!;
+  }
+}
+
+class FakeAudioBufferSourceNode extends FakeAudioNode {
+  buffer: AudioBuffer | null = null;
+  onended: (() => void) | null = null;
+
+  start() {}
+
+  stop() {
+    this.onended?.();
+  }
+}
+
 class FakeGainNode extends FakeAudioNode {
   gain = new FakeAudioParam(1);
 }
@@ -74,6 +104,7 @@ class FakeStereoPannerNode extends FakeAudioNode {
 
 class FakeAudioContext {
   currentTime = 0;
+  sampleRate = 48_000;
   destination = new FakeAudioNode();
   state: AudioContextState = "suspended";
   resume = vi.fn(async () => {
@@ -85,6 +116,14 @@ class FakeAudioContext {
 
   createOscillator() {
     return new FakeOscillatorNode();
+  }
+
+  createBuffer(numberOfChannels: number, length: number, sampleRate: number) {
+    return new FakeAudioBuffer(numberOfChannels, length, sampleRate);
+  }
+
+  createBufferSource() {
+    return new FakeAudioBufferSourceNode();
   }
 
   createGain() {
@@ -142,6 +181,7 @@ describe("demo app", () => {
     ).toBeTruthy();
     expect(screen.getByText("Tone generator")).toBeTruthy();
     expect(screen.getByText("Frequency sweep")).toBeTruthy();
+    expect(screen.getByText("Noise burst")).toBeTruthy();
     expect(screen.getByText("Analyser")).toBeTruthy();
     expect(screen.getByLabelText("Spectrum analyser")).toBeTruthy();
     expect(
@@ -165,7 +205,7 @@ describe("demo app", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "square" }));
 
-    expect(screen.getByText("880 Hz")).toBeTruthy();
+    expect(screen.getByText("880 Hz / A5")).toBeTruthy();
     expect(screen.getByText("-18 dB / gain 0.126 / -18.0 dB")).toBeTruthy();
     expect(screen.getByLabelText("Pan")).toHaveProperty("value", "0.4");
     expect(screen.getByRole("button", { name: "square" }).className).toContain(
@@ -173,7 +213,7 @@ describe("demo app", () => {
     );
   });
 
-  test("plays and stops tone and sweep through the demo controls", async () => {
+  test("plays and stops tone, sweep, and noise through the demo controls", async () => {
     vi.stubGlobal("AudioContext", FakeAudioContext);
     renderDemo();
 
@@ -197,5 +237,16 @@ describe("demo app", () => {
       screen.getAllByRole("button", { name: "Stop" })[1]!.click();
     });
     expect(screen.getByRole("button", { name: "Run sweep" })).toBeTruthy();
+
+    await act(async () => {
+      screen.getByRole("button", { name: "brown" }).click();
+      screen.getByRole("button", { name: "Play noise" }).click();
+    });
+    expect(screen.getByRole("button", { name: "Restart noise" })).toBeTruthy();
+
+    await act(async () => {
+      screen.getAllByRole("button", { name: "Stop" })[2]!.click();
+    });
+    expect(screen.getByRole("button", { name: "Play noise" })).toBeTruthy();
   });
 });

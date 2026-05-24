@@ -11,16 +11,23 @@ import {
   AudioProvider,
   SpectrumCanvas,
   WaveformCanvas,
+  useNoise,
   useTone,
 } from "@webaudio-kit/react";
 
 function ToneButton() {
   const tone = useTone({ frequency: 440, gain: 0.15 });
+  const noise = useNoise({ type: "pink", durationMs: 800, gain: 0.08 });
 
   return (
-    <button type="button" onClick={() => void tone.play()}>
-      Play tone
-    </button>
+    <>
+      <button type="button" onClick={() => void tone.play()}>
+        Play tone
+      </button>
+      <button type="button" onClick={() => void noise.play()}>
+        Play pink noise
+      </button>
+    </>
   );
 }
 

@@ -39,6 +39,7 @@ The current public surface is intentionally small:
 - `useAudioContext`
 - `useTone`
 - `useFrequencySweep`
+- `useNoise`
 - `useVolume`
 - `useAnalyser`
 - `WaveformCanvas`
@@ -50,9 +51,13 @@ tap, or keyboard handlers.
 
 - `playTone`
 - `playFrequencySweep`
+- `playNoise`
 - `dbToGain`
 - `gainToDb`
 - `clampFrequency`
+- `midiToFrequency`
+- `frequencyToMidi`
+- `frequencyToNoteName`
 
 Microphone support, AudioWorklets, and larger visualizer packages are future
 work.

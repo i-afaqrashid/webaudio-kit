@@ -3,7 +3,7 @@
 ## Package Boundaries
 
 `@webaudio-kit/core` is React-free. It owns Web Audio graph construction,
-frequency clamping, dB/gain math, playback handles, and cleanup.
+frequency clamping, dB/gain math, pitch helpers, playback handles, and cleanup.
 
 `@webaudio-kit/react` owns React ergonomics. It provides context state, lazy
 `AudioContext` setup, master volume, analyser access, and hook-level playback
@@ -40,22 +40,29 @@ The React provider creates:
 masterGain -> analyser -> destination
 ```
 
-Tone and sweep calls create short-lived source graphs:
+Tone and sweep calls create short-lived oscillator graphs:
 
 ```txt
 oscillator -> gain -> panner -> masterGain
 ```
 
+Noise calls create short-lived buffer-source graphs:
+
+```txt
+bufferSource -> gain -> panner -> masterGain
+```
+
 If `StereoPannerNode` is unavailable, core falls back to:
 
 ```txt
-oscillator -> gain -> masterGain
+source -> gain -> masterGain
 ```
 
 ## Playback Lifecycle
 
-Each `playTone()` or `playFrequencySweep()` call creates new nodes. This avoids
-reusing stopped oscillators, which the Web Audio API does not allow.
+Each `playTone()`, `playFrequencySweep()`, or `playNoise()` call creates new
+nodes. This avoids reusing stopped sources, which the Web Audio API does not
+allow.
 
 The playback handle owns:
 
@@ -87,6 +94,7 @@ Expected error surfaces:
 - `useAudioContext` outside provider throws a clear React usage error.
 - unsupported browsers throw `Web Audio API is not available in this browser`.
 - invalid sweep duration throws `durationMs must be a positive number`.
+- invalid noise duration throws `durationMs must be a positive number`.
 
 Apps should catch playback errors near UI actions and show a small user-facing
 message.

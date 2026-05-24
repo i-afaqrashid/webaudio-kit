@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.3.0 - 2026-05-24
+
+### Added
+
+- `playNoise()` in `@webaudio-kit/core` for short white, pink, and brown noise
+  buffers routed through gain, pan, and destination nodes.
+- `useNoise()` in `@webaudio-kit/react` with stable `play`, `stop`, and
+  `isPlaying` controls.
+- Pitch helper utilities: `midiToFrequency()`, `frequencyToMidi()`, and
+  `frequencyToNoteName()`.
+
+### Changed
+
+- Demo app, public site, docs, and standalone examples now include noise
+  playback controls and note-name frequency readouts.
+- Package smoke checks now verify the new public exports.
+
 ## 1.2.0 - 2026-05-24
 
 ### Added
