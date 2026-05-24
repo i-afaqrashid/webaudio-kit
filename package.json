@@ -16,6 +16,7 @@
   "author": "i-afaqrashid <i.afaqrashid@gmail.com>",
   "scripts": {
     "build": "pnpm -r --filter './packages/*' build",
+    "bench": "vitest bench --run",
     "demo:dev": "pnpm --filter @webaudio-kit/demo dev",
     "demo:build": "pnpm --filter @webaudio-kit/demo build",
     "demo:qa": "node scripts/demo-qa.mjs",

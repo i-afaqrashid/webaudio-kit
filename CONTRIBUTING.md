@@ -33,6 +33,15 @@ pnpm verify
 pnpm smoke:pack
 ```
 
+For performance-sensitive changes, also run:
+
+```sh
+pnpm bench
+```
+
+Benchmark results vary by machine, so include relative observations rather than
+hard claims.
+
 For browser demo QA:
 
 ```sh

@@ -20,5 +20,8 @@ export default defineConfig({
       "packages/**/*.test.ts",
       "packages/**/*.test.tsx",
     ],
+    benchmark: {
+      include: ["benchmarks/**/*.bench.ts", "benchmarks/**/*.bench.tsx"],
+    },
   },
 });
