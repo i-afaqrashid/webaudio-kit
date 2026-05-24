@@ -33,7 +33,7 @@ body:
     id: package-version
     attributes:
       label: Package version
-      placeholder: "@webaudio-kit/react@0.1.0"
+      placeholder: "@webaudio-kit/react@1.0.0"
     validations:
       required: true
   - type: checkboxes

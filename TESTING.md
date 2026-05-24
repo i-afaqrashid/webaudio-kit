@@ -8,7 +8,7 @@ Run the full local gate:
 pnpm verify
 pnpm smoke:pack
 pnpm release:check
-pnpm release:verify-tag v0.1.0
+pnpm release:verify-tag v1.0.0
 ```
 
 `pnpm verify` runs unit tests, TypeScript, package builds, demo build, lint, and

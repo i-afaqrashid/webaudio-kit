@@ -13,7 +13,7 @@ const providedTag =
 const releaseTagPattern = /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
 
 if (!providedTag) {
-  throw new Error("Release tag is required, for example v0.1.0");
+  throw new Error("Release tag is required, for example v1.0.0");
 }
 
 const tag = providedTag.replace("refs/tags/", "");

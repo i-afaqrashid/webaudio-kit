@@ -82,7 +82,7 @@ pnpm demo:qa
 pnpm smoke:pack
 pnpm release:check
 pnpm release:check:full
-pnpm release:verify-tag v0.1.0
+pnpm release:verify-tag v1.0.0
 pnpm release:dry-run
 pnpm verify
 ```
