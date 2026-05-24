@@ -11,6 +11,7 @@ The package names are:
 
 - `@webaudio-kit/core`
 - `@webaudio-kit/react`
+- `@webaudio-kit/cli`
 
 Before the first publish, npm may return `404` for both package names. A real
 publish still requires access to the npm `@webaudio-kit` scope.
@@ -20,7 +21,7 @@ publish still requires access to the npm `@webaudio-kit` scope.
 ```sh
 pnpm install --frozen-lockfile
 pnpm release:check:full
-pnpm release:verify-tag v1.3.0
+pnpm release:verify-tag v1.4.0
 pnpm release:dry-run
 ```
 
@@ -35,11 +36,11 @@ Review:
 
 ## Tag Release
 
-For version `1.3.0`:
+For version `1.4.0`:
 
 ```sh
-git tag v1.3.0
-git push origin v1.3.0
+git tag v1.4.0
+git push origin v1.4.0
 ```
 
 The GitHub release workflow is tag-gated. It checks that the tag matches the
@@ -49,6 +50,7 @@ this order:
 
 1. `@webaudio-kit/core`
 2. `@webaudio-kit/react`
+3. `@webaudio-kit/cli`
 
 ## Manual Publish Fallback
 
@@ -56,7 +58,7 @@ Use this only if the GitHub workflow is not configured yet.
 
 ```sh
 pnpm release:check:full
-pnpm release:verify-tag v1.3.0
+pnpm release:verify-tag v1.4.0
 pnpm release:dry-run
 npm whoami
 pnpm release:publish-tarballs .release-packages

@@ -28,6 +28,7 @@ const rootPackage = await readJson("package.json");
 const packageManifests = [
   ["@webaudio-kit/core", await readJson("packages/core/package.json")],
   ["@webaudio-kit/react", await readJson("packages/react/package.json")],
+  ["@webaudio-kit/cli", await readJson("packages/cli/package.json")],
 ];
 const changelog = await readFile(join(root, "CHANGELOG.md"), "utf8");
 

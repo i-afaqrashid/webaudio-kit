@@ -22,8 +22,13 @@ const packages = [
   },
   {
     icon: "terminal" as const,
+    name: "@webaudio-kit/cli",
+    copy: "Project setup helper that generates a public AI-agent brief with docs, npm, examples, browser audio, and safety context.",
+  },
+  {
+    icon: "zap" as const,
     name: "apps/demo",
-    copy: "A Vite React sandbox for manually testing tone generation, sweeps, pan, gain, and waveform output.",
+    copy: "A Vite React sandbox for manually testing tone generation, sweeps, pan, gain, noise, and analyser output.",
   },
 ];
 
@@ -114,6 +119,8 @@ export function App() {
     </AudioProvider>
   );
 }`}</CodeBlock>
+            <CodeBlock title="AI agent brief">{`pnpm dlx @webaudio-kit/cli agent-brief
+pnpm dlx @webaudio-kit/cli agent-brief --target codex --out AGENTS.md`}</CodeBlock>
           </div>
         </section>
 

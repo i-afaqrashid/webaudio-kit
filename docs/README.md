@@ -9,6 +9,7 @@ shipping `webaudio-kit`.
 - [API reference](./api.md)
 - [Architecture](./architecture.md)
 - [Browser audio guide](./browser-audio.md)
+- [AI agent brief CLI](./agent-brief.md)
 - [Examples](./examples.md)
 - [Apps](./apps.md)
 - [Example apps](../examples/README.md)
@@ -58,6 +59,7 @@ tap, or keyboard handlers.
 - `midiToFrequency`
 - `frequencyToMidi`
 - `frequencyToNoteName`
+- `webaudio-kit agent-brief`
 
 Microphone support, AudioWorklets, and larger visualizer packages are future
 work.

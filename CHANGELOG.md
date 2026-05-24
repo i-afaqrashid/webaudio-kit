@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.4.0 - 2026-05-25
+
+### Added
+
+- `@webaudio-kit/cli` with `webaudio-kit agent-brief` for generating an
+  `AGENTS.md` style brief for Codex, Claude Code, Gemini CLI, OpenCode,
+  Antigravity, and similar coding agents.
+- Agent brief documentation covering package links, docs links, safe browser
+  audio guidance, framework notes, and generated prompt content.
+
+### Changed
+
+- Release tag verification, npm publish ordering, and package smoke checks now
+  include the CLI package and validate the generated command output from a
+  packed tarball.
+- Public docs and launch material now list the CLI alongside the core and React
+  packages.
+
 ## 1.3.0 - 2026-05-24
 
 ### Added

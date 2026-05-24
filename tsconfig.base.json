@@ -18,6 +18,7 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
+      "@webaudio-kit/cli": ["packages/cli/src/index.ts"],
       "@webaudio-kit/core": ["packages/core/src/index.ts"],
       "@webaudio-kit/react": ["packages/react/src/index.tsx"]
     }

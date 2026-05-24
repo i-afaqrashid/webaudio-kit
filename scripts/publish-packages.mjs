@@ -10,7 +10,11 @@ const root = dirname(
 );
 const expectedRepository =
   "git+https://github.com/i-afaqrashid/webaudio-kit.git";
-const packageOrder = ["@webaudio-kit/core", "@webaudio-kit/react"];
+const packageOrder = [
+  "@webaudio-kit/core",
+  "@webaudio-kit/react",
+  "@webaudio-kit/cli",
+];
 const args = process.argv.slice(2);
 const dryRun = args.includes("--dry-run");
 const packageDirArg = args.find((arg) => !arg.startsWith("--"));
