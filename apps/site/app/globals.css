@@ -123,14 +123,11 @@ select {
 
 .hero {
   border-bottom: 1px solid var(--line);
-  padding: 56px 0 40px;
+  padding: 56px 0 52px;
 }
 
-.heroGrid {
-  align-items: start;
-  display: grid;
-  gap: 42px;
-  grid-template-columns: minmax(340px, 0.62fr) minmax(0, 1.38fr);
+.hero .heroCopy {
+  max-width: 880px;
 }
 
 .heroCopy h1,
@@ -149,6 +146,46 @@ select {
   line-height: 1.6;
   margin: 22px 0 0;
   max-width: 62ch;
+}
+
+.demoSection {
+  background: linear-gradient(180deg, #fbfcf7 0%, var(--bg) 100%);
+  border-bottom: 1px solid var(--line);
+  padding: 46px 0 78px;
+}
+
+.demoSectionHeader {
+  align-items: end;
+  display: grid;
+  gap: 28px;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.48fr);
+  margin-bottom: 24px;
+}
+
+.demoSectionHeader h2 {
+  font-size: clamp(32px, 4vw, 52px);
+  line-height: 1;
+  margin: 12px 0 0;
+  max-width: 16ch;
+}
+
+.demoSectionHeader p {
+  color: #374035;
+  font-size: 17px;
+  line-height: 1.6;
+  margin: 14px 0 0;
+  max-width: 68ch;
+}
+
+.demoSectionActions {
+  display: grid;
+  gap: 12px;
+  justify-items: stretch;
+}
+
+.demoSectionActions .heroActions,
+.demoSectionActions .installPill {
+  margin-top: 0;
 }
 
 .kicker,
@@ -223,21 +260,6 @@ select {
   white-space: normal;
 }
 
-.heroVisual {
-  background: #161a15;
-  border: 1px solid #252a23;
-  border-radius: 8px;
-  box-shadow: 0 28px 60px rgba(17, 21, 17, 0.2);
-  max-height: 560px;
-  overflow: hidden;
-}
-
-.heroVisual img {
-  display: block;
-  height: auto;
-  width: 100%;
-}
-
 .demoShell {
   background:
     linear-gradient(
@@ -250,7 +272,7 @@ select {
   border-radius: 8px;
   box-shadow: 0 24px 52px rgba(17, 21, 17, 0.14);
   min-width: 0;
-  padding: 14px;
+  padding: 18px;
 }
 
 .demoHeader {
@@ -305,7 +327,7 @@ select {
   align-items: stretch;
   display: grid;
   gap: 12px;
-  grid-template-columns: minmax(300px, 0.92fr) minmax(340px, 1.08fr);
+  grid-template-columns: minmax(360px, 0.78fr) minmax(520px, 1.22fr);
   margin-top: 14px;
 }
 
@@ -467,12 +489,12 @@ select {
   display: block;
   height: auto;
   margin-top: 8px;
-  max-height: 150px;
+  max-height: 170px;
   width: 100%;
 }
 
 .waveformFrame canvas:last-child {
-  max-height: 96px;
+  max-height: 110px;
 }
 
 .section {
@@ -768,7 +790,7 @@ select {
 }
 
 @media (max-width: 920px) {
-  .heroGrid,
+  .demoSectionHeader,
   .split,
   .docLayout {
     grid-template-columns: minmax(0, 1fr);
@@ -813,10 +835,6 @@ select {
   .hero,
   .docHero {
     padding-top: 40px;
-  }
-
-  .heroGrid {
-    gap: 34px;
   }
 
   .heroCopy h1,

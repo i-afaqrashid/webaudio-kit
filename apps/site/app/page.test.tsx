@@ -49,13 +49,17 @@ afterEach(() => {
 
 describe("site pages", () => {
   test("home page renders the package pitch, live demo, and external GitHub link", () => {
-    render(createElement(HomePage));
+    const { container } = render(createElement(HomePage));
 
     expect(
       screen.getByRole("heading", {
         name: "Browser tones and sweeps without fighting AudioContext.",
       }),
     ).toBeTruthy();
+    expect(container.querySelector(".hero .demoShell")).toBeNull();
+    expect(container.querySelector(".hero .heroActions")).toBeNull();
+    expect(container.querySelector(".hero .installPill")).toBeNull();
+    expect(container.querySelector(".demoSection .demoShell")).toBeTruthy();
     expect(screen.getByText("@webaudio-kit/core")).toBeTruthy();
     expect(screen.getByText("@webaudio-kit/react")).toBeTruthy();
     expect(screen.getByText("@webaudio-kit/cli")).toBeTruthy();

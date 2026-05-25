@@ -65,37 +65,57 @@ export default function HomePage() {
     <PageShell active="home">
       <main>
         <section className="hero">
-          <div className="wrap heroGrid">
-            <div className="heroCopy">
-              <span className="kicker">React Web Audio Toolkit</span>
-              <h1>
-                Browser tones and sweeps without fighting Audio
-                <wbr />
-                Context.
-              </h1>
-              <p>
-                webaudio-kit is a small React + TypeScript package set for tone
-                generators, frequency sweeps, noise bursts, safe volume
-                defaults, pitch labels, and analyser-driven UI in browser
-                prototypes.
-              </p>
-              <div className="heroActions">
-                <Link className="button buttonPrimary" href="/docs">
-                  Read docs
-                </Link>
-                <a
-                  className="button"
-                  href="https://github.com/i-afaqrashid/webaudio-kit"
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  <GitHubMark />
-                  GitHub
-                </a>
+          <div className="wrap heroCopy">
+            <span className="kicker">React Web Audio Toolkit</span>
+            <h1>
+              Browser tones and sweeps without fighting Audio
+              <wbr />
+              Context.
+            </h1>
+            <p>
+              webaudio-kit is a small React + TypeScript package set for tone
+              generators, frequency sweeps, noise bursts, safe volume defaults,
+              pitch labels, and analyser-driven UI in browser prototypes.
+            </p>
+          </div>
+        </section>
+
+        <section
+          aria-labelledby="interactive-demo-title"
+          className="section demoSection"
+        >
+          <div className="wrap">
+            <div className="demoSectionHeader">
+              <div>
+                <span className="kicker">Interactive demo</span>
+                <h2 id="interactive-demo-title">
+                  Tone, sweep, noise, and waveform in one workspace.
+                </h2>
+                <p>
+                  The controls and analyser now have room to breathe, so you can
+                  adjust the sound and watch the signal without fighting the
+                  hero layout.
+                </p>
               </div>
-              <div className="installPill" aria-label="Install command">
-                <span>$</span>
-                <code>pnpm add @webaudio-kit/react @webaudio-kit/core</code>
+              <div className="demoSectionActions">
+                <div className="heroActions">
+                  <Link className="button buttonPrimary" href="/docs">
+                    Read docs
+                  </Link>
+                  <a
+                    className="button"
+                    href="https://github.com/i-afaqrashid/webaudio-kit"
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    <GitHubMark />
+                    GitHub
+                  </a>
+                </div>
+                <div className="installPill" aria-label="Install command">
+                  <span>$</span>
+                  <code>pnpm add @webaudio-kit/react @webaudio-kit/core</code>
+                </div>
               </div>
             </div>
             <InteractiveDemo />
