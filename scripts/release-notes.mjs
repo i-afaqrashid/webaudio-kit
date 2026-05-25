@@ -9,10 +9,10 @@ const root = dirname(
 
 export const releaseTagPattern = /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
 
-export const releasePackages = [
-  "@webaudio-kit/core",
-  "@webaudio-kit/react",
-  "@webaudio-kit/cli",
+export const releasePackageHistory = [
+  { name: "@webaudio-kit/core", since: "1.0.0" },
+  { name: "@webaudio-kit/react", since: "1.0.0" },
+  { name: "@webaudio-kit/cli", since: "1.4.0" },
 ];
 
 export function normalizeReleaseTag(input) {
@@ -60,11 +60,19 @@ export function extractChangelogSection(changelog, version) {
   };
 }
 
+export function getReleasePackages(version) {
+  return releasePackageHistory
+    .filter(
+      (releasePackage) => compareVersions(version, releasePackage.since) >= 0,
+    )
+    .map((releasePackage) => releasePackage.name);
+}
+
 export function buildReleaseNotes({ changelog, tag }) {
   const normalizedTag = normalizeReleaseTag(tag);
   const version = normalizedTag.slice(1);
   const section = extractChangelogSection(changelog, version);
-  const packageLinks = releasePackages.map((packageName) => {
+  const packageLinks = getReleasePackages(version).map((packageName) => {
     return `- [\`${packageName}@${version}\`](https://www.npmjs.com/package/${packageName}/v/${version})`;
   });
 
@@ -81,6 +89,21 @@ export function buildReleaseNotes({ changelog, tag }) {
       "- [Demo](https://webaudio-kit.afaqrashid.com/demo)",
     ].join("\n"),
   ].join("\n\n");
+}
+
+function compareVersions(left, right) {
+  const leftParts = left.split(".").map(Number);
+  const rightParts = right.split(".").map(Number);
+
+  for (let index = 0; index < 3; index += 1) {
+    const diff = leftParts[index] - rightParts[index];
+
+    if (diff !== 0) {
+      return diff;
+    }
+  }
+
+  return 0;
 }
 
 async function main() {

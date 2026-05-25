@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   buildReleaseNotes,
   extractChangelogSection,
+  getReleasePackages,
   normalizeReleaseTag,
 } from "./release-notes.mjs";
 
@@ -55,4 +56,16 @@ test("buildReleaseNotes includes package links and release references", () => {
   assert.match(notes, /@webaudio-kit\/cli@1\.5\.1/);
   assert.match(notes, /Full changelog/);
   assert.match(notes, /https:\/\/webaudio-kit\.afaqrashid\.com\/docs/);
+});
+
+test("getReleasePackages reflects package history", () => {
+  assert.deepEqual(getReleasePackages("1.3.0"), [
+    "@webaudio-kit/core",
+    "@webaudio-kit/react",
+  ]);
+  assert.deepEqual(getReleasePackages("1.4.0"), [
+    "@webaudio-kit/core",
+    "@webaudio-kit/react",
+    "@webaudio-kit/cli",
+  ]);
 });
