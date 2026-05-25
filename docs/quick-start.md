@@ -8,6 +8,37 @@ pnpm add @webaudio-kit/core @webaudio-kit/react
 
 Use `npm install` or `yarn add` if your app does not use pnpm.
 
+## Paste This Into `App.tsx`
+
+```tsx
+import { AudioProvider, useTone } from "@webaudio-kit/react";
+
+function ToneButton() {
+  const tone = useTone({
+    frequency: 440,
+    gain: 0.15,
+    type: "sine",
+  });
+
+  return (
+    <button onClick={() => void tone.play({ durationMs: 600 })}>
+      {tone.isPlaying ? "Restart tone" : "Play tone"}
+    </button>
+  );
+}
+
+export function App() {
+  return (
+    <AudioProvider>
+      <ToneButton />
+    </AudioProvider>
+  );
+}
+```
+
+The click handler is important: browsers usually allow audio only after a user
+gesture.
+
 ## Add The Provider
 
 Wrap the part of your app that needs browser audio:

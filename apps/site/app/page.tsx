@@ -105,6 +105,9 @@ export default function HomePage() {
                   <Link className="button buttonPrimary" href="/docs">
                     Read docs
                   </Link>
+                  <Link className="button" href="/demos">
+                    Open demos
+                  </Link>
                   <a
                     className="button"
                     href="https://github.com/i-afaqrashid/webaudio-kit"

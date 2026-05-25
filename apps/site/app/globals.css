@@ -795,11 +795,96 @@ select {
   text-underline-offset: 3px;
 }
 
+.docActionLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0 6px;
+}
+
+.docActionLinks .button {
+  min-height: 38px;
+  min-width: 0;
+}
+
+.demoCardGrid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.demoCard {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 22px;
+}
+
+.demoCard:hover,
+.demoLinkPanel a:hover,
+.demoLinkPanel a.active {
+  border-color: #9ac323;
+  color: var(--ink);
+}
+
+.demoCard h2 {
+  font-size: 22px;
+  line-height: 1.05;
+  margin: 0;
+}
+
+.demoCard p,
+.demoLinkPanel {
+  color: #374035;
+  line-height: 1.6;
+}
+
+.demoCard p {
+  margin: 0;
+}
+
+.demoDetailHero h1 {
+  max-width: 14ch;
+}
+
+.demoDetailLayout {
+  align-items: start;
+  display: grid;
+  gap: 34px;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.34fr);
+}
+
+.demoLinkPanel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+  position: sticky;
+  top: 96px;
+}
+
+.demoLinkPanel a {
+  border-left: 2px solid var(--line);
+  color: var(--muted);
+  font-weight: 720;
+  padding-left: 12px;
+}
+
 @media (max-width: 920px) {
   .demoSectionHeader,
   .split,
-  .docLayout {
+  .docLayout,
+  .demoDetailLayout {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .demoCardGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .demoViewport {
@@ -822,6 +907,10 @@ select {
     border-bottom: 1px solid var(--line);
     grid-template-columns: repeat(2, minmax(0, 1fr));
     padding-bottom: 20px;
+    position: static;
+  }
+
+  .demoLinkPanel {
     position: static;
   }
 }
@@ -857,7 +946,8 @@ select {
   }
 
   .apiGrid,
-  .toc {
+  .toc,
+  .demoCardGrid {
     grid-template-columns: minmax(0, 1fr);
   }
 

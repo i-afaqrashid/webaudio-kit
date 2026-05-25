@@ -6,6 +6,7 @@ shipping `webaudio-kit`.
 ## Start Here
 
 - [Quick start](./quick-start.md)
+- [Live demos](https://webaudio-kit.afaqrashid.com/demos)
 - [API reference](./api.md)
 - [Architecture](./architecture.md)
 - [Browser audio guide](./browser-audio.md)
