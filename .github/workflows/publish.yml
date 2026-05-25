@@ -18,6 +18,7 @@ jobs:
     name: Publish npm packages
     if: github.repository == 'i-afaqrashid/webaudio-kit'
     runs-on: ubuntu-latest
+    environment: npm
     timeout-minutes: 30
     steps:
       - name: Configure git defaults
@@ -44,21 +45,6 @@ jobs:
           node --version
           npm --version
           pnpm --version
-
-      - name: Prepare pnpm store
-        run: |
-          PNPM_STORE_PATH="$(pnpm store path --silent)"
-          mkdir -p "$PNPM_STORE_PATH"
-          echo "PNPM_STORE_PATH=$PNPM_STORE_PATH" >> "$GITHUB_ENV"
-
-      - name: Restore pnpm store cache
-        uses: actions/cache@v5.0.5
-        with:
-          path: ${{ env.PNPM_STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-publish-node-24-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-publish-node-24-
-            ${{ runner.os }}-pnpm-publish-
 
       - name: Install
         run: pnpm install --frozen-lockfile
@@ -87,10 +73,4 @@ jobs:
           pnpm -r --filter './packages/*' pack --pack-destination .release-packages
 
       - name: Publish packages
-        run: |
-          if [ -n "${NPM_TOKEN:-}" ]; then
-            export NODE_AUTH_TOKEN="$NPM_TOKEN"
-          fi
-          pnpm release:publish-tarballs .release-packages
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: pnpm release:publish-tarballs .release-packages
