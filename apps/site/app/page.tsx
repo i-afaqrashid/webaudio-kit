@@ -65,18 +65,21 @@ export default function HomePage() {
     <PageShell active="home">
       <main>
         <section className="hero">
-          <div className="wrap heroCopy">
-            <span className="kicker">React Web Audio Toolkit</span>
-            <h1>
-              Browser tones and sweeps without fighting Audio
-              <wbr />
-              Context.
-            </h1>
-            <p>
-              webaudio-kit is a small React + TypeScript package set for tone
-              generators, frequency sweeps, noise bursts, safe volume defaults,
-              pitch labels, and analyser-driven UI in browser prototypes.
-            </p>
+          <div className="wrap">
+            <div className="heroCopy">
+              <span className="kicker">React Web Audio Toolkit</span>
+              <h1>
+                Browser tones and sweeps without fighting Audio
+                <wbr />
+                Context.
+              </h1>
+              <p>
+                webaudio-kit is a small React + TypeScript package set for tone
+                generators, frequency sweeps, noise bursts, safe volume
+                defaults, pitch labels, and analyser-driven UI in browser
+                prototypes.
+              </p>
+            </div>
           </div>
         </section>
 

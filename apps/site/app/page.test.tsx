@@ -56,6 +56,8 @@ describe("site pages", () => {
         name: "Browser tones and sweeps without fighting AudioContext.",
       }),
     ).toBeTruthy();
+    expect(container.querySelector(".hero > .wrap.heroCopy")).toBeNull();
+    expect(container.querySelector(".hero > .wrap > .heroCopy")).toBeTruthy();
     expect(container.querySelector(".hero .demoShell")).toBeNull();
     expect(container.querySelector(".hero .heroActions")).toBeNull();
     expect(container.querySelector(".hero .installPill")).toBeNull();
