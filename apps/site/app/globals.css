@@ -866,6 +866,113 @@ select {
   min-width: 0;
 }
 
+.apiReferenceLayout {
+  grid-template-columns: minmax(0, 230px) minmax(0, 1fr);
+}
+
+.apiReferenceContent {
+  max-width: 960px;
+}
+
+.apiReferenceSection {
+  border-top: 1px solid var(--line);
+  margin-top: 44px;
+  padding-top: 34px;
+}
+
+.apiReferenceSection:first-of-type {
+  margin-top: 14px;
+}
+
+.apiSectionHeader h2 {
+  border-top: 0;
+  font-size: 30px;
+  margin: 8px 0 0;
+  padding-top: 0;
+}
+
+.apiSectionHeader p {
+  margin: 12px 0 0;
+  max-width: 74ch;
+}
+
+.apiPackage {
+  background: #edf1e8;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  display: inline-flex;
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+  font-size: 12px;
+  padding: 5px 8px;
+}
+
+.apiExampleGrid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 18px 0;
+}
+
+.apiTableWrap {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin: 16px 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.apiTable {
+  border-collapse: collapse;
+  min-width: 720px;
+  width: 100%;
+}
+
+.apiTable th,
+.apiTable td {
+  border-bottom: 1px solid var(--line);
+  padding: 13px 14px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.apiTable th {
+  background: #f9fbf4;
+  color: #30372e;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.apiTable tr:last-child td {
+  border-bottom: 0;
+}
+
+.apiTable td {
+  color: #374035;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.apiTable td:nth-child(2),
+.apiTable td:nth-child(3) {
+  color: var(--muted);
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+  font-size: 12px;
+}
+
+.apiTable code {
+  white-space: nowrap;
+}
+
+.demoIntroLinks {
+  margin-bottom: 18px;
+}
+
 .releaseAside {
   display: grid;
   gap: 18px;
@@ -1075,6 +1182,7 @@ select {
   .demoSectionHeader,
   .split,
   .docLayout,
+  .apiReferenceLayout,
   .changelogLayout,
   .demoDetailLayout {
     grid-template-columns: minmax(0, 1fr);
@@ -1113,6 +1221,10 @@ select {
 
   .releaseAside {
     position: static;
+  }
+
+  .apiExampleGrid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -1213,5 +1325,57 @@ select {
   .terminal pre {
     white-space: pre-wrap;
     word-break: break-word;
+  }
+
+  .apiTable {
+    min-width: 0;
+  }
+
+  .apiTable thead {
+    display: none;
+  }
+
+  .apiTable,
+  .apiTable tbody,
+  .apiTable tr,
+  .apiTable td {
+    display: block;
+    width: 100%;
+  }
+
+  .apiTable tr {
+    border-bottom: 1px solid var(--line);
+    padding: 12px 14px;
+  }
+
+  .apiTable tr:last-child {
+    border-bottom: 0;
+  }
+
+  .apiTable td,
+  .apiTable tr:last-child td {
+    border-bottom: 0;
+    padding: 5px 0;
+  }
+
+  .apiTable td::before {
+    color: var(--muted);
+    content: attr(data-label);
+    display: block;
+    font-family:
+      ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+      "Liberation Mono", monospace;
+    font-size: 11px;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+  }
+
+  .apiTable td:nth-child(2),
+  .apiTable td:nth-child(3) {
+    font-size: 12px;
+  }
+
+  .apiTable code {
+    white-space: normal;
   }
 }

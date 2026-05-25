@@ -196,6 +196,14 @@ export function DemoIndex() {
               title="Try every control together."
               copy="The shared demo keeps tone, sweep, noise, test mode, volume, pan, waveform, and spectrum output in one place."
             />
+            <div className="docActionLinks demoIntroLinks">
+              <Link className="button" href="/docs/api">
+                API reference
+              </Link>
+              <Link className="button" href="/docs">
+                Implementation docs
+              </Link>
+            </div>
             <InteractiveDemo />
           </div>
         </section>
@@ -221,6 +229,9 @@ export function DemoDetail({ slug }: { slug: DemoSlug }) {
               </Link>
               <Link className="button" href="/docs">
                 Docs
+              </Link>
+              <Link className="button" href="/docs/api">
+                API reference
               </Link>
             </div>
           </div>
