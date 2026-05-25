@@ -111,6 +111,14 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@v5.0.5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
       - name: Cache Next.js build
         uses: actions/cache@v5.0.5
         with:
@@ -127,6 +135,12 @@ jobs:
 
       - name: Build site
         run: pnpm site:build
+
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run site browser QA
+        run: pnpm site:qa
 
       - name: Smoke packaged packages
         run: pnpm smoke:pack -- --skip-build
