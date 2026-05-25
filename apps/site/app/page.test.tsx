@@ -6,6 +6,7 @@ import {
   type ReactNode,
 } from "react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import ChangelogPage from "./changelog/page";
 import { DemoDetail, DemoIndex } from "./demos/demo-pages";
 import DocsPage from "./docs/page";
 import HomePage from "./page";
@@ -87,6 +88,11 @@ describe("site pages", () => {
     );
     expect(githubLinks[0]?.getAttribute("target")).toBe("_blank");
     expect(githubLinks[0]?.getAttribute("rel")).toBe("noreferrer");
+
+    const changelogLinks = screen.getAllByRole("link", {
+      name: "Changelog",
+    });
+    expect(changelogLinks[0]?.getAttribute("href")).toBe("/changelog");
   });
 
   test("docs page includes test mode, agent brief, and browser safety sections", () => {
@@ -103,6 +109,9 @@ describe("site pages", () => {
     expect(screen.getByText("AI agent brief CLI")).toBeTruthy();
     expect(screen.getByText("Autoplay behavior")).toBeTruthy();
     expect(screen.getByText("Safety boundary")).toBeTruthy();
+    expect(
+      screen.getByRole("link", { name: "Release history" }),
+    ).toHaveProperty("href", "http://localhost:3000/changelog");
 
     const docsDirectoryLink = screen.getByRole("link", {
       name: "Markdown docs directory",
@@ -134,6 +143,30 @@ describe("site pages", () => {
     for (const slug of ["tone", "sweep", "noise", "test-mode"]) {
       expect(existsSync(`apps/site/app/demos/${slug}/page.tsx`)).toBe(true);
     }
+  });
+
+  test("site exposes a public changelog route backed by the root changelog", async () => {
+    expect(existsSync("apps/site/app/changelog/page.tsx")).toBe(true);
+
+    render(createElement(ChangelogPage));
+
+    expect(
+      screen.getByRole("heading", { name: "Release history." }),
+    ).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "1.5.2" })).toBeTruthy();
+    expect(screen.getByText("npm Trusted Publishing")).toBeTruthy();
+    expect(
+      screen.getByRole("link", { name: "GitHub release v1.5.2" }),
+    ).toHaveProperty(
+      "href",
+      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.5.2",
+    );
+    expect(
+      screen.getByRole("link", { name: "@webaudio-kit/react 1.5.2" }),
+    ).toHaveProperty(
+      "href",
+      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.5.2",
+    );
   });
 
   test("demo index and focused demo pages render live workspaces", () => {
@@ -176,6 +209,9 @@ describe("site pages", () => {
     );
     expect(css).toMatch(
       /\.docContent\s+:where\(h2\[id\],\s*h3\[id\]\),\s*\.anchorTarget\s*{[^}]*scroll-margin-top:\s*var\(--anchor-scroll-offset\);/s,
+    );
+    expect(css).toMatch(
+      /\.releaseCard\[id\]\s*{[^}]*scroll-margin-top:\s*var\(--anchor-scroll-offset\);/s,
     );
   });
 });
