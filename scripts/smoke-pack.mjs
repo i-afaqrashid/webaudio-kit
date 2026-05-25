@@ -74,6 +74,7 @@ overrides:
 await writeFile(
   join(smokeDir, "smoke.mjs"),
   `import { buildAgentBrief } from "@webaudio-kit/cli";
+import { readFile } from "node:fs/promises";
 import { clampFrequency, dbToGain, frequencyToNoteName, midiToFrequency } from "@webaudio-kit/core";
 import {
   AudioProvider,
@@ -119,6 +120,19 @@ if (
 
 if (createDefaultAudioTestModeSteps().length < 5) {
   throw new Error("react audio test mode defaults failed");
+}
+
+const packageChangelogs = [
+  "node_modules/@webaudio-kit/core/CHANGELOG.md",
+  "node_modules/@webaudio-kit/react/CHANGELOG.md",
+  "node_modules/@webaudio-kit/cli/CHANGELOG.md",
+];
+
+for (const changelogPath of packageChangelogs) {
+  const changelog = await readFile(changelogPath, "utf8");
+  if (!changelog.includes("## ${rootPackage.version} -")) {
+    throw new Error(\`\${changelogPath} does not include the current release notes\`);
+  }
 }
 
 console.log("smoke ok");

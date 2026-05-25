@@ -29,14 +29,18 @@
     "release:check:full": "pnpm release:check && pnpm demo:qa",
     "release:check:tag": "pnpm release:verify-tag",
     "release:verify-tag": "node scripts/check-release-tag.mjs",
+    "release:notes": "node scripts/release-notes.mjs",
+    "release:sync-changelogs": "node scripts/sync-package-changelogs.mjs --write",
+    "release:check-changelogs": "node scripts/sync-package-changelogs.mjs --check",
     "release:publish-tarballs": "node scripts/publish-packages.mjs",
     "release:dry-run": "pnpm smoke:pack && pnpm release:publish-tarballs .release-packages --dry-run",
     "typecheck": "tsc -p tsconfig.base.json --noEmit",
-    "test": "vitest run",
+    "test": "vitest run && pnpm test:scripts",
+    "test:scripts": "node --test scripts/*.test.mjs",
     "test:watch": "vitest",
     "lint": "eslint . --max-warnings=0",
     "format:check": "prettier --check .",
-    "verify": "pnpm test && pnpm typecheck && pnpm build && pnpm demo:build && pnpm site:build && pnpm lint && pnpm format:check"
+    "verify": "pnpm test && pnpm typecheck && pnpm build && pnpm demo:build && pnpm site:build && pnpm release:check-changelogs && pnpm lint && pnpm format:check"
   },
   "engines": {
     "node": ">=22.13"
