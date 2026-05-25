@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { cleanup, render, screen } from "@testing-library/react";
 import {
   createElement,
@@ -107,5 +108,17 @@ describe("site pages", () => {
     });
     expect(docsDirectoryLink.getAttribute("target")).toBe("_blank");
     expect(docsDirectoryLink.getAttribute("rel")).toBe("noreferrer");
+  });
+
+  test("docs page stylesheet offsets hash targets below the sticky header", () => {
+    const css = readFileSync("apps/site/app/globals.css", "utf8");
+
+    expect(css).toContain("--anchor-scroll-offset");
+    expect(css).toMatch(
+      /html\s*{[^}]*scroll-padding-top:\s*var\(--anchor-scroll-offset\);/s,
+    );
+    expect(css).toMatch(
+      /\.docContent\s+:where\(h2\[id\],\s*h3\[id\]\),\s*\.anchorTarget\s*{[^}]*scroll-margin-top:\s*var\(--anchor-scroll-offset\);/s,
+    );
   });
 });
