@@ -68,7 +68,11 @@ export default function HomePage() {
           <div className="wrap heroGrid">
             <div className="heroCopy">
               <span className="kicker">React Web Audio Toolkit</span>
-              <h1>Browser tones and sweeps without fighting AudioContext.</h1>
+              <h1>
+                Browser tones and sweeps without fighting Audio
+                <wbr />
+                Context.
+              </h1>
               <p>
                 webaudio-kit is a small React + TypeScript package set for tone
                 generators, frequency sweeps, noise bursts, safe volume

@@ -119,8 +119,12 @@ function DemoControls() {
         </div>
       </div>
 
-      <div className="demoControls">
-        <div className="controlPanel">
+      <div className="demoViewport">
+        <div
+          aria-label="Primary audio controls"
+          className="controlPanel primaryControlPanel"
+          role="region"
+        >
           <div className="controlHead">
             <span>Tone generator</span>
             <strong>
@@ -128,48 +132,68 @@ function DemoControls() {
             </strong>
           </div>
 
-          <label className="rangeControl">
-            <span>Frequency</span>
-            <input
-              min="20"
-              max="20000"
-              onChange={(event) => setFrequency(Number(event.target.value))}
-              step="1"
-              type="range"
-              value={frequency}
-            />
-          </label>
+          <div className="primaryControlGrid">
+            <label className="rangeControl">
+              <span>Frequency</span>
+              <input
+                min="20"
+                max="20000"
+                onChange={(event) => setFrequency(Number(event.target.value))}
+                step="1"
+                type="range"
+                value={frequency}
+              />
+            </label>
 
-          <label className="rangeControl">
-            <span>Gain</span>
-            <input
-              min="-48"
-              max="0"
-              onChange={(event) => setGainDb(Number(event.target.value))}
-              step="1"
-              type="range"
-              value={gainDb}
-            />
-            <small>
-              {gainDb} dB / gain {gain.toFixed(3)} / {gainToDb(gain).toFixed(1)}{" "}
-              dB
-            </small>
-          </label>
+            <label className="rangeControl">
+              <span>Gain</span>
+              <input
+                min="-48"
+                max="0"
+                onChange={(event) => setGainDb(Number(event.target.value))}
+                step="1"
+                type="range"
+                value={gainDb}
+              />
+              <small>
+                {gainDb} dB / gain {gain.toFixed(3)} /{" "}
+                {gainToDb(gain).toFixed(1)} dB
+              </small>
+            </label>
 
-          <label className="rangeControl">
-            <span>Pan</span>
-            <input
-              min="-1"
-              max="1"
-              onChange={(event) => setPan(Number(event.target.value))}
-              step="0.01"
-              type="range"
-              value={pan}
-            />
-            <small>{pan < 0 ? "left" : pan > 0 ? "right" : "center"}</small>
-          </label>
+            <label className="rangeControl">
+              <span>Pan</span>
+              <input
+                min="-1"
+                max="1"
+                onChange={(event) => setPan(Number(event.target.value))}
+                step="0.01"
+                type="range"
+                value={pan}
+              />
+              <small>{pan < 0 ? "left" : pan > 0 ? "right" : "center"}</small>
+            </label>
 
-          <div className="segmentedControl" aria-label="Waveform">
+            <label className="rangeControl">
+              <span>Master volume</span>
+              <input
+                min="0"
+                max="1"
+                onChange={(event) =>
+                  void volume.setGain(Number(event.target.value))
+                }
+                step="0.01"
+                type="range"
+                value={volume.gain}
+              />
+              <small>{volume.gain.toFixed(2)}</small>
+            </label>
+          </div>
+
+          <div
+            className="segmentedControl waveformTypeControl"
+            aria-label="Waveform"
+          >
             {waveforms.map((waveform) => (
               <button
                 className={waveform === type ? "active" : undefined}
@@ -197,14 +221,22 @@ function DemoControls() {
           </div>
         </div>
 
+        <WaveformPanel />
+      </div>
+
+      <div
+        aria-label="Additional audio checks"
+        className="demoControls secondaryControls"
+        role="region"
+      >
         <div className="controlPanel sweepControls">
           <div className="controlHead">
             <span>Frequency sweep</span>
             <strong>250 Hz to 8000 Hz</strong>
           </div>
           <p>
-            The sweep uses the same graph as the tone control: oscillator, gain,
-            panner, master volume, analyser, then destination.
+            Uses the current waveform, gain, pan, master volume, and analyser
+            route.
           </p>
           <div className="demoActions">
             <button
@@ -218,20 +250,6 @@ function DemoControls() {
               Stop
             </button>
           </div>
-          <label className="rangeControl compact">
-            <span>Master volume</span>
-            <input
-              min="0"
-              max="1"
-              onChange={(event) =>
-                void volume.setGain(Number(event.target.value))
-              }
-              step="0.01"
-              type="range"
-              value={volume.gain}
-            />
-            <small>{volume.gain.toFixed(2)}</small>
-          </label>
         </div>
 
         <div className="controlPanel noiseControls">
@@ -309,8 +327,6 @@ function DemoControls() {
           </div>
         </div>
       </div>
-
-      <WaveformPanel />
     </div>
   );
 }
@@ -319,7 +335,11 @@ function WaveformPanel() {
   const analyser = useAnalyser();
 
   return (
-    <div className="waveformFrame">
+    <div
+      aria-label="Live analyser panel"
+      className="waveformFrame"
+      role="region"
+    >
       <div className="controlHead">
         <span>Analyser</span>
         <strong>{analyser ? "live" : "waiting for click"}</strong>
@@ -328,7 +348,7 @@ function WaveformPanel() {
       <AudioWaveformCanvas
         aria-label="Waveform analyser"
         backgroundColor="#0f120f"
-        height="180"
+        height="150"
         idleStrokeColor="#394135"
         strokeColor="#b9e145"
         width="900"
@@ -338,7 +358,7 @@ function WaveformPanel() {
         aria-label="Spectrum analyser"
         backgroundColor="#0f120f"
         barColor="#8ed8ff"
-        height="130"
+        height="96"
         idleBarColor="#394135"
         width="900"
       />
