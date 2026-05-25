@@ -9,6 +9,7 @@
   --accent-dark: #6f8e17;
   --blue: #2368a2;
   --caution: #9a5d15;
+  --anchor-scroll-offset: 112px;
   color: var(--ink);
   background: var(--bg);
   font-family:
@@ -30,6 +31,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: var(--anchor-scroll-offset);
 }
 
 body {
@@ -729,10 +731,14 @@ select {
   min-width: 0;
 }
 
+.docContent :where(h2[id], h3[id]),
+.anchorTarget {
+  scroll-margin-top: var(--anchor-scroll-offset);
+}
+
 .anchorTarget {
   display: block;
   height: 1px;
-  scroll-margin-top: 92px;
 }
 
 .docContent h2 {
@@ -821,6 +827,10 @@ select {
 }
 
 @media (max-width: 620px) {
+  :root {
+    --anchor-scroll-offset: 144px;
+  }
+
   .siteHeader {
     align-items: flex-start;
     flex-direction: column;
