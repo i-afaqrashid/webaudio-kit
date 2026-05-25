@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.5.2 - 2026-05-25
+
+### Changed
+
+- Publish releases through npm Trusted Publishing and remove token publishing
+  from the normal release path.
+- Generate GitHub Release notes from `CHANGELOG.md` during tag publishes and
+  upload package tarballs to the release page.
+- Add release-history links to every package README so npm package pages point
+  users to the full changelog and GitHub Releases.
+- Include synchronized `CHANGELOG.md` files in each package tarball.
+
 ## 1.5.1 - 2026-05-25
 
 ### Fixed
