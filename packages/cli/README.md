@@ -21,3 +21,14 @@ pnpm dlx @webaudio-kit/cli agent-brief --force
 
 Supported targets are `generic`, `codex`, `claude`, `gemini`, `opencode`, and
 `antigravity`.
+
+## Release History
+
+Every npm version maps to a GitHub tag and a `CHANGELOG.md` section.
+
+- Full changelog: https://github.com/i-afaqrashid/webaudio-kit/blob/main/CHANGELOG.md
+- GitHub Releases: https://github.com/i-afaqrashid/webaudio-kit/releases
+- npm versions: https://www.npmjs.com/package/@webaudio-kit/cli?activeTab=versions
+
+The published npm tarball includes `CHANGELOG.md` so version history is
+available with the package contents.

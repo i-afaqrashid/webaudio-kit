@@ -83,6 +83,17 @@ function AnalyserPanel() {
 See the repository API reference:
 https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/api.md.
 
+## Release History
+
+Every npm version maps to a GitHub tag and a `CHANGELOG.md` section.
+
+- Full changelog: https://github.com/i-afaqrashid/webaudio-kit/blob/main/CHANGELOG.md
+- GitHub Releases: https://github.com/i-afaqrashid/webaudio-kit/releases
+- npm versions: https://www.npmjs.com/package/@webaudio-kit/react?activeTab=versions
+
+The published npm tarball includes `CHANGELOG.md` so version history is
+available with the package contents.
+
 `AudioProvider` lazily creates and resumes `AudioContext` when playback starts.
 This matches browser autoplay rules and keeps import-time behavior safe.
 

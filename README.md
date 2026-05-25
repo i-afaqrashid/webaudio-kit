@@ -152,6 +152,7 @@ pnpm smoke:pack
 pnpm release:check
 pnpm release:check:full
 pnpm release:verify-tag v1.5.1
+pnpm release:notes v1.5.1
 pnpm release:dry-run
 pnpm verify
 ```
@@ -182,23 +183,37 @@ GitHub publish workflow. It rejects prerelease tags, package version drift,
 private packages, missing public publish config, and mismatched repository
 metadata.
 
+`pnpm release:notes v1.5.1` prints the GitHub Release notes generated from
+`CHANGELOG.md`, including npm links for every published package in that version.
+
 `pnpm release:dry-run` rebuilds and smoke-tests the package tarballs, checks npm
 for already-published versions, then runs `npm publish --dry-run` in the same
 package order used by the tag-gated publish workflow.
 
+## Release History
+
+`CHANGELOG.md` is the source of truth for public release notes. Every stable
+tag maps to a changelog section, a GitHub Release, and the same workspace
+version across:
+
+- `@webaudio-kit/core`
+- `@webaudio-kit/react`
+- `@webaudio-kit/cli`
+
+Package READMEs link npm users back to the full changelog and GitHub Releases,
+and each package tarball includes a `CHANGELOG.md` copy so the version history
+travels with the package.
+
 ## Release Publishing
 
 Publishing is triggered by stable semver tags such as `v1.0.0`. The GitHub
-workflow uses Node 24, npm provenance, a cached pnpm store, release tag
+workflow uses Node 24, npm trusted publishing with provenance, release tag
 verification, workspace verification, dependency audit, package smoke testing,
-and ordered package publishing.
+ordered package publishing, and GitHub Release creation from `CHANGELOG.md`.
 
-For npm authentication, prefer npm trusted publishing for the
-`i-afaqrashid/webaudio-kit` repository and `.github/workflows/publish.yml`
-workflow. If token-based publishing is used instead, the GitHub Actions
-`NPM_TOKEN` secret must be a granular npm token with publish access to the
-`@webaudio-kit` scope and bypass 2FA enabled, otherwise npm will stop the
-release with an OTP prompt.
+Npm trusted publishing is configured for the `i-afaqrashid/webaudio-kit`
+repository, `.github/workflows/publish.yml` workflow, and `npm` GitHub
+environment. Token publishing is not part of the normal release path.
 
 ## Package Names
 

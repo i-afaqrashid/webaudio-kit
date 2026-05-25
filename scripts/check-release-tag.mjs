@@ -2,6 +2,7 @@
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { extractChangelogSection } from "./release-notes.mjs";
 
 const root = dirname(
   fileURLToPath(new URL("../package.json", import.meta.url)),
@@ -48,9 +49,7 @@ if (mismatches.length > 0) {
   );
 }
 
-if (!changelog.includes(`## ${version} -`)) {
-  throw new Error(`CHANGELOG.md must include a section for ${version}`);
-}
+extractChangelogSection(changelog, version);
 
 for (const [name, packageJson] of packageManifests) {
   assertPublishablePackage(name, packageJson);
