@@ -127,10 +127,10 @@ select {
 }
 
 .heroGrid {
-  align-items: center;
+  align-items: start;
   display: grid;
   gap: 42px;
-  grid-template-columns: minmax(440px, 0.78fr) minmax(0, 1.22fr);
+  grid-template-columns: minmax(340px, 0.62fr) minmax(0, 1.38fr);
 }
 
 .heroCopy h1,
@@ -250,21 +250,21 @@ select {
   border-radius: 8px;
   box-shadow: 0 24px 52px rgba(17, 21, 17, 0.14);
   min-width: 0;
-  padding: 18px;
+  padding: 14px;
 }
 
 .demoHeader {
   align-items: start;
   display: grid;
-  gap: 16px;
+  gap: 12px;
   grid-template-columns: minmax(0, 1fr) auto;
 }
 
 .demoHeader h2 {
-  font-size: clamp(25px, 3vw, 36px);
+  font-size: clamp(22px, 2.4vw, 30px);
   line-height: 1;
   margin: 8px 0 0;
-  max-width: 14ch;
+  max-width: 20ch;
 }
 
 .demoState {
@@ -272,14 +272,15 @@ select {
   border: 1px solid var(--line);
   border-radius: 8px;
   display: grid;
-  gap: 10px;
-  min-width: 142px;
-  padding: 12px;
+  gap: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-width: 216px;
+  padding: 10px;
 }
 
 .demoState div + div {
-  border-top: 1px solid var(--line);
-  padding-top: 10px;
+  border-left: 1px solid var(--line);
+  padding-left: 10px;
 }
 
 .demoState span,
@@ -296,14 +297,22 @@ select {
 
 .demoState strong {
   display: block;
-  font-size: 18px;
+  font-size: 15px;
   margin-top: 4px;
+}
+
+.demoViewport {
+  align-items: stretch;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(300px, 0.92fr) minmax(340px, 1.08fr);
+  margin-top: 14px;
 }
 
 .demoControls {
   display: grid;
   gap: 12px;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.78fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: 18px;
 }
 
@@ -314,6 +323,18 @@ select {
   border-radius: 8px;
   min-width: 0;
   padding: 14px;
+}
+
+.primaryControlPanel {
+  display: grid;
+  grid-template-rows: auto auto auto auto;
+}
+
+.primaryControlGrid {
+  display: grid;
+  gap: 10px 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 12px;
 }
 
 .controlHead {
@@ -329,12 +350,16 @@ select {
 
 .rangeControl {
   display: grid;
-  gap: 7px;
+  gap: 5px;
   margin-top: 14px;
 }
 
+.primaryControlGrid .rangeControl {
+  margin-top: 0;
+}
+
 .rangeControl > span {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 720;
 }
 
@@ -343,30 +368,21 @@ select {
   width: 100%;
 }
 
-.rangeControl.compact {
-  margin-top: 22px;
-}
-
 .sweepControls p,
 .noiseControls p,
 .testModeControls p {
   color: #374035;
-  font-size: 14px;
-  line-height: 1.55;
-  margin: 16px 0 0;
-}
-
-.noiseControls,
-.testModeControls {
-  grid-column: 1 / -1;
+  font-size: 12px;
+  line-height: 1.45;
+  margin: 10px 0 0;
 }
 
 .testStepList {
   display: grid;
-  gap: 8px;
+  gap: 5px;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   list-style: none;
-  margin: 15px 0 0;
+  margin: 10px 0 0;
   padding: 0;
 }
 
@@ -377,7 +393,7 @@ select {
   display: grid;
   gap: 4px;
   min-width: 0;
-  padding: 9px;
+  padding: 6px;
 }
 
 .testStepList li.active {
@@ -386,7 +402,7 @@ select {
 }
 
 .testStepList span {
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 760;
   overflow-wrap: anywhere;
 }
@@ -395,7 +411,7 @@ select {
   display: grid;
   gap: 6px;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin-top: 15px;
+  margin-top: 12px;
 }
 
 .segmentedControl button {
@@ -423,17 +439,18 @@ select {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .demoActions .button {
   cursor: pointer;
-  min-height: 38px;
+  min-height: 36px;
   min-width: 0;
 }
 
 .waveformFrame {
-  margin-top: 12px;
+  display: grid;
+  margin-top: 0;
 }
 
 .visualizerLabel {
@@ -441,7 +458,7 @@ select {
   display: block;
   font-size: 12px;
   font-weight: 760;
-  margin-top: 14px;
+  margin-top: 10px;
 }
 
 .waveformFrame canvas {
@@ -449,9 +466,13 @@ select {
   border-radius: 6px;
   display: block;
   height: auto;
-  margin-top: 10px;
-  max-height: 190px;
+  margin-top: 8px;
+  max-height: 150px;
   width: 100%;
+}
+
+.waveformFrame canvas:last-child {
+  max-height: 96px;
 }
 
 .section {
@@ -753,8 +774,12 @@ select {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .demoControls {
+  .demoViewport {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .demoControls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .testStepList {
@@ -816,8 +841,36 @@ select {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .demoShell {
+    padding: 12px;
+  }
+
+  .demoState,
+  .demoControls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .demoState div + div {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    padding-left: 0;
+    padding-top: 10px;
+  }
+
   .segmentedControl {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .waveformTypeControl {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .waveformFrame canvas {
+    max-height: 108px;
+  }
+
+  .waveformFrame canvas:last-child {
+    max-height: 72px;
   }
 
   .codeCard pre,

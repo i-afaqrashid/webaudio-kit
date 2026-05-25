@@ -61,6 +61,15 @@ describe("site pages", () => {
     expect(screen.getByText("@webaudio-kit/cli")).toBeTruthy();
     expect(screen.getByText("Test mode")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Run test" })).toBeTruthy();
+    expect(
+      screen.getByRole("region", { name: "Primary audio controls" }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("region", { name: "Live analyser panel" }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("region", { name: "Additional audio checks" }),
+    ).toBeTruthy();
     expect(screen.getByLabelText("Waveform analyser")).toBeTruthy();
     expect(screen.getByLabelText("Spectrum analyser")).toBeTruthy();
 
