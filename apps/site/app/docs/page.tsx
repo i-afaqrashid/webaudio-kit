@@ -78,6 +78,7 @@ export default function DocsPage() {
               <a href="#noise">Noise hook</a>
               <a href="#test-mode">Test mode</a>
               <a href="#helpers">API helpers</a>
+              <a href="#api-reference">Reference</a>
               <a href="#agent-brief">Agent brief</a>
               <a href="#browser">Browser behavior</a>
               <a href="#release-history">Releases</a>
@@ -248,6 +249,18 @@ const gain = dbToGain(-14);
 const db = gainToDb(0.2);
 const note = frequencyToNoteName(440); // A4`}</CodeBlock>
 
+              <h2 id="api-reference">API reference</h2>
+              <p>
+                Use the dedicated API page when you need signatures, option
+                tables, return values, and copy-paste examples for every public
+                React and core export.
+              </p>
+              <div className="docActionLinks">
+                <Link className="button buttonPrimary" href="/docs/api">
+                  API reference
+                </Link>
+              </div>
+
               <h2 id="agent-brief">AI agent brief CLI</h2>
               <p>
                 <code>@webaudio-kit/cli</code> can generate an{" "}
@@ -307,6 +320,9 @@ pnpm dlx @webaudio-kit/cli agent-brief --target codex --out AGENTS.md`}</CodeBlo
                 safety, browser behavior, deployment, testing, and performance.
               </p>
               <ul className="docLinks">
+                <li>
+                  <Link href="/docs/api">Full API reference</Link>
+                </li>
                 <li>
                   <Link href="/demos">Interactive demo pages</Link>
                 </li>

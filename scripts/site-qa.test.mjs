@@ -18,7 +18,7 @@ test("site QA is wired into scripts and CI", async () => {
 
   assert.deepEqual(
     SITE_QA_ROUTES.map((route) => route.path),
-    ["/", "/docs", "/demos", "/demos/tone", "/changelog"],
+    ["/", "/docs", "/docs/api", "/demos", "/demos/tone", "/changelog"],
   );
   assert.deepEqual(
     SITE_QA_VIEWPORTS.map((viewport) => viewport.name),

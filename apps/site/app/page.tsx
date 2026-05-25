@@ -111,6 +111,9 @@ export default function HomePage() {
                   <Link className="button buttonPrimary" href="/docs">
                     Read docs
                   </Link>
+                  <Link className="button" href="/docs/api">
+                    API reference
+                  </Link>
                   <Link className="button" href="/demos">
                     Open demos
                   </Link>
@@ -162,6 +165,14 @@ export function App() {
 }`}</CodeBlock>
             <CodeBlock title="AI agent brief">{`pnpm dlx @webaudio-kit/cli agent-brief
 pnpm dlx @webaudio-kit/cli agent-brief --target codex --out AGENTS.md`}</CodeBlock>
+            <div className="docActionLinks">
+              <Link className="button buttonPrimary" href="/docs/api">
+                Browse the API reference
+              </Link>
+              <Link className="button" href="/docs">
+                Read the guide
+              </Link>
+            </div>
             {latestRelease ? (
               <div className="releaseBanner">
                 <div>

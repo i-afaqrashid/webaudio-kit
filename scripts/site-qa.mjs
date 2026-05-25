@@ -18,8 +18,19 @@ export const SITE_QA_ROUTES = [
     path: "/docs",
     heading: "Install, wrap, play, stop.",
     checks: [
+      { role: "link", name: "API reference" },
       { role: "link", name: "Release history" },
       { text: "Audio test mode" },
+    ],
+  },
+  {
+    path: "/docs/api",
+    heading: "Public API reference.",
+    checks: [
+      { text: "AudioProviderProps.initialGain" },
+      { text: "ToneOptions.frequency" },
+      { text: "frequencyToNoteName(frequency, options)" },
+      { role: "link", name: "Open tone demo" },
     ],
   },
   {

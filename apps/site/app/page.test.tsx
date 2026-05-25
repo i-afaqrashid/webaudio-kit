@@ -8,6 +8,7 @@ import {
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import ChangelogPage from "./changelog/page";
 import { DemoDetail, DemoIndex } from "./demos/demo-pages";
+import ApiDocsPage from "./docs/api/page";
 import DocsPage from "./docs/page";
 import HomePage from "./page";
 
@@ -112,6 +113,10 @@ describe("site pages", () => {
     expect(
       screen.getByRole("link", { name: "Release history" }),
     ).toHaveProperty("href", "http://localhost:3000/changelog");
+    expect(screen.getByRole("link", { name: "API reference" })).toHaveProperty(
+      "href",
+      "http://localhost:3000/docs/api",
+    );
 
     const docsDirectoryLink = screen.getByRole("link", {
       name: "Markdown docs directory",
@@ -124,10 +129,9 @@ describe("site pages", () => {
     render(createElement(DocsPage));
 
     expect(screen.getByText("Paste this into App.tsx")).toBeTruthy();
-    expect(screen.getByRole("link", { name: "Open tone demo" })).toHaveProperty(
-      "href",
-      "http://localhost:3000/demos/tone",
-    );
+    expect(
+      screen.getAllByRole("link", { name: "Open tone demo" })[0],
+    ).toHaveProperty("href", "http://localhost:3000/demos/tone");
     expect(
       screen.getByRole("link", { name: "Open sweep demo" }),
     ).toHaveProperty("href", "http://localhost:3000/demos/sweep");
@@ -137,6 +141,44 @@ describe("site pages", () => {
     expect(
       screen.getByRole("link", { name: "Open test mode demo" }),
     ).toHaveProperty("href", "http://localhost:3000/demos/test-mode");
+  });
+
+  test("site exposes a public API reference route for React and core exports", () => {
+    expect(existsSync("apps/site/app/docs/api/page.tsx")).toBe(true);
+
+    render(createElement(ApiDocsPage));
+
+    expect(
+      screen.getByRole("heading", { name: "Public API reference." }),
+    ).toBeTruthy();
+    for (const heading of [
+      "AudioProvider",
+      "useAudioContext",
+      "useTone",
+      "useFrequencySweep",
+      "useNoise",
+      "useVolume",
+      "useAnalyser",
+      "WaveformCanvas",
+      "SpectrumCanvas",
+      "useAudioTestMode",
+      "Core helpers",
+    ]) {
+      expect(screen.getByRole("heading", { name: heading })).toBeTruthy();
+    }
+
+    expect(screen.getByText("ToneOptions.frequency")).toBeTruthy();
+    expect(screen.getByText("FrequencySweepOptions.durationMs")).toBeTruthy();
+    expect(screen.getByText("NoiseOptions.type")).toBeTruthy();
+    expect(screen.getByText("AudioProviderProps.initialGain")).toBeTruthy();
+    expect(screen.getByText("WaveformCanvasProps.strokeColor")).toBeTruthy();
+    expect(screen.getByText("dbToGain(db)")).toBeTruthy();
+    expect(
+      screen.getByText("frequencyToNoteName(frequency, options)"),
+    ).toBeTruthy();
+    expect(
+      screen.getAllByRole("link", { name: "Open tone demo" })[0],
+    ).toHaveProperty("href", "http://localhost:3000/demos/tone");
   });
 
   test("site exposes dedicated demo routes", () => {
@@ -195,6 +237,10 @@ describe("site pages", () => {
       screen.getByRole("heading", { name: "Tone generator." }),
     ).toBeTruthy();
     expect(screen.getByText("tone.tsx")).toBeTruthy();
+    expect(screen.getByRole("link", { name: "API reference" })).toHaveProperty(
+      "href",
+      "http://localhost:3000/docs/api",
+    );
     expect(
       screen.getByRole("region", { name: "Live analyser panel" }),
     ).toBeTruthy();
