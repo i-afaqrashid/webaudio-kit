@@ -7,6 +7,10 @@ import {
   SectionHeader,
   Terminal,
 } from "./components";
+import {
+  getChangelogReleases,
+  getGitHubReleaseUrl,
+} from "./changelog/changelog-data";
 import { InteractiveDemo } from "./InteractiveDemo";
 
 const packages = [
@@ -61,6 +65,8 @@ const proofPoints = [
 ];
 
 export default function HomePage() {
+  const [latestRelease] = getChangelogReleases();
+
   return (
     <PageShell active="home">
       <main>
@@ -156,6 +162,32 @@ export function App() {
 }`}</CodeBlock>
             <CodeBlock title="AI agent brief">{`pnpm dlx @webaudio-kit/cli agent-brief
 pnpm dlx @webaudio-kit/cli agent-brief --target codex --out AGENTS.md`}</CodeBlock>
+            {latestRelease ? (
+              <div className="releaseBanner">
+                <div>
+                  <span className="kicker">Latest release</span>
+                  <h3>Version {latestRelease.version} is published.</h3>
+                  <p>
+                    Public package notes, GitHub release assets, and npm links
+                    are kept together so developers can verify exactly what
+                    shipped.
+                  </p>
+                </div>
+                <div className="releaseBannerLinks">
+                  <Link className="button buttonPrimary" href="/changelog">
+                    Changelog
+                  </Link>
+                  <a
+                    className="button"
+                    href={getGitHubReleaseUrl(latestRelease.version)}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    GitHub release v{latestRelease.version}
+                  </a>
+                </div>
+              </div>
+            ) : null}
           </div>
         </section>
 

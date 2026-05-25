@@ -262,6 +262,57 @@ select {
   white-space: normal;
 }
 
+.releaseBanner {
+  align-items: center;
+  background: #111511;
+  border-radius: 8px;
+  color: #f7f9f1;
+  display: grid;
+  gap: 22px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-top: 18px;
+  padding: 20px;
+}
+
+.releaseBanner h3 {
+  font-size: 23px;
+  line-height: 1.1;
+  margin: 8px 0 0;
+}
+
+.releaseBanner p {
+  color: #cdd6c8;
+  line-height: 1.6;
+  margin: 8px 0 0;
+  max-width: 62ch;
+}
+
+.releaseBanner .kicker {
+  color: #b9c7b2;
+}
+
+.releaseBannerLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.releaseBanner .button {
+  border-color: #4a5547;
+  color: #f7f9f1;
+}
+
+.releaseBanner .button:hover {
+  background: #202820;
+}
+
+.releaseBanner .buttonPrimary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #111511;
+}
+
 .demoShell {
   background:
     linear-gradient(
@@ -707,6 +758,14 @@ select {
   min-width: 0;
 }
 
+.changelogLayout {
+  align-items: start;
+  display: grid;
+  gap: 40px;
+  grid-template-columns: minmax(0, 240px) minmax(0, 1fr);
+  min-width: 0;
+}
+
 .toc {
   display: grid;
   gap: 12px;
@@ -807,6 +866,143 @@ select {
   min-width: 0;
 }
 
+.releaseAside {
+  display: grid;
+  gap: 18px;
+  position: sticky;
+  top: 96px;
+}
+
+.latestReleaseCard {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+}
+
+.latestReleaseCard strong {
+  font-size: 30px;
+  line-height: 1;
+}
+
+.latestReleaseCard span:last-of-type {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.latestReleaseCard a,
+.releaseHeader a,
+.releasePackageLinks a {
+  color: var(--blue);
+  font-weight: 720;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.releaseNav {
+  display: grid;
+  gap: 10px;
+}
+
+.releaseNav a {
+  border-left: 2px solid var(--line);
+  color: var(--muted);
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+  font-size: 12px;
+  padding-left: 12px;
+}
+
+.releaseNav a:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.releaseList {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+.releaseIntro,
+.releaseCard {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  min-width: 0;
+  padding: 24px;
+}
+
+.releaseCard[id] {
+  scroll-margin-top: var(--anchor-scroll-offset);
+}
+
+.releaseIntro h2,
+.releaseHeader h2 {
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1;
+  margin: 8px 0 0;
+}
+
+.releaseIntro p,
+.releaseCard li {
+  color: #374035;
+  line-height: 1.65;
+}
+
+.releaseIntro p {
+  margin: 12px 0 0;
+  max-width: 74ch;
+}
+
+.releaseActionLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.releaseHeader {
+  align-items: start;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  padding-bottom: 18px;
+}
+
+.releaseSections {
+  display: grid;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.releaseSections h3 {
+  font-size: 17px;
+  margin: 0 0 8px;
+}
+
+.releaseSections ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.releaseSections li + li {
+  margin-top: 7px;
+}
+
+.releasePackageLinks {
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  margin-top: 20px;
+  padding-top: 16px;
+}
+
 .demoCardGrid {
   display: grid;
   gap: 18px;
@@ -879,6 +1075,7 @@ select {
   .demoSectionHeader,
   .split,
   .docLayout,
+  .changelogLayout,
   .demoDetailLayout {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -911,6 +1108,10 @@ select {
   }
 
   .demoLinkPanel {
+    position: static;
+  }
+
+  .releaseAside {
     position: static;
   }
 }
@@ -953,6 +1154,23 @@ select {
 
   .scopeNote {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .releaseBanner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .releaseHeader {
+    flex-direction: column;
+  }
+
+  .releaseBannerLinks {
+    justify-content: stretch;
+  }
+
+  .releaseBannerLinks .button,
+  .releaseActionLinks .button {
+    width: 100%;
   }
 
   .demoHeader {

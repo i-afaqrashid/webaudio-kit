@@ -80,6 +80,7 @@ export default function DocsPage() {
               <a href="#helpers">API helpers</a>
               <a href="#agent-brief">Agent brief</a>
               <a href="#browser">Browser behavior</a>
+              <a href="#release-history">Releases</a>
             </aside>
 
             <article className="docContent">
@@ -279,6 +280,27 @@ pnpm dlx @webaudio-kit/cli agent-brief --target codex --out AGENTS.md`}</CodeBlo
                 </div>
               </div>
 
+              <h2 id="release-history">Release history</h2>
+              <p>
+                The website, npm package pages, and GitHub Releases all point
+                back to the same versioned changelog. Use it when you need to
+                verify published exports, package tarballs, or release notes for
+                a specific version.
+              </p>
+              <div className="docActionLinks">
+                <Link className="button buttonPrimary" href="/changelog">
+                  Release history
+                </Link>
+                <a
+                  className="button"
+                  href="https://github.com/i-afaqrashid/webaudio-kit/releases"
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  GitHub Releases
+                </a>
+              </div>
+
               <h2 id="more">More docs</h2>
               <p>
                 The repository also keeps source Markdown docs for API details,
@@ -287,6 +309,9 @@ pnpm dlx @webaudio-kit/cli agent-brief --target codex --out AGENTS.md`}</CodeBlo
               <ul className="docLinks">
                 <li>
                   <Link href="/demos">Interactive demo pages</Link>
+                </li>
+                <li>
+                  <Link href="/changelog">Versioned release history</Link>
                 </li>
                 <li>
                   <a
