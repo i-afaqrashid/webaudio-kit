@@ -27,6 +27,13 @@ The packages target browser runtimes and Node `>=22.13` for local tooling.
 `@webaudio-kit/react` supports React `>=18.3` and ships as a client entry for
 Next.js App Router projects.
 
+## Live demos
+
+- [Tone generator](https://webaudio-kit.afaqrashid.com/demos/tone)
+- [Frequency sweep](https://webaudio-kit.afaqrashid.com/demos/sweep)
+- [Noise burst](https://webaudio-kit.afaqrashid.com/demos/noise)
+- [Audio test mode](https://webaudio-kit.afaqrashid.com/demos/test-mode)
+
 ## 30-second example
 
 ```tsx
@@ -214,6 +221,7 @@ a certified audiology or medical testing system.
 - [Product plan](./product-plan.md)
 - [Publicity plan](./publicity-plan.md)
 - [Technical docs](./docs/README.md)
+- [Live demos](https://webaudio-kit.afaqrashid.com/demos)
 - [Architecture](./docs/architecture.md)
 - [API reference](./docs/api.md)
 - [Browser audio guide](./docs/browser-audio.md)

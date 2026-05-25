@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { CodeBlock, IconBadge, PageShell, SectionHeader } from "../components";
 
 export const metadata: Metadata = {
@@ -70,6 +71,7 @@ export default function DocsPage() {
           <div className="wrap docLayout">
             <aside className="toc" aria-label="Documentation sections">
               <a href="#install">Install</a>
+              <a href="#copy-paste">Copy-paste</a>
               <a href="#provider">Provider</a>
               <a href="#tone">Tone hook</a>
               <a href="#sweep">Sweep hook</a>
@@ -88,6 +90,44 @@ export default function DocsPage() {
               />
               <span id="install" className="anchorTarget" />
               <CodeBlock title="package install">{`pnpm add @webaudio-kit/react @webaudio-kit/core`}</CodeBlock>
+
+              <h2 id="copy-paste">Copy-paste React starter</h2>
+              <p>
+                Paste this into <code>App.tsx</code> in a React app after
+                installing the packages. The button click is the user gesture
+                that lets the provider create and resume browser audio.
+              </p>
+              <CodeBlock title="Paste this into App.tsx">{`import { AudioProvider, useTone } from "@webaudio-kit/react";
+
+function ToneButton() {
+  const tone = useTone({
+    frequency: 440,
+    gain: 0.15,
+    type: "sine",
+  });
+
+  return (
+    <button onClick={() => void tone.play({ durationMs: 600 })}>
+      {tone.isPlaying ? "Restart tone" : "Play tone"}
+    </button>
+  );
+}
+
+export function App() {
+  return (
+    <AudioProvider>
+      <ToneButton />
+    </AudioProvider>
+  );
+}`}</CodeBlock>
+              <div className="docActionLinks">
+                <Link className="button buttonPrimary" href="/demos/tone">
+                  Open quickstart demo
+                </Link>
+                <Link className="button" href="/demos">
+                  Browse all demos
+                </Link>
+              </div>
 
               <h2 id="provider">Provider</h2>
               <p>
@@ -122,6 +162,11 @@ export function Root() {
 
 await tone.play({ durationMs: 500 });
 tone.stop();`}</CodeBlock>
+              <div className="docActionLinks">
+                <Link className="button" href="/demos/tone">
+                  Open tone demo
+                </Link>
+              </div>
 
               <h2 id="sweep">Sweep hook</h2>
               <p>
@@ -138,6 +183,11 @@ tone.stop();`}</CodeBlock>
 
 await sweep.play();
 sweep.stop();`}</CodeBlock>
+              <div className="docActionLinks">
+                <Link className="button" href="/demos/sweep">
+                  Open sweep demo
+                </Link>
+              </div>
 
               <h2 id="noise">Noise hook</h2>
               <p>
@@ -153,6 +203,11 @@ sweep.stop();`}</CodeBlock>
 
 await noise.play();
 noise.stop();`}</CodeBlock>
+              <div className="docActionLinks">
+                <Link className="button" href="/demos/noise">
+                  Open noise demo
+                </Link>
+              </div>
 
               <h2 id="test-mode">Audio test mode</h2>
               <p>
@@ -164,6 +219,11 @@ noise.stop();`}</CodeBlock>
 
 await testMode.run();
 testMode.stop();`}</CodeBlock>
+              <div className="docActionLinks">
+                <Link className="button" href="/demos/test-mode">
+                  Open test mode demo
+                </Link>
+              </div>
 
               <h2 id="helpers">React surfaces and helpers</h2>
               <div className="apiGrid">
@@ -225,6 +285,9 @@ pnpm dlx @webaudio-kit/cli agent-brief --target codex --out AGENTS.md`}</CodeBlo
                 safety, browser behavior, deployment, testing, and performance.
               </p>
               <ul className="docLinks">
+                <li>
+                  <Link href="/demos">Interactive demo pages</Link>
+                </li>
                 <li>
                   <a
                     href="https://github.com/i-afaqrashid/webaudio-kit/tree/main/docs"

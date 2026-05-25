@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { cleanup, render, screen } from "@testing-library/react";
 import {
   createElement,
@@ -6,6 +6,7 @@ import {
   type ReactNode,
 } from "react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { DemoDetail, DemoIndex } from "./demos/demo-pages";
 import DocsPage from "./docs/page";
 import HomePage from "./page";
 
@@ -108,6 +109,62 @@ describe("site pages", () => {
     });
     expect(docsDirectoryLink.getAttribute("target")).toBe("_blank");
     expect(docsDirectoryLink.getAttribute("rel")).toBe("noreferrer");
+  });
+
+  test("docs page links every major audio surface to a dedicated demo", () => {
+    render(createElement(DocsPage));
+
+    expect(screen.getByText("Paste this into App.tsx")).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Open tone demo" })).toHaveProperty(
+      "href",
+      "http://localhost:3000/demos/tone",
+    );
+    expect(
+      screen.getByRole("link", { name: "Open sweep demo" }),
+    ).toHaveProperty("href", "http://localhost:3000/demos/sweep");
+    expect(
+      screen.getByRole("link", { name: "Open noise demo" }),
+    ).toHaveProperty("href", "http://localhost:3000/demos/noise");
+    expect(
+      screen.getByRole("link", { name: "Open test mode demo" }),
+    ).toHaveProperty("href", "http://localhost:3000/demos/test-mode");
+  });
+
+  test("site exposes dedicated demo routes", () => {
+    for (const slug of ["tone", "sweep", "noise", "test-mode"]) {
+      expect(existsSync(`apps/site/app/demos/${slug}/page.tsx`)).toBe(true);
+    }
+  });
+
+  test("demo index and focused demo pages render live workspaces", () => {
+    render(createElement(DemoIndex));
+
+    expect(
+      screen.getByRole("heading", {
+        name: "Focused browser audio workspaces.",
+      }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { name: "Tone generator" }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { name: "Frequency sweep" }),
+    ).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Noise burst" })).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { name: "Audio test mode" }),
+    ).toBeTruthy();
+
+    cleanup();
+    render(createElement(DemoDetail, { slug: "tone" }));
+
+    expect(
+      screen.getByRole("heading", { name: "Tone generator." }),
+    ).toBeTruthy();
+    expect(screen.getByText("tone.tsx")).toBeTruthy();
+    expect(
+      screen.getByRole("region", { name: "Live analyser panel" }),
+    ).toBeTruthy();
   });
 
   test("docs page stylesheet offsets hash targets below the sticky header", () => {

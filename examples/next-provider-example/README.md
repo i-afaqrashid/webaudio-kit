@@ -3,6 +3,16 @@
 This example shows the boundary that matters in Next.js: Web Audio hooks are
 client-only, so the provider and controls live in a `"use client"` component.
 
+## Run
+
+```sh
+pnpm install
+pnpm build
+pnpm --filter webaudio-kit-next-provider-example dev
+```
+
+## Files
+
 ```tsx
 // app/audio-controls.tsx
 "use client";
@@ -52,3 +62,4 @@ export default function Page() {
 ```
 
 Do not create `AudioContext` in a server component or at module import time.
+Start playback from a button click so browser autoplay policy can allow audio.

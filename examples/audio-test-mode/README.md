@@ -1,6 +1,15 @@
 # webaudio-kit Audio Test Mode Example
 
-Small Vite example showing `useAudioTestMode()`.
+Small Vite example showing `useAudioTestMode()` with waveform and spectrum
+canvases.
+
+## What it shows
+
+- short low-gain sequence from a user click
+- active step display
+- manual stop behavior
+- master volume reset
+- analyser-driven waveform and spectrum output
 
 ## Run
 

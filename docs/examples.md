@@ -1,5 +1,28 @@
 # Examples
 
+## Site Demos
+
+The public site has focused demo routes for the main audio surfaces:
+
+- Tone generator: https://webaudio-kit.afaqrashid.com/demos/tone
+- Frequency sweep: https://webaudio-kit.afaqrashid.com/demos/sweep
+- Noise burst: https://webaudio-kit.afaqrashid.com/demos/noise
+- Audio test mode: https://webaudio-kit.afaqrashid.com/demos/test-mode
+
+Each page includes a copy-paste snippet and the full analyser-backed workspace.
+
+## Real Example Apps
+
+The repository keeps standalone examples under `examples/`:
+
+- `examples/vite-tone-panel`: Vite React tone, sweep, noise, volume, waveform,
+  and spectrum controls.
+- `examples/next-provider-example`: Next App Router server/client boundary for
+  `AudioProvider` and hook-based controls.
+- `examples/audio-test-mode`: Low-gain test mode sequence with analyser output.
+- `examples/agent-brief-output`: sample agent context file for Codex, Claude
+  Code, Gemini CLI, OpenCode, and Antigravity.
+
 ## Tone Generator
 
 ```tsx
