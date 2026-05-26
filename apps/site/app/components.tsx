@@ -80,7 +80,7 @@ export function PageShell({
   active,
   children,
 }: {
-  active?: "home" | "docs" | "demos" | "changelog";
+  active?: "home" | "docs" | "examples" | "demos" | "changelog";
   children: ReactNode;
 }) {
   return (
@@ -98,6 +98,12 @@ export function PageShell({
             href="/docs"
           >
             Docs
+          </Link>
+          <Link
+            className={active === "examples" ? "active" : undefined}
+            href="/docs/examples"
+          >
+            Examples
           </Link>
           <Link
             className={active === "demos" ? "active" : undefined}

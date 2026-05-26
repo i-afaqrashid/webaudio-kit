@@ -13,6 +13,7 @@ import {
   getGitHubReleaseUrl,
 } from "./changelog/changelog-data";
 import { InteractiveDemo } from "./InteractiveDemo";
+import { stackBlitzStarterUrl } from "./playground-links";
 
 export const metadata = createPageMetadata({
   title: "webaudio-kit",
@@ -117,6 +118,17 @@ export default function HomePage() {
                 <div className="heroActions">
                   <Link className="button buttonPrimary" href="/docs">
                     Read docs
+                  </Link>
+                  <a
+                    className="button"
+                    href={stackBlitzStarterUrl}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    Run starter
+                  </a>
+                  <Link className="button" href="/docs/examples">
+                    Run examples
                   </Link>
                   <Link className="button" href="/docs/api">
                     API reference

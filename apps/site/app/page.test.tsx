@@ -85,6 +85,24 @@ describe("site pages", () => {
     ).toBeTruthy();
     expect(screen.getByLabelText("Waveform analyser")).toBeTruthy();
     expect(screen.getByLabelText("Spectrum analyser")).toBeTruthy();
+    expect(
+      screen
+        .getAllByRole("link", { name: "Examples" })
+        .some(
+          (link) =>
+            link.getAttribute("href") ===
+              "http://localhost:3000/docs/examples" ||
+            link.getAttribute("href") === "/docs/examples",
+        ),
+    ).toBe(true);
+    expect(screen.getByRole("link", { name: "Run starter" })).toHaveProperty(
+      "href",
+      "https://stackblitz.com/fork/github/i-afaqrashid/webaudio-kit/tree/main/examples/vite-react?title=webaudio-kit%20Vite%20React%20starter",
+    );
+    expect(screen.getByRole("link", { name: "Run examples" })).toHaveProperty(
+      "href",
+      "http://localhost:3000/docs/examples",
+    );
 
     const githubLinks = screen.getAllByRole("link", { name: /GitHub/ });
     expect(githubLinks[0]?.getAttribute("href")).toBe(
@@ -228,10 +246,16 @@ describe("site pages", () => {
       "href",
       "http://localhost:3000/docs/recipes",
     );
-    expect(screen.getByRole("link", { name: "Examples" })).toHaveProperty(
-      "href",
-      "http://localhost:3000/docs/examples",
-    );
+    expect(
+      screen
+        .getAllByRole("link", { name: "Examples" })
+        .some(
+          (link) =>
+            link.getAttribute("href") ===
+              "http://localhost:3000/docs/examples" ||
+            link.getAttribute("href") === "/docs/examples",
+        ),
+    ).toBe(true);
   });
 
   test("site exposes public examples and recipes docs routes", () => {
@@ -399,19 +423,19 @@ describe("site pages", () => {
     expect(
       screen.getByRole("heading", { name: "Release history." }),
     ).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "1.5.10" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "1.5.11" })).toBeTruthy();
     expect(screen.getByText("npm Trusted Publishing")).toBeTruthy();
     expect(
-      screen.getByRole("link", { name: "GitHub release v1.5.10" }),
+      screen.getByRole("link", { name: "GitHub release v1.5.11" }),
     ).toHaveProperty(
       "href",
-      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.5.10",
+      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.5.11",
     );
     expect(
-      screen.getByRole("link", { name: "@webaudio-kit/react 1.5.10" }),
+      screen.getByRole("link", { name: "@webaudio-kit/react 1.5.11" }),
     ).toHaveProperty(
       "href",
-      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.5.10",
+      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.5.11",
     );
   });
 
@@ -482,10 +506,16 @@ describe("site pages", () => {
       "href",
       "http://localhost:3000/docs/recipes",
     );
-    expect(screen.getByRole("link", { name: "Examples" })).toHaveProperty(
-      "href",
-      "http://localhost:3000/docs/examples",
-    );
+    expect(
+      screen
+        .getAllByRole("link", { name: "Examples" })
+        .some(
+          (link) =>
+            link.getAttribute("href") ===
+              "http://localhost:3000/docs/examples" ||
+            link.getAttribute("href") === "/docs/examples",
+        ),
+    ).toBe(true);
     expect(
       screen.getByRole("region", { name: "Live analyser panel" }),
     ).toBeTruthy();
