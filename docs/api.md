@@ -297,6 +297,9 @@ inside the provider. Use it for panic buttons, alert acknowledgement, or route
 changes. `setGain(0)` mutes output; it does not cancel already scheduled
 playback.
 
+For guidance on choosing hooks, direct core playback, or provider-routed core
+helpers, see [Hooks vs Core](./hooks-vs-core.md).
+
 ## `AudioProvider` State Machine
 
 `useAudioContext().state` can return `idle`, `suspended`, `running`, or

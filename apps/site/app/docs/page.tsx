@@ -95,6 +95,7 @@ export default function DocsPage() {
               <a href="#sweep">Sweep hook</a>
               <a href="#noise">Noise hook</a>
               <a href="#test-mode">Test mode</a>
+              <a href="#hooks-vs-core">Hooks vs Core</a>
               <a href="#helpers">API helpers</a>
               <a href="#frameworks">Frameworks</a>
               <a href="#benchmarks">Benchmarks</a>
@@ -327,6 +328,22 @@ const note = frequencyToNoteName(440); // A4`}</CodeBlock>
                 </Link>
                 <Link className="button" href="/demos/pitch">
                   Open pitch helper demo
+                </Link>
+              </div>
+
+              <h2 id="hooks-vs-core">Hooks vs Core</h2>
+              <p>
+                Most React screens should start with hooks. When a screen needs
+                custom <code>@webaudio-kit/core</code> playback, use{" "}
+                <code>ensureAudioContext()</code> and route into the provider
+                graph.
+              </p>
+              <div className="docActionLinks">
+                <Link
+                  className="button buttonPrimary"
+                  href="/docs/hooks-vs-core"
+                >
+                  Hooks vs Core
                 </Link>
               </div>
 

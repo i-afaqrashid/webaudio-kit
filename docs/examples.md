@@ -34,6 +34,10 @@ Run `pnpm examples:check` from the repository root to pack local packages into
 tarballs, install them into temporary copies of the examples, and build each
 example app without workspace shortcuts.
 
+If an example mixes React hooks with direct `@webaudio-kit/core` playback, use
+the [Hooks vs Core](./hooks-vs-core.md) guide to route custom sounds through the
+provider `masterGain` and analyser.
+
 ## Run in browser
 
 These StackBlitz links open standalone GitHub example folders. GitHub remains

@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.9.8 - 2026-05-26
+
+### Added
+
+- Add a Hooks vs Core interop guide explaining when to use React hooks, direct
+  core playback, and `ensureAudioContext()` together in provider-backed React
+  screens.
+- Add a public `/docs/hooks-vs-core` docs route and link the guide from the root
+  README, package READMEs, API reference, examples docs, and docs overview.
+
 ## 1.9.7 - 2026-05-26
 
 ### Added
