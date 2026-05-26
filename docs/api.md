@@ -11,8 +11,11 @@ type ToneOptions = {
   type?: OscillatorType;
   pan?: number;
   durationMs?: number;
+  detuneCents?: number;
   envelope?: PlaybackEnvelope;
+  filter?: PlaybackFilter;
   pattern?: PlaybackPattern;
+  voices?: PlaybackVoices;
 };
 ```
 
@@ -22,8 +25,38 @@ type ToneOptions = {
 - `pan`: stereo pan from `-1` left to `1` right. Defaults to `0`.
 - `durationMs`: optional playback duration. If omitted, playback continues
   until stopped.
+- `detuneCents`: oscillator detune in cents. Defaults to `0`.
 - `envelope`: optional gain envelope for attack, decay, sustain, and release.
+- `filter`: optional BiquadFilterNode routing. Defaults to lowpass when set.
 - `pattern`: optional repeat pattern. Repeated tones require `durationMs`.
+- `voices`: optional bounded multi-voice layering. Requested gain is divided
+  across voices.
+
+### `PlaybackFilter`
+
+```ts
+type PlaybackFilter = {
+  frequency: number;
+  q?: number;
+  type?: BiquadFilterType;
+};
+```
+
+- `frequency`: positive filter frequency in Hz, clamped to `20..20000`.
+- `q`: non-negative Q value. Defaults to `1`.
+- `type`: browser biquad filter type. Defaults to `"lowpass"`.
+
+### `PlaybackVoices`
+
+```ts
+type PlaybackVoices = {
+  count?: number;
+  spreadCents?: number;
+};
+```
+
+- `count`: integer voice count from `1..8`. Defaults to `1`.
+- `spreadCents`: total detune spread across voices. Defaults to `0`.
 
 ### `PlaybackEnvelope`
 
@@ -64,8 +97,11 @@ type FrequencySweepOptions = {
   gain?: number;
   type?: OscillatorType;
   pan?: number;
+  detuneCents?: number;
   envelope?: PlaybackEnvelope;
+  filter?: PlaybackFilter;
   pattern?: PlaybackPattern;
+  voices?: PlaybackVoices;
 };
 ```
 
@@ -83,6 +119,7 @@ type NoiseOptions = {
   pan?: number;
   type?: NoiseType;
   envelope?: PlaybackEnvelope;
+  filter?: PlaybackFilter;
   pattern?: PlaybackPattern;
 };
 ```
@@ -127,7 +164,9 @@ const handle = playTone(audioContext, {
   gain: 0.12,
   type: "square",
   envelope: { attackMs: 8, releaseMs: 45 },
+  filter: { frequency: 1800, q: 0.7 },
   pattern: { repeat: 3, gapMs: 90 },
+  voices: { count: 2, spreadCents: 10 },
 });
 
 handle.stop();

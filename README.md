@@ -106,6 +106,20 @@ await alertTone.play({
 });
 ```
 
+Shape harsher cues with a lowpass filter and lightweight detuned voices:
+
+```tsx
+await alertTone.play({
+  frequency: 660,
+  durationMs: 220,
+  gain: 0.15,
+  type: "sawtooth",
+  envelope: { attackMs: 8, releaseMs: 55 },
+  filter: { frequency: 1800, q: 0.7 },
+  voices: { count: 2, spreadCents: 10 },
+});
+```
+
 ## Next.js App Router
 
 Keep controls that call hooks in a client component. The package entry includes

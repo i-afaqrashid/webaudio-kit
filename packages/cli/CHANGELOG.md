@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.8.0 - 2026-05-26
+
+### Added
+
+- Add oscillator `detuneCents` and bounded `voices` support for richer tone and
+  sweep cues.
+- Add optional `filter` routing for tones, sweeps, and noise bursts with
+  lowpass defaults, frequency clamping, and Q control.
+- Add React type re-exports for `PlaybackFilter` and `PlaybackVoices`.
+
+### Changed
+
+- Share requested gain across multi-voice playback so layered tones do not get
+  louder by default.
+- Document warning/error/success cue shaping with filters, detune, voices, and
+  envelopes.
+
 ## 1.7.0 - 2026-05-26
 
 ### Added

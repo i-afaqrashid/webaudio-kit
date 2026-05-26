@@ -21,7 +21,7 @@ const apiCards = [
   {
     icon: "sliders" as const,
     title: "useTone",
-    copy: "Plays one oscillator with optional gain, pan, waveform, duration, envelope, and repeat pattern controls.",
+    copy: "Plays oscillator cues with gain, pan, waveform, duration, envelope, filter, detune, voice, and repeat controls.",
   },
   {
     icon: "radio" as const,
@@ -90,6 +90,7 @@ export default function DocsPage() {
               <a href="#provider">Provider</a>
               <a href="#tone">Tone hook</a>
               <a href="#envelopes">Envelopes</a>
+              <a href="#sound-shaping">Sound shaping</a>
               <a href="#patterns">Repeat patterns</a>
               <a href="#sweep">Sweep hook</a>
               <a href="#noise">Noise hook</a>
@@ -201,6 +202,22 @@ tone.stop();`}</CodeBlock>
   durationMs: 500,
   gain: 0.12,
   envelope: { attackMs: 10, decayMs: 40, sustain: 0.7, releaseMs: 80 },
+});`}</CodeBlock>
+
+              <h2 id="sound-shaping">Sound shaping</h2>
+              <p>
+                Use <code>filter</code>, <code>detuneCents</code>, and{" "}
+                <code>voices</code> to make alert cues less thin or harsh
+                without shipping audio files.
+              </p>
+              <CodeBlock title="warning cue styling">{`await tone.play({
+  frequency: 660,
+  durationMs: 220,
+  gain: 0.15,
+  type: "sawtooth",
+  envelope: { attackMs: 8, releaseMs: 55 },
+  filter: { frequency: 1800, q: 0.7 },
+  voices: { count: 2, spreadCents: 10 },
 });`}</CodeBlock>
 
               <h2 id="patterns">Repeat patterns</h2>
