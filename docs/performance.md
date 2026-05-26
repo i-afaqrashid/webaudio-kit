@@ -34,7 +34,9 @@ pnpm bench
 ```
 
 Benchmark numbers vary by machine and current system load. Use them as local
-comparison signals, not hard release thresholds.
+comparison signals, not hard release thresholds. See the
+[Benchmark guide](./benchmarks.md) for telemetry-free benchmark usage,
+interpretation notes, and limitations across browsers and devices.
 
 ## Manual Profiling
 

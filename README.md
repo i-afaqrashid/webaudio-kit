@@ -171,7 +171,10 @@ integration stays honest.
 
 `pnpm bench` runs local performance benchmarks for math helpers, playback graph
 scheduling, analyser frame processing, and React audio hooks. Treat benchmark
-numbers as local trend signals, not release gates.
+numbers as local trend signals, not release gates. See the
+[public benchmark guide](https://webaudio-kit.afaqrashid.com/docs/benchmarks)
+and [Markdown benchmark guide](./docs/benchmarks.md) for telemetry-free usage
+notes.
 
 `pnpm release:check` runs the full verification gate, package smoke check, and
 standalone example builds used before tagging a release.

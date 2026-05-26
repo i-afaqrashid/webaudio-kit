@@ -54,6 +54,24 @@ export const SITE_QA_ROUTES = [
     ],
   },
   {
+    path: "/docs/benchmarks",
+    heading: "Telemetry-free benchmark guide.",
+    metadata: {
+      title: "Benchmarks | webaudio-kit",
+      description:
+        "Run webaudio-kit local benchmarks without telemetry, analytics, tracking, or cross-device score claims.",
+      ogTitle: "Benchmarks | webaudio-kit",
+    },
+    checks: [
+      { text: "pnpm bench" },
+      { text: "benchmarks/core-math.bench.ts" },
+      { text: "benchmarks/core-playback.bench.ts" },
+      { text: "local trend signals" },
+      { text: "No telemetry" },
+      { role: "link", name: "Performance notes" },
+    ],
+  },
+  {
     path: "/docs/examples",
     heading: "Standalone example apps.",
     metadata: {

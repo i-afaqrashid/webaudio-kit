@@ -20,6 +20,7 @@ shipping `webaudio-kit`.
 - [Troubleshooting](./troubleshooting.md)
 - [Deployment](./deployment.md)
 - [Performance](./performance.md)
+- [Benchmarks](./benchmarks.md)
 
 ## Repository Docs
 
