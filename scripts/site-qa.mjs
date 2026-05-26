@@ -42,7 +42,19 @@ export const SITE_QA_ROUTES = [
       { text: "examples/vite-react" },
       { text: "examples/next-app-router" },
       { text: "pnpm examples:check" },
+      { role: "link", name: "Framework comparison" },
       { role: "link", name: "Recipes" },
+    ],
+  },
+  {
+    path: "/docs/frameworks",
+    heading: "Framework setup comparison.",
+    checks: [
+      { text: "Provider placement" },
+      { text: "Next App Router client boundary" },
+      { text: "Browser autoplay impact" },
+      { text: "examples/vite-react" },
+      { role: "link", name: "Example apps" },
     ],
   },
   {

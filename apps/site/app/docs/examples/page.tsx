@@ -59,6 +59,9 @@ export default function ExampleDocsPage() {
               <Link className="button buttonPrimary" href="/docs/recipes">
                 Recipes
               </Link>
+              <Link className="button" href="/docs/frameworks">
+                Framework comparison
+              </Link>
               <Link className="button" href="/docs/api">
                 API reference
               </Link>
@@ -108,6 +111,9 @@ export default function ExampleDocsPage() {
               <div className="docActionLinks">
                 <Link className="button buttonPrimary" href="/docs/recipes">
                   Recipes
+                </Link>
+                <Link className="button" href="/docs/frameworks">
+                  Framework comparison
                 </Link>
                 <Link className="button" href="/docs">
                   Docs guide

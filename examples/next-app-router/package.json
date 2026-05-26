@@ -9,7 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@webaudio-kit/react": "^1.5.6",
+    "@webaudio-kit/react": "^1.5.7",
     "next": "^16.2.6",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"

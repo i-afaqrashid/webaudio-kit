@@ -71,6 +71,9 @@ export default function DocsPage() {
               <Link className="button" href="/docs/examples">
                 Example apps
               </Link>
+              <Link className="button" href="/docs/frameworks">
+                Framework comparison
+              </Link>
             </div>
           </div>
         </section>
@@ -86,6 +89,7 @@ export default function DocsPage() {
               <a href="#noise">Noise hook</a>
               <a href="#test-mode">Test mode</a>
               <a href="#helpers">API helpers</a>
+              <a href="#frameworks">Frameworks</a>
               <a href="#api-reference">Reference</a>
               <a href="#agent-brief">Agent brief</a>
               <a href="#browser">Browser behavior</a>
@@ -265,6 +269,22 @@ const note = frequencyToNoteName(440); // A4`}</CodeBlock>
                 </Link>
                 <Link className="button" href="/demos/pitch">
                   Open pitch helper demo
+                </Link>
+              </div>
+
+              <h2 id="frameworks">Framework setup</h2>
+              <p>
+                Provider placement changes slightly between Vite React, Next App
+                Router, and plain React. The dedicated comparison page shows
+                where the provider belongs, where Next client boundaries are
+                required, and how browser autoplay rules affect each setup.
+              </p>
+              <div className="docActionLinks">
+                <Link className="button buttonPrimary" href="/docs/frameworks">
+                  Framework comparison
+                </Link>
+                <Link className="button" href="/docs/examples">
+                  Example apps
                 </Link>
               </div>
 
