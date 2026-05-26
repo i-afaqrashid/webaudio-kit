@@ -14,8 +14,10 @@ Small Vite + React example for the most common webaudio-kit setup.
 
 ```sh
 pnpm install
-pnpm build
-pnpm --filter webaudio-kit-vite-tone-panel dev
+pnpm examples:check
+cd examples/vite-tone-panel
+pnpm install
+pnpm dev
 ```
 
 Open the printed local URL and start playback from a button click.

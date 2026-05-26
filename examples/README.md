@@ -6,14 +6,17 @@ published package API shape and are checked from packed tarballs with
 
 | Example                 | What to inspect                                                                           | Local command                                                           |
 | ----------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| `vite-tone-panel`       | Vite React tone, sweep, noise, volume, waveform, and spectrum controls                    | `pnpm --filter webaudio-kit-vite-tone-panel dev`                        |
-| `next-provider-example` | Next App Router server/client boundary for `AudioProvider` and hooks                      | `pnpm --filter webaudio-kit-next-provider-example dev`                  |
-| `audio-test-mode`       | Low-gain test mode sequence with analyser canvases                                        | `pnpm --filter webaudio-kit-audio-test-mode-example dev`                |
+| `vite-react`            | Main Vite React tone, sweep, noise, volume, waveform, and spectrum controls               | `cd examples/vite-react && pnpm install && pnpm dev`                    |
+| `next-app-router`       | Next App Router server/client boundary for `AudioProvider` and hooks                      | `cd examples/next-app-router && pnpm install && pnpm dev`               |
+| `plain-react`           | Smallest plain React provider, tone, volume, waveform, and spectrum setup                 | `cd examples/plain-react && pnpm install && pnpm dev`                   |
+| `vite-tone-panel`       | Legacy Vite React tone panel kept for compatibility                                       | `cd examples/vite-tone-panel && pnpm install && pnpm dev`               |
+| `next-provider-example` | Legacy Next provider example kept for compatibility                                       | `cd examples/next-provider-example && pnpm install && pnpm dev`         |
+| `audio-test-mode`       | Low-gain test mode sequence with analyser canvases                                        | `cd examples/audio-test-mode && pnpm install && pnpm dev`               |
 | `agent-brief-output`    | Example `AGENTS.md` context for Codex, Claude Code, Gemini CLI, OpenCode, and Antigravity | `pnpm dlx @webaudio-kit/cli agent-brief --target codex --out AGENTS.md` |
 
-## Vite tone panel
+## Vite React
 
-`examples/vite-tone-panel` shows the standard client-side setup:
+`examples/vite-react` shows the standard client-side setup:
 
 - wrap controls in `AudioProvider`
 - play and stop a tone with `useTone`
@@ -22,14 +25,20 @@ published package API shape and are checked from packed tarballs with
 - render waveform and spectrum canvases with `WaveformCanvas` and
   `SpectrumCanvas`
 
-## Next provider example
+## Next App Router
 
-`examples/next-provider-example` shows the important Next.js boundary: the file
-that imports hooks from `@webaudio-kit/react` must be a client component.
+`examples/next-app-router` shows the important Next.js boundary: the file that
+imports hooks from `@webaudio-kit/react` must be a client component.
 
 It also proves that `useNoise`, `WaveformCanvas`, and `SpectrumCanvas` work
 from a Next App Router client component while the page itself remains a server
 component.
+
+## Plain React
+
+`examples/plain-react` shows the smallest React setup: provider, tone button,
+volume slider, waveform canvas, and spectrum canvas. It uses Vite only as a
+local dev server and bundler.
 
 ## Audio test mode
 

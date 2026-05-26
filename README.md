@@ -165,8 +165,9 @@ Playwright, then writes a demo screenshot, WebM, and GIF under `docs/assets/`.
 `pnpm smoke:pack` packs all publishable packages and imports them from a clean
 temporary app. It also runs the CLI bin from the packed tarball.
 
-`pnpm examples:check` builds the standalone Vite and Next examples from packed
-package tarballs so framework integration stays honest.
+`pnpm examples:check` builds the standalone Vite React, Next App Router, plain
+React, and compatibility examples from packed package tarballs so framework
+integration stays honest.
 
 `pnpm bench` runs local performance benchmarks for math helpers, playback graph
 scheduling, analyser frame processing, and React audio hooks. Treat benchmark
