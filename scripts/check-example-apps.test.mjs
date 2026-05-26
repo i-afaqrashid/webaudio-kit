@@ -65,3 +65,49 @@ test("docs expose one-click browser examples", () => {
   assert.match(readme, /https:\/\/webaudio-kit\.afaqrashid\.com\/new/);
   assert.match(newRoute, new RegExp(`${stackBlitzBase}/vite-react`));
 });
+
+test("site examples page embeds source-backed snippets", () => {
+  const sitePage = readFileSync("apps/site/app/docs/examples/page.tsx", "utf8");
+
+  for (const example of [
+    {
+      file: "examples/vite-react/src/main.tsx",
+      markers: [
+        "function AudioWorkbench()",
+        "WaveformCanvas",
+        "SpectrumCanvas",
+      ],
+      snippetTitle: "Vite React source excerpt",
+    },
+    {
+      file: "examples/next-app-router/app/audio-controls.tsx",
+      markers: ['"use client";', "function Controls()", "AudioProvider"],
+      snippetTitle: "Next App Router source excerpt",
+    },
+    {
+      file: "examples/incident-alert-console/src/main.tsx",
+      markers: ["function IncidentConsole()", "useAudioContext()", "Stop cues"],
+      snippetTitle: "Incident console source excerpt",
+    },
+  ]) {
+    const source = readFileSync(example.file, "utf8");
+
+    assert.match(sitePage, new RegExp(`snippetPath: "${example.file}"`));
+    assert.match(sitePage, new RegExp(example.snippetTitle));
+    assert.match(
+      sitePage,
+      new RegExp(
+        `https://github.com/i-afaqrashid/webaudio-kit/blob/main/${example.file}`,
+      ),
+    );
+
+    for (const marker of example.markers) {
+      assert.match(source, new RegExp(escapeRegExp(marker)));
+      assert.match(sitePage, new RegExp(escapeRegExp(marker)));
+    }
+  }
+});
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
