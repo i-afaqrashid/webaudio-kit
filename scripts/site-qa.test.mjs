@@ -25,6 +25,7 @@ test("site QA is wired into scripts and CI", async () => {
       "/",
       "/docs",
       "/docs/api",
+      "/docs/benchmarks",
       "/docs/examples",
       "/docs/frameworks",
       "/docs/recipes",
@@ -50,6 +51,12 @@ test("site QA is wired into scripts and CI", async () => {
     description:
       "Install webaudio-kit, wire AudioProvider, use tone, sweep, and noise hooks, and understand browser audio safety constraints.",
     ogTitle: "Docs | webaudio-kit",
+  });
+  assert.deepEqual(routeMetadata["/docs/benchmarks"], {
+    title: "Benchmarks | webaudio-kit",
+    description:
+      "Run webaudio-kit local benchmarks without telemetry, analytics, tracking, or cross-device score claims.",
+    ogTitle: "Benchmarks | webaudio-kit",
   });
   assert.deepEqual(routeMetadata["/demos/tone"], {
     title: "Tone generator | webaudio-kit",

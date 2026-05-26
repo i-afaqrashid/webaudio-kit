@@ -9,6 +9,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import ChangelogPage from "./changelog/page";
 import { DemoDetail, DemoIndex } from "./demos/demo-pages";
 import ApiDocsPage from "./docs/api/page";
+import BenchmarkDocsPage from "./docs/benchmarks/page";
 import ExampleDocsPage from "./docs/examples/page";
 import DocsPage from "./docs/page";
 import RecipeDocsPage from "./docs/recipes/page";
@@ -129,6 +130,16 @@ describe("site pages", () => {
     expect(
       screen.getAllByRole("link", { name: "Framework comparison" })[0],
     ).toHaveProperty("href", "http://localhost:3000/docs/frameworks");
+    expect(
+      screen
+        .getAllByRole("link", { name: "Benchmarks" })
+        .some(
+          (link) =>
+            link.getAttribute("href") ===
+              "http://localhost:3000/docs/benchmarks" ||
+            link.getAttribute("href") === "/docs/benchmarks",
+        ),
+    ).toBe(true);
 
     const docsDirectoryLink = screen.getByRole("link", {
       name: "Markdown docs directory",
@@ -297,6 +308,37 @@ describe("site pages", () => {
     ).toHaveProperty("href", "http://localhost:3000/docs/examples");
   });
 
+  test("site exposes telemetry-free benchmark docs", () => {
+    expect(existsSync("apps/site/app/docs/benchmarks/page.tsx")).toBe(true);
+
+    render(createElement(BenchmarkDocsPage));
+
+    expect(
+      screen.getByRole("heading", {
+        name: "Telemetry-free benchmark guide.",
+      }),
+    ).toBeTruthy();
+    expect(screen.getAllByText("pnpm bench").length).toBeGreaterThan(0);
+    expect(
+      screen.getByRole("heading", { name: "What the suite measures" }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { name: "How to read local numbers" }),
+    ).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Limits" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "No telemetry" })).toBeTruthy();
+    expect(screen.getByText("benchmarks/core-math.bench.ts")).toBeTruthy();
+    expect(screen.getByText("benchmarks/core-playback.bench.ts")).toBeTruthy();
+    expect(screen.getByText("benchmarks/analyser-frame.bench.ts")).toBeTruthy();
+    expect(screen.getByText("benchmarks/react-hooks.bench.tsx")).toBeTruthy();
+    expect(
+      screen.getByRole("link", { name: "Performance notes" }),
+    ).toHaveProperty(
+      "href",
+      "https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/performance.md",
+    );
+  });
+
   test("site exposes dedicated demo routes", () => {
     for (const slug of [
       "tone",
@@ -321,19 +363,19 @@ describe("site pages", () => {
     expect(
       screen.getByRole("heading", { name: "Release history." }),
     ).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "1.5.8" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "1.5.9" })).toBeTruthy();
     expect(screen.getByText("npm Trusted Publishing")).toBeTruthy();
     expect(
-      screen.getByRole("link", { name: "GitHub release v1.5.8" }),
+      screen.getByRole("link", { name: "GitHub release v1.5.9" }),
     ).toHaveProperty(
       "href",
-      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.5.8",
+      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.5.9",
     );
     expect(
-      screen.getByRole("link", { name: "@webaudio-kit/react 1.5.8" }),
+      screen.getByRole("link", { name: "@webaudio-kit/react 1.5.9" }),
     ).toHaveProperty(
       "href",
-      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.5.8",
+      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.5.9",
     );
   });
 

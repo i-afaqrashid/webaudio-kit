@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.5.9 - 2026-05-26
+
+### Added
+
+- Add public telemetry-free benchmark documentation for `pnpm bench`,
+  benchmark coverage, local result interpretation, and browser/device limits.
+- Add a public `/docs/benchmarks` page linked from the docs guide and README.
+- Add tests that keep benchmark docs linked and explicit about no telemetry,
+  analytics, or tracking.
+
+### Changed
+
+- Extend site browser QA coverage to include the benchmark docs route and
+  metadata.
+
 ## 1.5.8 - 2026-05-26
 
 ### Added

@@ -94,6 +94,7 @@ export default function DocsPage() {
               <a href="#test-mode">Test mode</a>
               <a href="#helpers">API helpers</a>
               <a href="#frameworks">Frameworks</a>
+              <a href="#benchmarks">Benchmarks</a>
               <a href="#api-reference">Reference</a>
               <a href="#agent-brief">Agent brief</a>
               <a href="#browser">Browser behavior</a>
@@ -292,6 +293,26 @@ const note = frequencyToNoteName(440); // A4`}</CodeBlock>
                 </Link>
               </div>
 
+              <h2 id="benchmarks">Benchmarks</h2>
+              <p>
+                Local benchmarks cover math helpers, playback scheduling,
+                analyser frame work, and React hook overhead. They are
+                telemetry-free trend checks, not cross-device score claims.
+              </p>
+              <div className="docActionLinks">
+                <Link className="button buttonPrimary" href="/docs/benchmarks">
+                  Benchmarks
+                </Link>
+                <a
+                  className="button"
+                  href="https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/benchmarks.md"
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  Markdown benchmark guide
+                </a>
+              </div>
+
               <h2 id="api-reference">API reference</h2>
               <p>
                 Use the dedicated API page when you need signatures, option
@@ -371,6 +392,9 @@ pnpm dlx @webaudio-kit/cli agent-brief --target codex --out AGENTS.md`}</CodeBlo
                 </li>
                 <li>
                   <Link href="/changelog">Versioned release history</Link>
+                </li>
+                <li>
+                  <Link href="/docs/benchmarks">Telemetry-free benchmarks</Link>
                 </li>
                 <li>
                   <a
