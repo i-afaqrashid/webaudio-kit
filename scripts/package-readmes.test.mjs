@@ -38,6 +38,36 @@ test("package READMEs expose public npm-facing docs links", () => {
   }
 });
 
+test("React README keeps framework install snippets copy-paste ready", () => {
+  const contents = readFileSync("packages/react/README.md", "utf8");
+
+  assert.match(contents, /## Framework Install Snippets/);
+  assert.match(contents, /### Vite React/);
+  assert.match(contents, /pnpm create vite/);
+  assert.match(contents, /### Next App Router/);
+  assert.match(contents, /"use client";/);
+  assert.match(contents, /### Plain React/);
+  assert.match(contents, /createRoot/);
+});
+
+test("Core README shows browser gesture setup and helper usage", () => {
+  const contents = readFileSync("packages/core/README.md", "utf8");
+
+  assert.match(contents, /## Browser Gesture Setup/);
+  assert.match(contents, /button\.addEventListener\("click", async \(\) =>/);
+  assert.match(contents, /playFrequencySweep/);
+  assert.match(contents, /frequencyToNoteName\(440\)/);
+});
+
+test("CLI README exposes package manager invocations", () => {
+  const contents = readFileSync("packages/cli/README.md", "utf8");
+
+  assert.match(contents, /## Package Manager Snippets/);
+  assert.match(contents, /pnpm dlx @webaudio-kit\/cli@latest agent-brief/);
+  assert.match(contents, /npx @webaudio-kit\/cli@latest agent-brief/);
+  assert.match(contents, /bunx @webaudio-kit\/cli@latest agent-brief/);
+});
+
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

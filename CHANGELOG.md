@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.5.6 - 2026-05-26
+
+### Added
+
+- Add npm-facing framework install snippets for Vite React, Next App Router, and
+  plain React in `@webaudio-kit/react`.
+- Add a browser gesture setup example to `@webaudio-kit/core` that covers tone,
+  sweep, and pitch helper usage.
+- Add package-manager invocation snippets for the agent brief CLI.
+
+### Changed
+
+- Expand package README coverage so npm pages stay concise but copy-paste ready.
+
 ## 1.5.5 - 2026-05-26
 
 ### Added

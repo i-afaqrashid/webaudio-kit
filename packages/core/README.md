@@ -30,6 +30,33 @@ handle.stop();
 Create or resume `AudioContext` from a user gesture in your app. This package
 does not create audio at module import time.
 
+## Browser Gesture Setup
+
+```ts
+import {
+  frequencyToNoteName,
+  playFrequencySweep,
+  playTone,
+} from "@webaudio-kit/core";
+
+const button = document.querySelector<HTMLButtonElement>("#play")!;
+const context = new AudioContext();
+
+button.addEventListener("click", async () => {
+  await context.resume();
+
+  playTone(context, { frequency: 440, gain: 0.12, durationMs: 500 });
+  playFrequencySweep(context, {
+    from: 250,
+    to: 8000,
+    durationMs: 1600,
+    gain: 0.08,
+  });
+
+  console.log(frequencyToNoteName(440));
+});
+```
+
 ## API
 
 - `playTone(context, options, destination?)`
