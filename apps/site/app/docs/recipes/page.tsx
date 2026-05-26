@@ -173,24 +173,25 @@ function MonitoringAlertCues({ severity }) {
 }`,
   },
   {
-    id: "master-volume-slider",
-    title: "Master Volume Slider",
-    copy: "Use provider volume for one shared master gain across tone, sweep, and noise controls.",
+    id: "controlled-volume-slider",
+    title: "Controlled Volume Slider",
+    copy: "Use provider gain as the controlled value, safe bounds for the slider, and storageKey when a browser preference should persist.",
     demo: "volume",
-    code: `import { useVolume } from "@webaudio-kit/react";
+    code: `import { useVolumeControl } from "@webaudio-kit/react";
 
-function MasterVolumeSlider() {
-  const volume = useVolume();
+function ControlledVolumeSlider() {
+  const volume = useVolumeControl({
+    label: "Master volume",
+    maxGain: 0.5,
+    storageKey: "app-master-gain",
+  });
 
   return (
-    <input
-      max={0.5}
-      min={0}
-      onChange={(event) => void volume.setGain(event.currentTarget.valueAsNumber)}
-      step={0.01}
-      type="range"
-      value={volume.gain}
-    />
+    <>
+      <input {...volume.inputProps} />
+      <span>{volume.gain.toFixed(2)}</span>
+      <button onClick={() => void volume.resetGain()}>Reset volume</button>
+    </>
   );
 }`,
   },

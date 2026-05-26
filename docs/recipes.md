@@ -432,30 +432,30 @@ export function App() {
 }
 ```
 
-## Master Volume Slider
+## Controlled Volume Slider
 
-Use provider volume for one shared master gain across tone, sweep, and noise
-controls.
+Use provider gain directly for one shared master volume across tone, sweep, and
+noise controls. `useVolumeControl()` avoids duplicate React state, keeps safe bounds
+in one place, and can persist a browser preference with `storageKey`.
 
 ```tsx
-import { AudioProvider, useVolume } from "@webaudio-kit/react";
+import { AudioProvider, useVolumeControl } from "@webaudio-kit/react";
 
-function MasterVolumeSlider() {
-  const volume = useVolume();
+function ControlledVolumeSlider() {
+  const volume = useVolumeControl({
+    label: "Master volume",
+    maxGain: 0.5,
+    storageKey: "app-master-gain",
+  });
 
   return (
     <label>
       Master volume
-      <input
-        max={0.5}
-        min={0}
-        onChange={(event) =>
-          void volume.setGain(event.currentTarget.valueAsNumber)
-        }
-        step={0.01}
-        type="range"
-        value={volume.gain}
-      />
+      <input {...volume.inputProps} />
+      <span>{volume.gain.toFixed(2)}</span>
+      <button type="button" onClick={() => void volume.resetGain()}>
+        Reset volume
+      </button>
     </label>
   );
 }
@@ -463,7 +463,7 @@ function MasterVolumeSlider() {
 export function App() {
   return (
     <AudioProvider initialGain={0.2}>
-      <MasterVolumeSlider />
+      <ControlledVolumeSlider />
     </AudioProvider>
   );
 }

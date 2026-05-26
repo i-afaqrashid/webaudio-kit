@@ -568,6 +568,56 @@ await volume.setGain(0.2);
 
 Returns the current master gain and a setter.
 
+### `useVolumeControl()`
+
+Returns controlled slider helpers backed by provider gain:
+
+```ts
+{
+  gain: number;
+  db: number;
+  inputProps: {
+    "aria-label": string;
+    max: number;
+    min: number;
+    onChange(event): void;
+    step: number;
+    type: "range";
+    value: number;
+  };
+  maxGain: number;
+  minGain: number;
+  resetGain(): Promise<void>;
+  setGain(gain: number): Promise<void>;
+  step: number;
+}
+```
+
+Use it for a `Controlled Volume Slider` so provider gain stays the source of
+truth instead of syncing duplicate React state. `minGain`, `maxGain`, and `step`
+define safe bounds. `storageKey` persists a localStorage preference and
+`resetGain()` removes that stored preference before restoring `defaultGain`.
+
+```tsx
+import { useVolumeControl } from "@webaudio-kit/react";
+
+function ControlledVolumeSlider() {
+  const volume = useVolumeControl({
+    label: "Master volume",
+    maxGain: 0.5,
+    storageKey: "app-master-gain",
+  });
+
+  return (
+    <>
+      <input {...volume.inputProps} />
+      <span>{volume.gain.toFixed(2)}</span>
+      <button onClick={() => void volume.resetGain()}>Reset volume</button>
+    </>
+  );
+}
+```
+
 ### `useAnalyser()`
 
 ```tsx

@@ -161,6 +161,33 @@ function AlertControls() {
 `useVolume().setGain(0)` changes master output level, but it does not cancel
 already scheduled tones, sweeps, noise bursts, patterns, or test-mode steps.
 
+Use `useVolumeControl()` for a controlled slider that treats provider gain as the
+source of truth. It exposes `inputProps`, clamps changes to safe bounds, and can
+persist a browser preference with `storageKey`:
+
+```tsx
+import { useVolumeControl } from "@webaudio-kit/react";
+
+function ControlledVolumeSlider() {
+  const volume = useVolumeControl({
+    maxGain: 0.5,
+    storageKey: "app-master-gain",
+  });
+
+  return (
+    <>
+      <input {...volume.inputProps} />
+      <span>{volume.gain.toFixed(2)}</span>
+      <button onClick={() => void volume.resetGain()}>Reset volume</button>
+    </>
+  );
+}
+```
+
+Keep separate app-level state only for preferences outside audio output, such as
+a policy mute toggle. For normal master volume, provider gain is the canonical
+controlled value.
+
 Explicit browser audio unlock UX is available through `useAudioUnlock()`:
 
 ```tsx
@@ -233,6 +260,7 @@ so custom code can route through `runtime.masterGain`.
 - `useNoise`
 - `useAudioTestMode`
 - `useVolume`
+- `useVolumeControl`
 - `useAnalyser`
 - `WaveformCanvas`
 - `SpectrumCanvas`

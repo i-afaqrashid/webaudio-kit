@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.9.11 - 2026-05-26
+
+### Added
+
+- Add `useVolumeControl()` for provider-backed controlled volume sliders with
+  safe bounds, decibel display data, reset handling, and optional localStorage
+  persistence through `storageKey`.
+- Document the canonical controlled volume pattern in the root README, React
+  README, API reference, recipes, and public docs site.
+
 ## 1.9.10 - 2026-05-26
 
 ### Added

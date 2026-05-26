@@ -14,7 +14,7 @@ test("recipe documentation covers common audio patterns", () => {
     "Tone Button",
     "Frequency Sweep Control",
     "Monitoring Alert Cues",
-    "Master Volume Slider",
+    "Controlled Volume Slider",
     "Waveform And Spectrum Panel",
     "Audio Test Mode",
     "Safe Autoplay Pattern",
@@ -31,6 +31,7 @@ test("recipe documentation covers common audio patterns", () => {
     "WaveformCanvas",
     "SpectrumCanvas",
     "useAudioTestMode",
+    "useVolumeControl",
   ]) {
     assert.match(recipes, new RegExp(importName));
   }

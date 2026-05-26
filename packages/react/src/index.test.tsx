@@ -1,4 +1,10 @@
-import { act, cleanup, render, screen } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
 import { useState } from "react";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import {
@@ -16,6 +22,7 @@ import {
   useNoise,
   useTone,
   useVolume,
+  useVolumeControl,
 } from "./index";
 
 class FakeAudioParam {
@@ -237,6 +244,7 @@ class ThrowingAudioContext {
 afterEach(() => {
   cleanup();
   FakeAudioContext.instances = [];
+  window.localStorage.clear();
   vi.useRealTimers();
   vi.unstubAllGlobals();
 });
@@ -393,6 +401,31 @@ function EngineHarness() {
       </button>
       <button type="button" onClick={() => engine.stopAll()}>
         engine stop all
+      </button>
+    </div>
+  );
+}
+
+function VolumeControlHarness({ storageKey }: { storageKey?: string }) {
+  const volume = useVolumeControl({
+    defaultGain: 0.2,
+    label: "Alert volume",
+    maxGain: 0.5,
+    minGain: 0,
+    step: 0.01,
+    storageKey,
+  });
+
+  return (
+    <div>
+      <span data-testid="volume-control-gain">{volume.gain.toFixed(2)}</span>
+      <span data-testid="volume-control-db">{volume.db.toFixed(1)}</span>
+      <input data-testid="volume-control-input" {...volume.inputProps} />
+      <button type="button" onClick={() => void volume.setGain(2)}>
+        set high volume
+      </button>
+      <button type="button" onClick={() => void volume.resetGain()}>
+        reset volume
       </button>
     </div>
   );
@@ -984,6 +1017,66 @@ describe("AudioProvider", () => {
 
     expect(screen.getByTestId("volume").textContent).toBe("0.0");
     expect(FakeAudioContext.instances[0]?.gains[0]?.gain.value).toBe(0);
+  });
+
+  test("useVolumeControl drives a controlled slider from provider gain", async () => {
+    render(
+      <AudioProvider initialGain={0.2}>
+        <VolumeControlHarness />
+      </AudioProvider>,
+    );
+
+    const input = screen.getByTestId(
+      "volume-control-input",
+    ) as HTMLInputElement;
+    expect(screen.getByTestId("volume-control-gain").textContent).toBe("0.20");
+    expect(input.value).toBe("0.2");
+    expect(input.min).toBe("0");
+    expect(input.max).toBe("0.5");
+    expect(input.step).toBe("0.01");
+    expect(input.getAttribute("aria-label")).toBe("Alert volume");
+
+    fireEvent.change(input, { target: { value: "0.35" } });
+
+    expect(screen.getByTestId("volume-control-gain").textContent).toBe("0.35");
+    expect(input.value).toBe("0.35");
+    expect(screen.getByTestId("volume-control-db").textContent).toBe("-9.1");
+  });
+
+  test("useVolumeControl clamps helper updates to the configured safe range", async () => {
+    render(
+      <AudioProvider initialGain={0.2}>
+        <VolumeControlHarness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "set high volume" }).click();
+    });
+
+    expect(screen.getByTestId("volume-control-gain").textContent).toBe("0.50");
+  });
+
+  test("useVolumeControl restores and resets a persisted preference", async () => {
+    window.localStorage.setItem("wk-volume", "0.33");
+
+    render(
+      <AudioProvider initialGain={0.2}>
+        <VolumeControlHarness storageKey="wk-volume" />
+      </AudioProvider>,
+    );
+
+    await act(async () => undefined);
+
+    expect(screen.getByTestId("volume-control-gain").textContent).toBe("0.33");
+    expect(window.localStorage.getItem("wk-volume")).toBe("0.33");
+
+    await act(async () => {
+      screen.getByRole("button", { name: "reset volume" }).click();
+    });
+
+    expect(screen.getByTestId("volume-control-gain").textContent).toBe("0.20");
+    expect(window.localStorage.getItem("wk-volume")).toBe(null);
   });
 
   test("supports webkitAudioContext fallback", async () => {

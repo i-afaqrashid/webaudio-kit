@@ -49,6 +49,11 @@ const apiCards = [
     copy: "Returns the analyser node so UI can render waveform or spectrum data.",
   },
   {
+    icon: "sliders" as const,
+    title: "useVolumeControl",
+    copy: "Creates provider-backed range input props with safe bounds and optional persisted volume preference.",
+  },
+  {
     icon: "waves" as const,
     title: "WaveformCanvas",
     copy: "Draws provider analyser data with an idle line before playback starts.",

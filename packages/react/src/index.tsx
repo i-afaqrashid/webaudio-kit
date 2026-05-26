@@ -2,6 +2,7 @@
 
 import {
   type CanvasHTMLAttributes,
+  type ChangeEvent,
   createContext,
   type ReactNode,
   useCallback,
@@ -14,6 +15,7 @@ import {
 import {
   DEFAULT_GAIN,
   type FrequencySweepOptions,
+  gainToDb,
   type NoiseOptions,
   type PlaybackHandle,
   type PlaybackPattern,
@@ -61,6 +63,36 @@ export type AudioUnlockControls = {
   state: AudioProviderValue["state"];
   status: AudioUnlockStatus;
   unlock(): Promise<AudioRuntime>;
+};
+
+export type VolumeControlOptions = {
+  defaultGain?: number;
+  label?: string;
+  maxGain?: number;
+  minGain?: number;
+  step?: number;
+  storageKey?: string;
+};
+
+export type VolumeControlInputProps = {
+  "aria-label": string;
+  max: number;
+  min: number;
+  onChange(event: ChangeEvent<HTMLInputElement>): void;
+  step: number;
+  type: "range";
+  value: number;
+};
+
+export type VolumeControlControls = {
+  db: number;
+  gain: number;
+  inputProps: VolumeControlInputProps;
+  maxGain: number;
+  minGain: number;
+  resetGain(): Promise<void>;
+  setGain(gain: number): Promise<void>;
+  step: number;
 };
 
 export type AudioProviderProps = {
@@ -738,6 +770,79 @@ export function useVolume(): {
   };
 }
 
+export function useVolumeControl(
+  options: VolumeControlOptions = {},
+): VolumeControlControls {
+  const volume = useVolume();
+  const minGain = normalizeGain(options.minGain ?? 0);
+  const maxGain = normalizeVolumeControlMax(options.maxGain, minGain);
+  const step = normalizeVolumeControlStep(options.step);
+  const defaultGain = clampGainToRange(
+    options.defaultGain ?? DEFAULT_GAIN,
+    minGain,
+    maxGain,
+  );
+  const label = options.label ?? "Master volume";
+  const storageKey = options.storageKey;
+  const restoredStorageRef = useRef<string | undefined>(undefined);
+
+  const setGain = useCallback(
+    async (nextGain: number) => {
+      const boundedGain = clampGainToRange(nextGain, minGain, maxGain);
+      await volume.setGain(boundedGain);
+      writeStoredGain(storageKey, boundedGain);
+    },
+    [maxGain, minGain, storageKey, volume],
+  );
+
+  const resetGain = useCallback(async () => {
+    removeStoredGain(storageKey);
+    await volume.setGain(defaultGain);
+  }, [defaultGain, storageKey, volume]);
+
+  useEffect(() => {
+    if (!storageKey || restoredStorageRef.current === storageKey) {
+      return;
+    }
+
+    restoredStorageRef.current = storageKey;
+    const storedGain = readStoredGain(storageKey);
+
+    if (storedGain !== null) {
+      void setGain(storedGain);
+    }
+  }, [setGain, storageKey]);
+
+  const inputProps = useMemo<VolumeControlInputProps>(
+    () => ({
+      "aria-label": label,
+      max: maxGain,
+      min: minGain,
+      onChange(event) {
+        void setGain(event.currentTarget.valueAsNumber);
+      },
+      step,
+      type: "range",
+      value: volume.gain,
+    }),
+    [label, maxGain, minGain, setGain, step, volume.gain],
+  );
+
+  return useMemo<VolumeControlControls>(
+    () => ({
+      db: gainToDb(volume.gain),
+      gain: volume.gain,
+      inputProps,
+      maxGain,
+      minGain,
+      resetGain,
+      setGain,
+      step,
+    }),
+    [inputProps, maxGain, minGain, resetGain, setGain, step, volume.gain],
+  );
+}
+
 export function useAnalyser(): AnalyserNode | null {
   return useAudioContext().analyser;
 }
@@ -1146,6 +1251,68 @@ function normalizeGain(value: number): number {
   }
 
   return Math.max(0, value);
+}
+
+function normalizeVolumeControlMax(
+  value: number | undefined,
+  minGain: number,
+): number {
+  if (!Number.isFinite(value)) {
+    return Math.max(minGain, 1);
+  }
+
+  return Math.max(minGain, value ?? 1);
+}
+
+function normalizeVolumeControlStep(value: number | undefined): number {
+  if (!Number.isFinite(value) || value === undefined || value <= 0) {
+    return 0.01;
+  }
+
+  return value;
+}
+
+function clampGainToRange(value: number, minGain: number, maxGain: number) {
+  const normalized = normalizeGain(value);
+  return Math.min(maxGain, Math.max(minGain, normalized));
+}
+
+function readStoredGain(storageKey: string): number | null {
+  try {
+    const stored = globalThis.localStorage?.getItem(storageKey);
+    if (stored === undefined || stored === null) {
+      return null;
+    }
+
+    const parsed = Number(stored);
+    return Number.isFinite(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeStoredGain(storageKey: string | undefined, gain: number): void {
+  if (!storageKey) {
+    return;
+  }
+
+  try {
+    globalThis.localStorage?.setItem(storageKey, String(gain));
+  } catch {
+    // Ignore unavailable or quota-limited storage; provider state remains valid.
+  }
+}
+
+function removeStoredGain(storageKey: string | undefined): void {
+  if (!storageKey) {
+    return;
+  }
+
+  try {
+    globalThis.localStorage?.removeItem(storageKey);
+  } catch {
+    // Ignore unavailable storage; reset still updates provider state.
+  }
 }
 
 function normalizeDurationMs(value: number | undefined, fallback: number) {
