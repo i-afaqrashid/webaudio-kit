@@ -27,6 +27,9 @@ const handle = playTone(context, {
 handle.stop();
 ```
 
+Create or resume `AudioContext` from a user gesture in your app. This package
+does not create audio at module import time.
+
 ## API
 
 - `playTone(context, options, destination?)`
@@ -39,22 +42,23 @@ handle.stop();
 - `frequencyToMidi(frequency, concertA?)`
 - `frequencyToNoteName(frequency, options?)`
 
-See the repository API reference:
-https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/api.md.
+## Docs And Examples
+
+- API reference: https://webaudio-kit.afaqrashid.com/docs/api
+- Recipes: https://webaudio-kit.afaqrashid.com/docs/recipes
+- Example apps: https://webaudio-kit.afaqrashid.com/docs/examples
+- Interactive demos: https://webaudio-kit.afaqrashid.com/demos
 
 ## Release History
 
 Every npm version maps to a GitHub tag and a `CHANGELOG.md` section.
 
-- Full changelog: https://github.com/i-afaqrashid/webaudio-kit/blob/main/CHANGELOG.md
+- Changelog: https://webaudio-kit.afaqrashid.com/changelog
 - GitHub Releases: https://github.com/i-afaqrashid/webaudio-kit/releases
 - npm versions: https://www.npmjs.com/package/@webaudio-kit/core?activeTab=versions
 
 The published npm tarball includes `CHANGELOG.md` so version history is
 available with the package contents.
-
-`AudioContext` is never created at module import time. Create or resume it from
-a user gesture in your app.
 
 This library is for browser audio interfaces and prototypes. It is not a
 certified audiology or medical testing system.
