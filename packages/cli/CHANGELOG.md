@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.5.5 - 2026-05-26
+
+### Added
+
+- Add focused live demo pages for visualizer-only usage, bounded master volume,
+  stereo pan checks, pitch helper playback, and combined tone/noise workflows.
+- Add site QA coverage for representative focused demo routes.
+
+### Changed
+
+- Link focused demo pages from the docs and API reference where the related
+  React hooks, canvases, and core helpers are documented.
+
 ## 1.5.4 - 2026-05-26
 
 ### Added

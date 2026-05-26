@@ -1277,6 +1277,104 @@ select {
   grid-template-columns: minmax(0, 1fr) minmax(220px, 0.34fr);
 }
 
+.focusedDemoPanel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 22px;
+}
+
+.focusedDemoHeader {
+  align-items: start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.focusedDemoHeader h2 {
+  font-size: 28px;
+  line-height: 1.05;
+  margin: 8px 0 0;
+}
+
+.focusedDemoGrid {
+  align-items: stretch;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.42fr);
+  margin-top: 18px;
+}
+
+.focusedControlCard,
+.focusedMetricStack {
+  background: #f9fbf4;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.focusedControlCard {
+  display: grid;
+  gap: 14px;
+}
+
+.focusedControlCard strong {
+  display: block;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.focusedControlCard p {
+  color: #374035;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.focusedMetricStack {
+  display: grid;
+  gap: 10px;
+}
+
+.focusedMetricStack div {
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  padding-bottom: 10px;
+}
+
+.focusedMetricStack div:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.focusedMetricStack span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.focusedMetricStack strong {
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+  font-size: 14px;
+}
+
+.focusedCanvasStack {
+  background: #0f120f;
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+}
+
+.focusedCanvasStack canvas {
+  display: block;
+  height: auto;
+  width: 100%;
+}
+
 .demoLinkPanel {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -1317,6 +1415,7 @@ select {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .focusedDemoGrid,
   .testStepList {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1399,6 +1498,14 @@ select {
 
   .releaseHeader {
     flex-direction: column;
+  }
+
+  .focusedDemoHeader {
+    display: grid;
+  }
+
+  .focusedDemoGrid {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .releaseBannerLinks {

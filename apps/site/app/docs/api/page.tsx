@@ -16,10 +16,15 @@ type ApiRow = {
 };
 
 type DemoHref =
+  | "/demos/combo"
   | "/demos/noise"
+  | "/demos/pan"
+  | "/demos/pitch"
   | "/demos/sweep"
   | "/demos/test-mode"
-  | "/demos/tone";
+  | "/demos/tone"
+  | "/demos/visualizer"
+  | "/demos/volume";
 
 type ApiSection = {
   id: string;
@@ -37,6 +42,10 @@ type ApiSection = {
     href: DemoHref;
     label: string;
   };
+  secondaryDemos?: {
+    href: DemoHref;
+    label: string;
+  }[];
 };
 
 const reactSections: ApiSection[] = [
@@ -235,6 +244,7 @@ function ToneButton() {
 }`,
     },
     demo: { href: "/demos/tone", label: "Open tone demo" },
+    secondaryDemos: [{ href: "/demos/pan", label: "Open pan demo" }],
   },
   {
     id: "use-frequency-sweep",
@@ -390,6 +400,7 @@ function NoiseButton() {
 }`,
     },
     demo: { href: "/demos/noise", label: "Open noise demo" },
+    secondaryDemos: [{ href: "/demos/combo", label: "Open combo demo" }],
   },
   {
     id: "use-volume",
@@ -433,6 +444,7 @@ function VolumeSlider() {
   );
 }`,
     },
+    demo: { href: "/demos/volume", label: "Open volume demo" },
   },
   {
     id: "use-analyser",
@@ -463,6 +475,7 @@ function Meter() {
   return <span>{analyser.fftSize} point analyser</span>;
 }`,
     },
+    demo: { href: "/demos/visualizer", label: "Open visualizer demo" },
   },
   {
     id: "waveform-canvas",
@@ -521,7 +534,7 @@ function Signal() {
   );
 }`,
     },
-    demo: { href: "/demos/tone", label: "Open tone demo" },
+    demo: { href: "/demos/visualizer", label: "Open visualizer demo" },
   },
   {
     id: "spectrum-canvas",
@@ -583,7 +596,7 @@ function Spectrum() {
   );
 }`,
     },
-    demo: { href: "/demos/tone", label: "Open tone demo" },
+    demo: { href: "/demos/visualizer", label: "Open visualizer demo" },
   },
   {
     id: "use-audio-test-mode",
@@ -790,6 +803,9 @@ const note = frequencyToNoteName(440, { includeCents: true });`}</CodeBlock>
                   <Link className="button" href="/docs#helpers">
                     Back to helper overview
                   </Link>
+                  <Link className="button" href="/demos/pitch">
+                    Open pitch helper demo
+                  </Link>
                 </div>
               </section>
             </article>
@@ -826,6 +842,11 @@ function ApiReferenceSection({ section }: { section: ApiSection }) {
           <Link className="button" href={section.demo.href}>
             {section.demo.label}
           </Link>
+          {section.secondaryDemos?.map((demo) => (
+            <Link className="button" href={demo.href} key={demo.href}>
+              {demo.label}
+            </Link>
+          ))}
         </div>
       ) : null}
     </section>
