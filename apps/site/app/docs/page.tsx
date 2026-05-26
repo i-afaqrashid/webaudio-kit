@@ -21,7 +21,7 @@ const apiCards = [
   {
     icon: "sliders" as const,
     title: "useTone",
-    copy: "Plays one oscillator with optional gain, pan, waveform, and duration controls.",
+    copy: "Plays one oscillator with optional gain, pan, waveform, duration, and repeat pattern controls.",
   },
   {
     icon: "radio" as const,
@@ -89,6 +89,7 @@ export default function DocsPage() {
               <a href="#copy-paste">Copy-paste</a>
               <a href="#provider">Provider</a>
               <a href="#tone">Tone hook</a>
+              <a href="#patterns">Repeat patterns</a>
               <a href="#sweep">Sweep hook</a>
               <a href="#noise">Noise hook</a>
               <a href="#test-mode">Test mode</a>
@@ -186,6 +187,25 @@ tone.stop();`}</CodeBlock>
                   Open tone demo
                 </Link>
               </div>
+
+              <h2 id="patterns">Repeat patterns</h2>
+              <p>
+                Tones, sweeps, and noise bursts accept{" "}
+                <code>pattern: {"{ repeat, gapMs }"}</code> for alert cues. The
+                returned handle stops the whole scheduled pattern, including
+                future voices.
+              </p>
+              <CodeBlock title="alert cue pattern">{`const alertTone = useTone();
+
+await alertTone.play({
+  frequency: 880,
+  durationMs: 120,
+  gain: 0.12,
+  type: "square",
+  pattern: { repeat: 3, gapMs: 90 },
+});
+
+alertTone.stop();`}</CodeBlock>
 
               <h2 id="sweep">Sweep hook</h2>
               <p>

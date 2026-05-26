@@ -87,6 +87,49 @@ export function App() {
 }
 ```
 
+## Repeated Alert Cue
+
+Use `pattern` for notification-style cues. The hook can be created without
+defaults when each alert profile supplies full playback options at `play()` time.
+
+```tsx
+import { AudioProvider, useTone } from "@webaudio-kit/react";
+
+const profiles = {
+  warning: { frequency: 660, repeat: 2 },
+  critical: { frequency: 880, repeat: 3 },
+};
+
+function AlertCueButton() {
+  const alertTone = useTone();
+
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        void alertTone.play({
+          frequency: profiles.critical.frequency,
+          durationMs: 120,
+          gain: 0.12,
+          type: "square",
+          pattern: { repeat: profiles.critical.repeat, gapMs: 90 },
+        })
+      }
+    >
+      Play critical cue
+    </button>
+  );
+}
+
+export function App() {
+  return (
+    <AudioProvider>
+      <AlertCueButton />
+    </AudioProvider>
+  );
+}
+```
+
 ## Master Volume Slider
 
 Use provider volume for one shared master gain across tone, sweep, and noise

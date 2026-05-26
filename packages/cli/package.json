@@ -1,6 +1,6 @@
 {
   "name": "@webaudio-kit/cli",
-  "version": "1.5.11",
+  "version": "1.6.0",
   "type": "module",
   "description": "CLI helpers for webaudio-kit projects.",
   "license": "MIT",

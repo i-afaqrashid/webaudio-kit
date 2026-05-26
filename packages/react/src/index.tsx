@@ -16,6 +16,7 @@ import {
   type FrequencySweepOptions,
   type NoiseOptions,
   type PlaybackHandle,
+  type PlaybackPattern,
   playFrequencySweep,
   playNoise,
   playTone,
@@ -103,6 +104,18 @@ export type AudioTestModeControls = {
   run(): Promise<void>;
   stop(): void;
   steps: AudioTestModeStep[];
+};
+
+export type PlaybackControls<TOptions> = {
+  play(overrides?: Partial<TOptions>): Promise<void>;
+  stop(): void;
+  isPlaying: boolean;
+};
+
+export type RequiredPlaybackControls<TOptions> = {
+  play(options: TOptions): Promise<void>;
+  stop(): void;
+  isPlaying: boolean;
 };
 
 const AudioContextStateContext = createContext<AudioProviderValue | undefined>(
@@ -261,11 +274,11 @@ export function useAudioContext(): AudioProviderValue {
   return context;
 }
 
-export function useTone(options: ToneOptions): {
-  play(overrides?: Partial<ToneOptions>): Promise<void>;
-  stop(): void;
-  isPlaying: boolean;
-} {
+export function useTone(): RequiredPlaybackControls<ToneOptions>;
+export function useTone(options: ToneOptions): PlaybackControls<ToneOptions>;
+export function useTone(
+  options?: ToneOptions,
+): PlaybackControls<ToneOptions> | RequiredPlaybackControls<ToneOptions> {
   const audio = useAudioContext();
   const optionsRef = useLatest(options);
   const handleRef = useRef<PlaybackHandle | null>(null);
@@ -282,7 +295,7 @@ export function useTone(options: ToneOptions): {
   const play = useCallback(
     async (overrides: Partial<ToneOptions> = {}) => {
       const runtime = await audio.ensureAudioContext();
-      const nextOptions = { ...optionsRef.current, ...overrides };
+      const nextOptions = resolveToneOptions(optionsRef.current, overrides);
 
       stop();
       handleRef.current = playTone(
@@ -291,7 +304,11 @@ export function useTone(options: ToneOptions): {
         runtime.masterGain,
       );
       setIsPlaying(true);
-      schedulePlaybackEnd(nextOptions.durationMs, timeoutRef, setIsPlaying);
+      schedulePlaybackEnd(
+        getPlaybackDurationMs(nextOptions),
+        timeoutRef,
+        setIsPlaying,
+      );
     },
     [audio, optionsRef, stop],
   );
@@ -301,11 +318,15 @@ export function useTone(options: ToneOptions): {
   return { play, stop, isPlaying };
 }
 
-export function useFrequencySweep(options: FrequencySweepOptions): {
-  play(overrides?: Partial<FrequencySweepOptions>): Promise<void>;
-  stop(): void;
-  isPlaying: boolean;
-} {
+export function useFrequencySweep(): RequiredPlaybackControls<FrequencySweepOptions>;
+export function useFrequencySweep(
+  options: FrequencySweepOptions,
+): PlaybackControls<FrequencySweepOptions>;
+export function useFrequencySweep(
+  options?: FrequencySweepOptions,
+):
+  | PlaybackControls<FrequencySweepOptions>
+  | RequiredPlaybackControls<FrequencySweepOptions> {
   const audio = useAudioContext();
   const optionsRef = useLatest(options);
   const handleRef = useRef<PlaybackHandle | null>(null);
@@ -322,7 +343,10 @@ export function useFrequencySweep(options: FrequencySweepOptions): {
   const play = useCallback(
     async (overrides: Partial<FrequencySweepOptions> = {}) => {
       const runtime = await audio.ensureAudioContext();
-      const nextOptions = { ...optionsRef.current, ...overrides };
+      const nextOptions = resolveFrequencySweepOptions(
+        optionsRef.current,
+        overrides,
+      );
 
       stop();
       handleRef.current = playFrequencySweep(
@@ -331,7 +355,11 @@ export function useFrequencySweep(options: FrequencySweepOptions): {
         runtime.masterGain,
       );
       setIsPlaying(true);
-      schedulePlaybackEnd(nextOptions.durationMs, timeoutRef, setIsPlaying);
+      schedulePlaybackEnd(
+        getPlaybackDurationMs(nextOptions),
+        timeoutRef,
+        setIsPlaying,
+      );
     },
     [audio, optionsRef, stop],
   );
@@ -341,11 +369,11 @@ export function useFrequencySweep(options: FrequencySweepOptions): {
   return { play, stop, isPlaying };
 }
 
-export function useNoise(options: NoiseOptions): {
-  play(overrides?: Partial<NoiseOptions>): Promise<void>;
-  stop(): void;
-  isPlaying: boolean;
-} {
+export function useNoise(): RequiredPlaybackControls<NoiseOptions>;
+export function useNoise(options: NoiseOptions): PlaybackControls<NoiseOptions>;
+export function useNoise(
+  options?: NoiseOptions,
+): PlaybackControls<NoiseOptions> | RequiredPlaybackControls<NoiseOptions> {
   const audio = useAudioContext();
   const optionsRef = useLatest(options);
   const handleRef = useRef<PlaybackHandle | null>(null);
@@ -362,7 +390,7 @@ export function useNoise(options: NoiseOptions): {
   const play = useCallback(
     async (overrides: Partial<NoiseOptions> = {}) => {
       const runtime = await audio.ensureAudioContext();
-      const nextOptions = { ...optionsRef.current, ...overrides };
+      const nextOptions = resolveNoiseOptions(optionsRef.current, overrides);
 
       stop();
       handleRef.current = playNoise(
@@ -371,7 +399,11 @@ export function useNoise(options: NoiseOptions): {
         runtime.masterGain,
       );
       setIsPlaying(true);
-      schedulePlaybackEnd(nextOptions.durationMs, timeoutRef, setIsPlaying);
+      schedulePlaybackEnd(
+        getPlaybackDurationMs(nextOptions),
+        timeoutRef,
+        setIsPlaying,
+      );
     },
     [audio, optionsRef, stop],
   );
@@ -732,6 +764,55 @@ function normalizePositiveDurationMs(
   return value;
 }
 
+function resolveToneOptions(
+  defaults: ToneOptions | undefined,
+  overrides: Partial<ToneOptions>,
+): ToneOptions {
+  const options = { ...defaults, ...overrides };
+
+  if (typeof options.frequency !== "number") {
+    throw new Error("frequency must be provided before tone playback");
+  }
+
+  return options as ToneOptions;
+}
+
+function resolveFrequencySweepOptions(
+  defaults: FrequencySweepOptions | undefined,
+  overrides: Partial<FrequencySweepOptions>,
+): FrequencySweepOptions {
+  const options = { ...defaults, ...overrides };
+
+  if (typeof options.from !== "number") {
+    throw new Error("from must be provided before frequency sweep playback");
+  }
+
+  if (typeof options.to !== "number") {
+    throw new Error("to must be provided before frequency sweep playback");
+  }
+
+  if (typeof options.durationMs !== "number") {
+    throw new Error(
+      "durationMs must be provided before frequency sweep playback",
+    );
+  }
+
+  return options as FrequencySweepOptions;
+}
+
+function resolveNoiseOptions(
+  defaults: NoiseOptions | undefined,
+  overrides: Partial<NoiseOptions>,
+): NoiseOptions {
+  const options = { ...defaults, ...overrides };
+
+  if (typeof options.durationMs !== "number") {
+    throw new Error("durationMs must be provided before noise playback");
+  }
+
+  return options as NoiseOptions;
+}
+
 function cloneAudioTestModeStep(step: AudioTestModeStep): AudioTestModeStep {
   if (step.kind === "tone") {
     return { ...step, tone: { ...step.tone } };
@@ -811,6 +892,34 @@ function schedulePlaybackEnd(
   }, durationMs);
 }
 
+function getPlaybackDurationMs(options: {
+  durationMs?: number;
+  pattern?: PlaybackPattern;
+}): number | undefined {
+  const durationMs = options.durationMs;
+  if (
+    durationMs === undefined ||
+    !Number.isFinite(durationMs) ||
+    durationMs <= 0
+  ) {
+    return durationMs;
+  }
+
+  const repeat = options.pattern?.repeat ?? 1;
+  const gapMs = options.pattern?.gapMs ?? 0;
+
+  if (
+    !Number.isInteger(repeat) ||
+    repeat <= 1 ||
+    !Number.isFinite(gapMs) ||
+    gapMs < 0
+  ) {
+    return durationMs;
+  }
+
+  return repeat * durationMs + (repeat - 1) * gapMs;
+}
+
 function clearPlaybackTimer(timeoutRef: {
   current: PlaybackTimer | undefined;
 }): void {
@@ -854,6 +963,7 @@ export type {
   NoiseType,
   NoteNameOptions,
   PlaybackHandle,
+  PlaybackPattern,
   ToneOptions,
 } from "@webaudio-kit/core";
 export {

@@ -85,6 +85,27 @@ const noise = useNoise({ type: "pink", durationMs: 800, gain: 0.08 });
 <button onClick={() => void noise.play()}>Play pink noise</button>;
 ```
 
+Patterned cues can be supplied per play call, so alert profiles do not need
+construction-time placeholder hook options:
+
+```tsx
+const alertTone = useTone();
+
+<button
+  onClick={() =>
+    void alertTone.play({
+      frequency: 880,
+      durationMs: 120,
+      gain: 0.12,
+      type: "square",
+      pattern: { repeat: 3, gapMs: 90 },
+    })
+  }
+>
+  Play alert
+</button>;
+```
+
 ## API
 
 - `AudioProvider`

@@ -30,6 +30,24 @@ handle.stop();
 Create or resume `AudioContext` from a user gesture in your app. This package
 does not create audio at module import time.
 
+## Repeat Patterns
+
+Tone, sweep, and noise playback accept `pattern: { repeat, gapMs }` for
+notification-style cues. `repeat` is the total number of plays, and `gapMs` is
+the silence between plays.
+
+```ts
+const handle = playTone(context, {
+  frequency: 880,
+  durationMs: 120,
+  gain: 0.12,
+  type: "square",
+  pattern: { repeat: 3, gapMs: 90 },
+});
+
+handle.stop(); // stops the current and future scheduled voices
+```
+
 ## Browser Gesture Setup
 
 ```ts

@@ -299,6 +299,46 @@ describe("playTone", () => {
     expect(context.oscillators[0]?.stoppedAt).toBe(5.25);
   });
 
+  test("schedules repeat patterns with duration and gap spacing", () => {
+    const context = new FakeAudioContext();
+
+    playTone(context as unknown as AudioContext, {
+      frequency: 880,
+      durationMs: 250,
+      pattern: { repeat: 3, gapMs: 100 },
+    });
+
+    expect(context.oscillators).toHaveLength(3);
+    expect(
+      context.oscillators.map((oscillator) => oscillator.startedAt),
+    ).toEqual([5, 5.35, 5.7]);
+    expect(
+      context.oscillators.map((oscillator) => oscillator.stoppedAt),
+    ).toEqual([5.25, 5.6, 5.95]);
+    expect(
+      context.oscillators.map((oscillator) => oscillator.frequency.value),
+    ).toEqual([880, 880, 880]);
+  });
+
+  test("stops every voice in a scheduled tone pattern", () => {
+    const context = new FakeAudioContext();
+
+    const handle = playTone(context as unknown as AudioContext, {
+      frequency: 440,
+      durationMs: 200,
+      pattern: { repeat: 2, gapMs: 100 },
+    });
+
+    handle.stop();
+    handle.stop();
+
+    expect(context.oscillators).toHaveLength(2);
+    expect(context.oscillators[0]?.stopCalls).toBe(2);
+    expect(context.oscillators[1]?.stopCalls).toBe(2);
+    expect(context.oscillators[0]?.disconnected).toBe(true);
+    expect(context.oscillators[1]?.disconnected).toBe(true);
+  });
+
   test("normalizes unsafe gain and pan values before scheduling playback", () => {
     const context = new FakeAudioContext();
 
@@ -390,6 +430,31 @@ describe("playTone", () => {
     expect(context.gains[0]?.disconnectCalls).toBe(1);
     expect(context.panners[0]?.disconnected).toBe(true);
   });
+
+  test("requires finite tone durations and valid spacing for repeat patterns", () => {
+    const context = new FakeAudioContext();
+
+    expect(() =>
+      playTone(context as unknown as AudioContext, {
+        frequency: 440,
+        pattern: { repeat: 2 },
+      }),
+    ).toThrow("durationMs must be a positive number");
+    expect(() =>
+      playTone(context as unknown as AudioContext, {
+        frequency: 440,
+        durationMs: 100,
+        pattern: { repeat: 0 },
+      }),
+    ).toThrow("pattern.repeat must be a positive integer");
+    expect(() =>
+      playTone(context as unknown as AudioContext, {
+        frequency: 440,
+        durationMs: 100,
+        pattern: { repeat: 2, gapMs: -1 },
+      }),
+    ).toThrow("pattern.gapMs must be a non-negative number");
+  });
 });
 
 describe("playFrequencySweep", () => {
@@ -409,6 +474,33 @@ describe("playFrequencySweep", () => {
     ]);
     expect(context.oscillators[0]?.startedAt).toBe(5);
     expect(context.oscillators[0]?.stoppedAt).toBe(6);
+  });
+
+  test("schedules repeat sweep patterns with independent ramps", () => {
+    const context = new FakeAudioContext();
+
+    playFrequencySweep(context as unknown as AudioContext, {
+      from: 250,
+      to: 8000,
+      durationMs: 500,
+      pattern: { repeat: 2, gapMs: 200 },
+    });
+
+    expect(context.oscillators).toHaveLength(2);
+    expect(context.oscillators[0]?.startedAt).toBe(5);
+    expect(context.oscillators[0]?.stoppedAt).toBe(5.5);
+    expect(context.oscillators[0]?.frequency.events).toEqual([
+      { method: "cancelScheduledValues", value: 440, time: 5 },
+      { method: "setValueAtTime", value: 250, time: 5 },
+      { method: "linearRampToValueAtTime", value: 8000, time: 5.5 },
+    ]);
+    expect(context.oscillators[1]?.startedAt).toBe(5.7);
+    expect(context.oscillators[1]?.stoppedAt).toBe(6.2);
+    expect(context.oscillators[1]?.frequency.events).toEqual([
+      { method: "cancelScheduledValues", value: 440, time: 5.7 },
+      { method: "setValueAtTime", value: 250, time: 5.7 },
+      { method: "linearRampToValueAtTime", value: 8000, time: 6.2 },
+    ]);
   });
 
   test("clamps sweep endpoints and applies playback graph options", () => {
@@ -491,6 +583,26 @@ describe("playNoise", () => {
     expect(samples.some((sample) => sample !== 0)).toBe(true);
     expect(Math.max(...samples)).toBeLessThanOrEqual(1);
     expect(Math.min(...samples)).toBeGreaterThanOrEqual(-1);
+  });
+
+  test("schedules repeat noise patterns with duration and gap spacing", () => {
+    const context = new FakeAudioContext();
+
+    playNoise(context as unknown as AudioContext, {
+      durationMs: 300,
+      pattern: { repeat: 2, gapMs: 50 },
+      type: "pink",
+    });
+
+    expect(context.bufferSources).toHaveLength(2);
+    expect(context.bufferSources.map((source) => source.startedAt)).toEqual([
+      5, 5.35,
+    ]);
+    expect(context.bufferSources[0]?.stoppedAt).toBeCloseTo(5.3);
+    expect(context.bufferSources[1]?.stoppedAt).toBeCloseTo(5.65);
+    expect(context.buffers).toHaveLength(2);
+    expect(context.buffers[0]?.length).toBe(14_400);
+    expect(context.buffers[1]?.length).toBe(14_400);
   });
 
   test("supports pink and brown noise buffers with graph options", () => {

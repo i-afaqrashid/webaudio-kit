@@ -169,7 +169,13 @@ function AudioStateBadge() {
     packageName: "@webaudio-kit/react",
     summary:
       "Creates stable controls for one oscillator tone. Every play call creates fresh oscillator, gain, and pan nodes and cleans them up when playback ends.",
-    signature: `function useTone(options: ToneOptions): {
+    signature: `function useTone(): {
+  play(options: ToneOptions): Promise<void>;
+  stop(): void;
+  isPlaying: boolean;
+};
+
+function useTone(options: ToneOptions): {
   play(overrides?: Partial<ToneOptions>): Promise<void>;
   stop(): void;
   isPlaying: boolean;
@@ -206,6 +212,12 @@ function AudioStateBadge() {
         type: "number",
         notes: "Optional duration. Omit it for manual stop control.",
       },
+      {
+        name: "ToneOptions.pattern",
+        type: "{ repeat?: number; gapMs?: number }",
+        notes:
+          "Optional repeat pattern. Repeated tones require durationMs and share one stop handle.",
+      },
     ],
     returns: [
       {
@@ -227,20 +239,22 @@ function AudioStateBadge() {
       },
     ],
     example: {
-      title: "Tone button",
+      title: "Patterned tone",
       code: `import { useTone } from "@webaudio-kit/react";
 
-function ToneButton() {
-  const tone = useTone({
-    frequency: 440,
-    gain: 0.15,
-    type: "sine",
-  });
+function AlertCueButton() {
+  const tone = useTone();
 
   return (
     <>
-      <button onClick={() => void tone.play({ durationMs: 600 })}>
-        Play tone
+      <button onClick={() => void tone.play({
+        frequency: 880,
+        durationMs: 120,
+        gain: 0.12,
+        type: "square",
+        pattern: { repeat: 3, gapMs: 90 },
+      })}>
+        Play alert cue
       </button>
       <button onClick={tone.stop}>Stop</button>
     </>
@@ -256,7 +270,13 @@ function ToneButton() {
     packageName: "@webaudio-kit/react",
     summary:
       "Creates stable controls for a scheduled oscillator ramp between two clamped frequencies.",
-    signature: `function useFrequencySweep(options: FrequencySweepOptions): {
+    signature: `function useFrequencySweep(): {
+  play(options: FrequencySweepOptions): Promise<void>;
+  stop(): void;
+  isPlaying: boolean;
+};
+
+function useFrequencySweep(options: FrequencySweepOptions): {
   play(overrides?: Partial<FrequencySweepOptions>): Promise<void>;
   stop(): void;
   isPlaying: boolean;
@@ -299,6 +319,12 @@ function ToneButton() {
         notes:
           "Stereo pan from -1 left to 1 right when supported by the browser.",
       },
+      {
+        name: "FrequencySweepOptions.pattern",
+        type: "{ repeat?: number; gapMs?: number }",
+        notes:
+          "Optional repeat pattern for chirps or repeated sweeps without app-owned timers.",
+      },
     ],
     returns: [
       {
@@ -340,7 +366,13 @@ function SweepButton() {
     packageName: "@webaudio-kit/react",
     summary:
       "Creates stable controls for short generated white, pink, or brown noise buffers.",
-    signature: `function useNoise(options: NoiseOptions): {
+    signature: `function useNoise(): {
+  play(options: NoiseOptions): Promise<void>;
+  stop(): void;
+  isPlaying: boolean;
+};
+
+function useNoise(options: NoiseOptions): {
   play(overrides?: Partial<NoiseOptions>): Promise<void>;
   stop(): void;
   isPlaying: boolean;
@@ -369,6 +401,12 @@ function SweepButton() {
         type: '"white" | "pink" | "brown"',
         defaultValue: '"white"',
         notes: "Noise color used when generating the buffer.",
+      },
+      {
+        name: "NoiseOptions.pattern",
+        type: "{ repeat?: number; gapMs?: number }",
+        notes:
+          "Optional repeat pattern for repeated bursts without setTimeout wrappers.",
       },
     ],
     returns: [
@@ -707,10 +745,16 @@ const coreRows: ApiRow[] = [
       'Returns labels such as "A4" or "A4 +3c". Invalid input returns "unknown".',
   },
   {
+    name: "PlaybackPattern",
+    type: "{ repeat?: number; gapMs?: number }",
+    notes:
+      "Optional repeat schedule shared by tone, sweep, and noise options. repeat is total plays; gapMs is silence between plays.",
+  },
+  {
     name: "playTone(context, options, destination)",
     type: "(AudioContext, ToneOptions, AudioNode?) => PlaybackHandle",
     notes:
-      "Creates oscillator, gain, optional stereo panner, starts playback, and returns stop cleanup.",
+      "Creates oscillator, gain, optional stereo panner, starts playback, and returns stop cleanup for one shot or the full pattern.",
   },
   {
     name: "playFrequencySweep(context, options, destination)",
