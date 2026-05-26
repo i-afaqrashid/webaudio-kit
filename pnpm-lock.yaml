@@ -66,6 +66,9 @@ importers:
 
   apps/demo:
     dependencies:
+      '@webaudio-kit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@webaudio-kit/react':
         specifier: workspace:*
         version: link:../../packages/react
@@ -85,6 +88,9 @@ importers:
 
   apps/site:
     dependencies:
+      '@webaudio-kit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@webaudio-kit/react':
         specifier: workspace:*
         version: link:../../packages/react
@@ -117,12 +123,13 @@ importers:
 
   packages/react:
     dependencies:
-      '@webaudio-kit/core':
-        specifier: workspace:*
-        version: link:../core
       react:
         specifier: '>=18.3.0'
         version: 19.2.6
+    devDependencies:
+      '@webaudio-kit/core':
+        specifier: workspace:*
+        version: link:../core
 
 packages:
 

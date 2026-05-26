@@ -9,6 +9,16 @@ frequency clamping, dB/gain math, pitch helpers, playback handles, and cleanup.
 `AudioContext` setup, master volume, analyser access, and hook-level playback
 state.
 
+`@webaudio-kit/react` declares `@webaudio-kit/core` as a peer dependency. The
+React package imports and re-exports core helpers, but app projects should own
+the core version explicitly so direct core imports and React hook internals use
+the same package copy.
+
+The supported local Node floor is `>=20.19`. That floor follows the current
+tooling stack used by the workspace checks while keeping the browser runtime
+packages usable for teams still on Node 20 LTS. Publish automation can run on a
+newer Node version without changing the supported floor.
+
 `apps/demo` is a manual QA and public demo target. It should prove the package
 APIs are usable, but it should not become the source of library behavior.
 

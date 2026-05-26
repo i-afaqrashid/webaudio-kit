@@ -1,6 +1,6 @@
 {
   "name": "@webaudio-kit/core",
-  "version": "1.9.4",
+  "version": "1.9.5",
   "type": "module",
   "description": "Core browser audio primitives for webaudio-kit.",
   "license": "MIT",
@@ -34,7 +34,7 @@
     "CHANGELOG.md"
   ],
   "engines": {
-    "node": ">=22.13"
+    "node": ">=20.19"
   },
   "publishConfig": {
     "access": "public"

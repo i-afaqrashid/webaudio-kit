@@ -10,6 +10,7 @@
     "site:build": "pnpm build"
   },
   "dependencies": {
+    "@webaudio-kit/core": "workspace:*",
     "@webaudio-kit/react": "workspace:*",
     "lucide-react": "^1.16.0",
     "next": "^16.2.6",
