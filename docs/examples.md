@@ -15,13 +15,22 @@ Each page includes a copy-paste snippet and the full analyser-backed workspace.
 
 The repository keeps standalone examples under `examples/`:
 
-- `examples/vite-tone-panel`: Vite React tone, sweep, noise, volume, waveform,
+- `examples/vite-react`: main Vite React tone, sweep, noise, volume, waveform,
   and spectrum controls.
-- `examples/next-provider-example`: Next App Router server/client boundary for
+- `examples/next-app-router`: Next App Router server/client boundary for
   `AudioProvider` and hook-based controls.
+- `examples/plain-react`: smallest plain React provider, tone, volume,
+  waveform, and spectrum setup.
+- `examples/vite-tone-panel`: legacy Vite tone panel kept for compatibility.
+- `examples/next-provider-example`: legacy Next provider example kept for
+  compatibility.
 - `examples/audio-test-mode`: Low-gain test mode sequence with analyser output.
 - `examples/agent-brief-output`: sample agent context file for Codex, Claude
   Code, Gemini CLI, OpenCode, and Antigravity.
+
+Run `pnpm examples:check` from the repository root to pack local packages into
+tarballs, install them into temporary copies of the examples, and build each
+example app without workspace shortcuts.
 
 ## Tone Generator
 

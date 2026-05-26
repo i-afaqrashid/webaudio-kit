@@ -11,6 +11,9 @@ const root = dirname(
 const packDir = join(root, ".release-packages");
 const skipBuild = process.argv.includes("--skip-build");
 const examples = [
+  "vite-react",
+  "next-app-router",
+  "plain-react",
   "vite-tone-panel",
   "next-provider-example",
   "audio-test-mode",

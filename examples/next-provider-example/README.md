@@ -7,8 +7,10 @@ client-only, so the provider and controls live in a `"use client"` component.
 
 ```sh
 pnpm install
-pnpm build
-pnpm --filter webaudio-kit-next-provider-example dev
+pnpm examples:check
+cd examples/next-provider-example
+pnpm install
+pnpm dev
 ```
 
 ## Files

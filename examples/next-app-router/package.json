@@ -1,11 +1,11 @@
 {
   "private": true,
-  "name": "webaudio-kit-next-provider-example",
+  "name": "webaudio-kit-next-app-router-example",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
+    "dev": "next dev",
     "start": "next start"
   },
   "dependencies": {

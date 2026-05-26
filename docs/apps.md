@@ -87,6 +87,9 @@ checks.
 
 Current examples:
 
+- `examples/vite-react`
+- `examples/next-app-router`
+- `examples/plain-react`
 - `examples/vite-tone-panel`
 - `examples/next-provider-example`
 - `examples/audio-test-mode`
