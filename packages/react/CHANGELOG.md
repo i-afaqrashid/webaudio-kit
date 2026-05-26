@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.9.10 - 2026-05-26
+
+### Added
+
+- Add `useAudioUnlock()` for explicit browser audio enablement controls with
+  `idle`, `unlocking`, `suspended`, `running`, `closed`, and failed unlock UI
+  states.
+- Add Enable Audio recipes and API docs that explain browser autoplay policy,
+  provider lazy creation, retryable unlock errors, and visible status labels.
+
 ## 1.9.9 - 2026-05-26
 
 ### Added

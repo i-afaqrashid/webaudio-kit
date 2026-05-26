@@ -81,6 +81,7 @@ import {
   SpectrumCanvas,
   WaveformCanvas,
   createDefaultAudioTestModeSteps,
+  useAudioUnlock,
   useAudioTestMode,
   useNoise,
   useTone,
@@ -111,6 +112,7 @@ if (
   typeof SpectrumCanvas !== "function" ||
   typeof WaveformCanvas !== "function" ||
   typeof createDefaultAudioTestModeSteps !== "function" ||
+  typeof useAudioUnlock !== "function" ||
   typeof useAudioTestMode !== "function" ||
   typeof useNoise !== "function" ||
   typeof useTone !== "function"

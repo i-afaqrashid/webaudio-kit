@@ -300,6 +300,46 @@ playback.
 For guidance on choosing hooks, direct core playback, or provider-routed core
 helpers, see [Hooks vs Core](./hooks-vs-core.md).
 
+### `useAudioUnlock()`
+
+Returns a small UX primitive for explicit browser audio enablement:
+
+```ts
+{
+  unlock(): Promise<AudioRuntime>;
+  status: "idle" | "unlocking" | "suspended" | "running" | "closed" | "error";
+  state: AudioContextState | "idle";
+  isUnlocked: boolean;
+  isUnlocking: boolean;
+  error: Error | null;
+}
+```
+
+Use it when the app needs an `Enable Audio` button before alert sounds, live
+monitoring cues, or other non-obvious playback. `unlock()` should run from a
+click, tap, or keyboard handler because browser autoplay policy still requires a
+user gesture. `idle` means the provider has not created the context yet,
+`suspended` means the browser did not allow playback yet, `running` means audio
+is ready, and `error` means a failed unlock attempt is stored in `error`.
+
+```tsx
+import { useAudioUnlock } from "@webaudio-kit/react";
+
+function EnableAudioButton() {
+  const audio = useAudioUnlock();
+
+  return (
+    <>
+      <button disabled={audio.isUnlocked} onClick={() => void audio.unlock()}>
+        {audio.isUnlocked ? "Audio enabled" : "Enable Audio"}
+      </button>
+      <span>{audio.status}</span>
+      {audio.error ? <span>unlock failed</span> : null}
+    </>
+  );
+}
+```
+
 ### `useAudioEngine()`
 
 Returns provider-scoped playback helpers for advanced React use cases:

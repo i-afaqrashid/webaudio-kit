@@ -161,6 +161,30 @@ function AlertControls() {
 `useVolume().setGain(0)` changes master output level, but it does not cancel
 already scheduled tones, sweeps, noise bursts, patterns, or test-mode steps.
 
+Explicit browser audio unlock UX is available through `useAudioUnlock()`:
+
+```tsx
+import { useAudioUnlock } from "@webaudio-kit/react";
+
+function EnableAudioButton() {
+  const audio = useAudioUnlock();
+
+  return (
+    <>
+      <button disabled={audio.isUnlocked} onClick={() => void audio.unlock()}>
+        {audio.isUnlocked ? "Audio enabled" : "Enable Audio"}
+      </button>
+      <span>{audio.status}</span>
+      {audio.error ? <span>unlock failed</span> : null}
+    </>
+  );
+}
+```
+
+Call `unlock()` from a click, tap, or keyboard handler. `status` can be `idle`,
+`unlocking`, `suspended`, `running`, `closed`, or `error`, which lets an app
+separate browser autoplay policy from library behavior.
+
 Provider-scoped playback helpers are available through `useAudioEngine()` when
 custom or layered sounds still need the shared master gain and analyser graph:
 
@@ -202,6 +226,7 @@ so custom code can route through `runtime.masterGain`.
 
 - `AudioProvider`
 - `useAudioContext`
+- `useAudioUnlock`
 - `useAudioEngine`
 - `useTone`
 - `useFrequencySweep`

@@ -1,6 +1,6 @@
 {
   "name": "@webaudio-kit/core",
-  "version": "1.9.9",
+  "version": "1.9.10",
   "type": "module",
   "description": "Core browser audio primitives for webaudio-kit.",
   "license": "MIT",

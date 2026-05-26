@@ -43,6 +43,7 @@ The current public surface is intentionally small:
 
 - `AudioProvider`
 - `useAudioContext`
+- `useAudioUnlock`
 - `useAudioEngine`
 - `useTone`
 - `useFrequencySweep`

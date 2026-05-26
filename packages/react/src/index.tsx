@@ -49,6 +49,20 @@ export type AudioEngineControls = AudioProviderValue & {
   ): Promise<T>;
 };
 
+export type AudioUnlockStatus =
+  | AudioProviderValue["state"]
+  | "unlocking"
+  | "error";
+
+export type AudioUnlockControls = {
+  error: Error | null;
+  isUnlocked: boolean;
+  isUnlocking: boolean;
+  state: AudioProviderValue["state"];
+  status: AudioUnlockStatus;
+  unlock(): Promise<AudioRuntime>;
+};
+
 export type AudioProviderProps = {
   children: ReactNode;
   initialGain?: number;
@@ -322,6 +336,41 @@ export function AudioProvider({
 
 export function useAudioContext(): AudioProviderValue {
   return useAudioProviderContext();
+}
+
+export function useAudioUnlock(): AudioUnlockControls {
+  const { ensureAudioContext, state } = useAudioProviderContext();
+  const [error, setError] = useState<Error | null>(null);
+  const [isUnlocking, setIsUnlocking] = useState(false);
+
+  const unlock = useCallback(async () => {
+    setIsUnlocking(true);
+    setError(null);
+
+    try {
+      return await ensureAudioContext();
+    } catch (caughtError) {
+      const nextError = toError(caughtError);
+      setError(nextError);
+      throw nextError;
+    } finally {
+      setIsUnlocking(false);
+    }
+  }, [ensureAudioContext]);
+
+  const status = getAudioUnlockStatus({ error, isUnlocking, state });
+
+  return useMemo<AudioUnlockControls>(
+    () => ({
+      error,
+      isUnlocked: state === "running",
+      isUnlocking,
+      state,
+      status,
+      unlock,
+    }),
+    [error, isUnlocking, state, status, unlock],
+  );
 }
 
 export function useAudioEngine(): AudioEngineControls {
@@ -1057,6 +1106,38 @@ async function resumeIfNeeded(audioContext: AudioContext): Promise<void> {
   if (audioContext.state === "suspended") {
     await audioContext.resume();
   }
+}
+
+function getAudioUnlockStatus({
+  error,
+  isUnlocking,
+  state,
+}: {
+  error: Error | null;
+  isUnlocking: boolean;
+  state: AudioProviderValue["state"];
+}): AudioUnlockStatus {
+  if (isUnlocking) {
+    return "unlocking";
+  }
+
+  if (state === "running") {
+    return "running";
+  }
+
+  if (error) {
+    return "error";
+  }
+
+  return state;
+}
+
+function toError(caughtError: unknown) {
+  if (caughtError instanceof Error) {
+    return caughtError;
+  }
+
+  return new Error(String(caughtError));
 }
 
 function normalizeGain(value: number): number {

@@ -10,6 +10,7 @@ import {
   useAnalyser,
   useAudioContext,
   useAudioEngine,
+  useAudioUnlock,
   useAudioTestMode,
   useFrequencySweep,
   useNoise,
@@ -223,6 +224,16 @@ class DelayedFakeAudioContext extends FakeAudioContext {
   currentTime = 5;
 }
 
+class StillSuspendedAudioContext extends FakeAudioContext {
+  resume = vi.fn(async () => undefined);
+}
+
+class ThrowingAudioContext {
+  constructor() {
+    throw new Error("AudioContext denied");
+  }
+}
+
 afterEach(() => {
   cleanup();
   FakeAudioContext.instances = [];
@@ -285,6 +296,26 @@ function Harness() {
 function MissingProviderHarness() {
   useAudioContext();
   return null;
+}
+
+function UnlockHarness() {
+  const unlock = useAudioUnlock();
+
+  return (
+    <div>
+      <span data-testid="unlock-state">{unlock.state}</span>
+      <span data-testid="unlock-status">{unlock.status}</span>
+      <span data-testid="unlock-ready">{String(unlock.isUnlocked)}</span>
+      <span data-testid="unlocking">{String(unlock.isUnlocking)}</span>
+      <span data-testid="unlock-error">{unlock.error?.message ?? "none"}</span>
+      <button
+        type="button"
+        onClick={() => void unlock.unlock().catch(() => undefined)}
+      >
+        enable audio
+      </button>
+    </div>
+  );
 }
 
 function EngineHarness() {
@@ -680,6 +711,71 @@ describe("AudioProvider", () => {
     });
 
     expect(screen.getByTestId("tone-playing").textContent).toBe("false");
+  });
+
+  test("useAudioUnlock exposes an explicit user-gesture unlock control", async () => {
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <UnlockHarness />
+      </AudioProvider>,
+    );
+
+    expect(FakeAudioContext.instances).toHaveLength(0);
+    expect(screen.getByTestId("unlock-state").textContent).toBe("idle");
+    expect(screen.getByTestId("unlock-status").textContent).toBe("idle");
+    expect(screen.getByTestId("unlock-ready").textContent).toBe("false");
+
+    await act(async () => {
+      screen.getByRole("button", { name: "enable audio" }).click();
+    });
+
+    expect(FakeAudioContext.instances).toHaveLength(1);
+    expect(FakeAudioContext.instances[0]?.resume).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId("unlock-state").textContent).toBe("running");
+    expect(screen.getByTestId("unlock-status").textContent).toBe("running");
+    expect(screen.getByTestId("unlock-ready").textContent).toBe("true");
+    expect(screen.getByTestId("unlock-error").textContent).toBe("none");
+  });
+
+  test("useAudioUnlock reports suspended status when the browser keeps audio blocked", async () => {
+    vi.stubGlobal("AudioContext", StillSuspendedAudioContext);
+
+    render(
+      <AudioProvider>
+        <UnlockHarness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "enable audio" }).click();
+    });
+
+    expect(screen.getByTestId("unlock-state").textContent).toBe("suspended");
+    expect(screen.getByTestId("unlock-status").textContent).toBe("suspended");
+    expect(screen.getByTestId("unlock-ready").textContent).toBe("false");
+  });
+
+  test("useAudioUnlock stores unlock failures for user-facing retry UI", async () => {
+    vi.stubGlobal("AudioContext", ThrowingAudioContext);
+
+    render(
+      <AudioProvider>
+        <UnlockHarness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "enable audio" }).click();
+    });
+
+    expect(screen.getByTestId("unlock-state").textContent).toBe("idle");
+    expect(screen.getByTestId("unlock-status").textContent).toBe("error");
+    expect(screen.getByTestId("unlock-ready").textContent).toBe("false");
+    expect(screen.getByTestId("unlock-error").textContent).toBe(
+      "AudioContext denied",
+    );
   });
 
   test("sets master volume and starts frequency sweeps through the provider graph", async () => {
