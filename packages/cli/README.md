@@ -38,6 +38,8 @@ Supported targets are `generic`, `codex`, `claude`, `gemini`, `opencode`, and
 - API reference: https://webaudio-kit.afaqrashid.com/docs/api
 - Recipes: https://webaudio-kit.afaqrashid.com/docs/recipes
 - Example apps: https://webaudio-kit.afaqrashid.com/docs/examples
+- Markdown docs: https://github.com/i-afaqrashid/webaudio-kit/tree/main/docs
+- LLM docs index: https://webaudio-kit.afaqrashid.com/llms.txt
 - Interactive demos: https://webaudio-kit.afaqrashid.com/demos
 
 ## Release History

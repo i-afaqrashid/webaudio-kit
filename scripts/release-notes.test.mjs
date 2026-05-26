@@ -59,14 +59,14 @@ test("buildReleaseNotes includes package links and release references", () => {
   assert.match(notes, /https:\/\/webaudio-kit\.afaqrashid\.com\/docs/);
 });
 
-test("current release notes include AudioProvider state machine docs", () => {
+test("current release notes include docs crawler access work", () => {
   const rootChangelog = readFileSync("CHANGELOG.md", "utf8");
-  const notes = buildReleaseNotes({ changelog: rootChangelog, tag: "v1.9.6" });
+  const notes = buildReleaseNotes({ changelog: rootChangelog, tag: "v1.9.7" });
 
-  assert.match(notes, /AudioProvider state machine/i);
-  assert.match(notes, /custom `idle` state/i);
-  assert.match(notes, /AudioStateBadge/);
-  assert.match(notes, /@webaudio-kit\/cli@1\.9\.6/);
+  assert.match(notes, /llms\.txt/i);
+  assert.match(notes, /robots\.txt/i);
+  assert.match(notes, /non-browser user agents/i);
+  assert.match(notes, /@webaudio-kit\/cli@1\.9\.7/);
 });
 
 test("getReleasePackages reflects package history", () => {
