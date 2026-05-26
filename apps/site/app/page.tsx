@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { createPageMetadata, HOME_DESCRIPTION } from "./metadata";
 import {
   CodeBlock,
   GitHubMark,
@@ -12,6 +13,12 @@ import {
   getGitHubReleaseUrl,
 } from "./changelog/changelog-data";
 import { InteractiveDemo } from "./InteractiveDemo";
+
+export const metadata = createPageMetadata({
+  title: "webaudio-kit",
+  description: HOME_DESCRIPTION,
+  path: "/",
+});
 
 const packages = [
   {

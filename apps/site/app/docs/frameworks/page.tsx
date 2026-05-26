@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CodeBlock, PageShell, SectionHeader } from "../../components";
+import { createPageMetadata } from "../../metadata";
 
-export const metadata: Metadata = {
+const description =
+  "Compare webaudio-kit setup patterns for Vite React, Next App Router, and plain React applications.";
+
+export const metadata: Metadata = createPageMetadata({
   title: "Framework Setup Comparison",
-  description:
-    "Compare webaudio-kit setup patterns for Vite React, Next App Router, and plain React applications.",
-};
+  description,
+  path: "/docs/frameworks",
+});
 
 const frameworkRows = [
   {

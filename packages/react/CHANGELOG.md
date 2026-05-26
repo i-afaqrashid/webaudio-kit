@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.5.8 - 2026-05-26
+
+### Added
+
+- Add centralized route metadata with canonical URLs, Open Graph fields, and
+  Twitter summary-card fields across the site.
+- Add generated social preview image endpoints for shared links.
+- Add metadata tests covering key route titles, descriptions, social fields,
+  and non-medical wording.
+
+### Changed
+
+- Extend site browser QA to verify built page title, description, Open Graph,
+  Twitter card, and social image tags.
+
 ## 1.5.7 - 2026-05-26
 
 ### Added

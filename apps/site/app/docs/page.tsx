@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CodeBlock, IconBadge, PageShell, SectionHeader } from "../components";
+import { createPageMetadata } from "../metadata";
 
-export const metadata: Metadata = {
+const description =
+  "Install webaudio-kit, wire AudioProvider, use tone, sweep, and noise hooks, and understand browser audio safety constraints.";
+
+export const metadata: Metadata = createPageMetadata({
   title: "Docs",
-  description:
-    "Install webaudio-kit, wire AudioProvider, use tone, sweep, and noise hooks, and understand browser audio safety constraints.",
-};
+  description,
+  path: "/docs",
+});
 
 const apiCards = [
   {

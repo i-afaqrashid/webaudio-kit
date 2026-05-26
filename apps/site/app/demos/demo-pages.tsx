@@ -4,6 +4,7 @@ import { CodeBlock, IconBadge, PageShell, SectionHeader } from "../components";
 import type { IconName } from "../components";
 import { InteractiveDemo } from "../InteractiveDemo";
 import { FocusedDemoPanel } from "./FocusedDemoPanel";
+import { createPageMetadata } from "../metadata";
 
 export type DemoSlug =
   | "combo"
@@ -326,10 +327,11 @@ export function getDemo(slug: DemoSlug) {
 export function getDemoMetadata(slug: DemoSlug): Metadata {
   const demo = getDemo(slug);
 
-  return {
+  return createPageMetadata({
     title: demo.title,
-    description: `${demo.label} for webaudio-kit React browser audio prototypes.`,
-  };
+    description: demo.copy,
+    path: `/demos/${slug}`,
+  });
 }
 
 export function DemoIndex() {
