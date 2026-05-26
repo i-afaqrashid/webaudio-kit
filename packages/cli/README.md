@@ -1,11 +1,13 @@
 # @webaudio-kit/cli
 
-CLI helpers for webaudio-kit projects.
+CLI helpers for browser audio projects using webaudio-kit.
 
 ## Generate an AI agent brief
 
 ```sh
+npx @webaudio-kit/cli@latest agent-brief
 pnpm dlx @webaudio-kit/cli agent-brief
+yarn dlx @webaudio-kit/cli@latest agent-brief
 ```
 
 ## Package Manager Snippets
@@ -13,6 +15,7 @@ pnpm dlx @webaudio-kit/cli agent-brief
 ```sh
 pnpm dlx @webaudio-kit/cli@latest agent-brief
 npx @webaudio-kit/cli@latest agent-brief
+yarn dlx @webaudio-kit/cli@latest agent-brief
 bunx @webaudio-kit/cli@latest agent-brief
 ```
 
