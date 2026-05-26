@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.9.3 - 2026-05-26
+
+### Added
+
+- Add a complete Monitoring Alert Cues recipe with severity profiles, transition
+  triggered playback, repeat patterns, mute behavior, and `stopAll()`
+  acknowledgement controls.
+- Add a matching live recipe demo so warning and critical profiles can be tried
+  from the public recipes page.
+
+### Changed
+
+- Clarify that monitoring cue recipes are product UI feedback, not certified
+  alarms, life-safety systems, medical software, or audiology workflows.
+
 ## 1.9.2 - 2026-05-26
 
 ### Changed

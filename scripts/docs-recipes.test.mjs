@@ -12,6 +12,7 @@ test("recipe documentation covers common audio patterns", () => {
   for (const heading of [
     "Tone Button",
     "Frequency Sweep Control",
+    "Monitoring Alert Cues",
     "Master Volume Slider",
     "Waveform And Spectrum Panel",
     "Audio Test Mode",
@@ -34,6 +35,11 @@ test("recipe documentation covers common audio patterns", () => {
 
   assert.match(recipes, /browser autoplay/i);
   assert.match(recipes, /live recipe demos/i);
+  assert.match(recipes, /severityProfiles/);
+  assert.match(recipes, /previousSeverityRef/);
+  assert.match(recipes, /transition/i);
+  assert.match(recipes, /stopAll/);
+  assert.match(recipes, /not certified alarms/i);
   assert.match(recipes, /not medical/i);
   assert.match(docsIndex, /Recipes/);
   assert.match(rootReadme, /Recipes/);

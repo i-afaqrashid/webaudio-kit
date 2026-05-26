@@ -59,14 +59,14 @@ test("buildReleaseNotes includes package links and release references", () => {
   assert.match(notes, /https:\/\/webaudio-kit\.afaqrashid\.com\/docs/);
 });
 
-test("current release notes include responsive visualizer README work", () => {
+test("current release notes include the monitoring alert recipe work", () => {
   const rootChangelog = readFileSync("CHANGELOG.md", "utf8");
-  const notes = buildReleaseNotes({ changelog: rootChangelog, tag: "v1.9.2" });
+  const notes = buildReleaseNotes({ changelog: rootChangelog, tag: "v1.9.3" });
 
-  assert.match(notes, /WaveformCanvas/i);
-  assert.match(notes, /SpectrumCanvas/i);
-  assert.match(notes, /backing buffer/i);
-  assert.match(notes, /@webaudio-kit\/cli@1\.9\.2/);
+  assert.match(notes, /Monitoring Alert Cues/i);
+  assert.match(notes, /severity profiles/i);
+  assert.match(notes, /stopAll/i);
+  assert.match(notes, /@webaudio-kit\/cli@1\.9\.3/);
 });
 
 test("getReleasePackages reflects package history", () => {

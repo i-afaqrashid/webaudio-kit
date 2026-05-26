@@ -319,10 +319,17 @@ describe("site pages", () => {
     ).toBeTruthy();
     expect(screen.getByRole("heading", { name: "Tone Button" })).toBeTruthy();
     expect(
+      screen.getByRole("heading", { name: "Monitoring Alert Cues" }),
+    ).toBeTruthy();
+    expect(
       screen.getByRole("heading", { name: "Safe Autoplay Pattern" }),
     ).toBeTruthy();
+    expect(screen.getByText(/severityProfiles/)).toBeTruthy();
     expect(screen.getByText("browser autoplay behavior")).toBeTruthy();
-    expect(screen.getAllByText("Live recipe demo")).toHaveLength(7);
+    expect(screen.getAllByText("Live recipe demo")).toHaveLength(8);
+    expect(
+      screen.getByRole("button", { name: "Run critical profile" }),
+    ).toBeTruthy();
     expect(
       screen.getByRole("button", { name: "Play recipe tone" }),
     ).toBeTruthy();
@@ -423,19 +430,19 @@ describe("site pages", () => {
     expect(
       screen.getByRole("heading", { name: "Release history." }),
     ).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "1.9.2" })).toBeTruthy();
-    expect(screen.getByText(/backing buffer dimensions/)).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "1.9.3" })).toBeTruthy();
+    expect(screen.getByText(/Monitoring Alert Cues/)).toBeTruthy();
     expect(
-      screen.getByRole("link", { name: "GitHub release v1.9.2" }),
+      screen.getByRole("link", { name: "GitHub release v1.9.3" }),
     ).toHaveProperty(
       "href",
-      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.9.2",
+      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.9.3",
     );
     expect(
-      screen.getByRole("link", { name: "@webaudio-kit/react 1.9.2" }),
+      screen.getByRole("link", { name: "@webaudio-kit/react 1.9.3" }),
     ).toHaveProperty(
       "href",
-      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.9.2",
+      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.9.3",
     );
   });
 

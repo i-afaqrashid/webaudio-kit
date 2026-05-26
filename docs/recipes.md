@@ -131,6 +131,125 @@ export function App() {
 }
 ```
 
+## Monitoring Alert Cues
+
+Use severity profiles when an incident dashboard needs repeatable UI cues. Fire
+audio on a state transition, not on every render. Mute suppresses new cues;
+acknowledge uses `stopAll()` to cancel active and scheduled provider-owned
+playback. This recipe is for product UI feedback, not certified alarms,
+life-safety systems, medical software, or audiology workflows.
+
+```tsx
+import {
+  AudioProvider,
+  type FrequencySweepOptions,
+  type ToneOptions,
+  useAudioContext,
+  useFrequencySweep,
+  useTone,
+  useVolume,
+} from "@webaudio-kit/react";
+import { useEffect, useRef, useState } from "react";
+
+type Severity = "healthy" | "info" | "warning" | "critical";
+type CueProfile =
+  | { kind: "tone"; options: ToneOptions }
+  | { kind: "sweep"; options: FrequencySweepOptions };
+
+const severityProfiles = {
+  healthy: null,
+  info: {
+    kind: "tone",
+    options: {
+      durationMs: 140,
+      frequency: 523.25,
+      gain: 0.06,
+      type: "sine" as const,
+      envelope: { attackMs: 8, releaseMs: 45 },
+    },
+  },
+  warning: {
+    kind: "tone",
+    options: {
+      durationMs: 130,
+      frequency: 760,
+      gain: 0.09,
+      type: "triangle" as const,
+      envelope: { attackMs: 8, releaseMs: 55 },
+      pattern: { repeat: 2, gapMs: 100 },
+    },
+  },
+  critical: {
+    kind: "sweep",
+    options: {
+      durationMs: 620,
+      from: 520,
+      to: 1800,
+      gain: 0.1,
+      type: "sawtooth" as const,
+      envelope: { attackMs: 12, releaseMs: 90 },
+      filter: { frequency: 2200, q: 0.8 },
+      pattern: { repeat: 2, gapMs: 140 },
+    },
+  },
+} satisfies Record<Severity, CueProfile | null>;
+
+function MonitoringAlertCues({ severity }: { severity: Severity }) {
+  const audio = useAudioContext();
+  const tone = useTone();
+  const sweep = useFrequencySweep();
+  const volume = useVolume();
+  const previousSeverityRef = useRef<Severity>("healthy");
+  const [muted, setMuted] = useState(false);
+
+  useEffect(() => {
+    const previousSeverity = previousSeverityRef.current;
+    previousSeverityRef.current = severity;
+
+    if (muted || previousSeverity === severity) {
+      return;
+    }
+
+    const profile = severityProfiles[severity];
+
+    if (!profile) {
+      audio.stopAll();
+      return;
+    }
+
+    if (profile.kind === "tone") {
+      void tone.play(profile.options);
+    } else {
+      void sweep.play(profile.options);
+    }
+  }, [audio, muted, severity, sweep, tone]);
+
+  async function handleMute(nextMuted: boolean) {
+    setMuted(nextMuted);
+    await volume.setGain(nextMuted ? 0 : 0.2);
+  }
+
+  return (
+    <section aria-label="Monitoring alert cue controls">
+      <button type="button" onClick={() => audio.stopAll()}>
+        Acknowledge
+      </button>
+      <button type="button" onClick={() => void handleMute(!muted)}>
+        {muted ? "Unmute" : "Mute"}
+      </button>
+    </section>
+  );
+}
+
+export function App({ severity }: { severity: Severity }) {
+  return (
+    <AudioProvider initialGain={0.2}>
+      <MonitoringAlertCues severity={severity} />
+    </AudioProvider>
+  );
+}
+```
+
 ## Stop All Cues
 
 Use `stopAll()` when an acknowledge button, page transition, or emergency mute
