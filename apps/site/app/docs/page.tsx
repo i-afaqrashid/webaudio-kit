@@ -88,6 +88,9 @@ export default function DocsPage() {
               <Link className="button" href="/docs/frameworks">
                 Framework comparison
               </Link>
+              <Link className="button" href="/docs/scope">
+                Scope
+              </Link>
             </div>
           </div>
         </section>
@@ -106,6 +109,7 @@ export default function DocsPage() {
               <a href="#noise">Noise hook</a>
               <a href="#test-mode">Test mode</a>
               <a href="#hooks-vs-core">Hooks vs Core</a>
+              <a href="#scope">Scope</a>
               <a href="#helpers">API helpers</a>
               <a href="#frameworks">Frameworks</a>
               <a href="#benchmarks">Benchmarks</a>
@@ -354,6 +358,18 @@ const note = frequencyToNoteName(440); // A4`}</CodeBlock>
                   href="/docs/hooks-vs-core"
                 >
                   Hooks vs Core
+                </Link>
+              </div>
+
+              <h2 id="scope">Scope and limitations</h2>
+              <p>
+                webaudio-kit is intentionally scoped to safe procedural UI
+                audio. It is not a full synthesizer graph, Tone.js competitor,
+                AudioWorklets toolkit, or medical system.
+              </p>
+              <div className="docActionLinks">
+                <Link className="button buttonPrimary" href="/docs/scope">
+                  Scope guide
                 </Link>
               </div>
 

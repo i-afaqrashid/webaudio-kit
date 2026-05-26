@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.9.12 - 2026-05-26
+
+### Added
+
+- Add a candid Scope and Limitations guide explaining when to use React hooks,
+  core primitives, raw Web Audio, or a full audio engine such as Tone.js.
+- Add a public `/docs/scope` docs route and link it from the root README,
+  package READMEs, docs home, and Hooks vs Core guide.
+
 ## 1.9.11 - 2026-05-26
 
 ### Added

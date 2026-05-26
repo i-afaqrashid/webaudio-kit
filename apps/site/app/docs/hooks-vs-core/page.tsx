@@ -35,6 +35,9 @@ export default function HooksVsCoreDocsPage() {
               <Link className="button" href="/docs/recipes">
                 Recipes
               </Link>
+              <Link className="button" href="/docs/scope">
+                Scope
+              </Link>
             </div>
           </div>
         </section>
@@ -226,6 +229,9 @@ function LayeredCueButton() {
                 </Link>
                 <Link className="button" href="/docs/examples">
                   Example apps
+                </Link>
+                <Link className="button" href="/docs/scope">
+                  Scope guide
                 </Link>
                 <a
                   className="button"
