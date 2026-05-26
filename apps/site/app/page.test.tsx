@@ -322,7 +322,7 @@ describe("site pages", () => {
       screen.getByRole("heading", { name: "Safe Autoplay Pattern" }),
     ).toBeTruthy();
     expect(screen.getByText("browser autoplay behavior")).toBeTruthy();
-    expect(screen.getAllByText("Live recipe demo")).toHaveLength(6);
+    expect(screen.getAllByText("Live recipe demo")).toHaveLength(7);
     expect(
       screen.getByRole("button", { name: "Play recipe tone" }),
     ).toBeTruthy();
@@ -423,19 +423,19 @@ describe("site pages", () => {
     expect(
       screen.getByRole("heading", { name: "Release history." }),
     ).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "1.8.0" })).toBeTruthy();
-    expect(screen.getByText("npm Trusted Publishing")).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "1.9.0" })).toBeTruthy();
+    expect(screen.getAllByText(/stopAll/).length).toBeGreaterThan(0);
     expect(
-      screen.getByRole("link", { name: "GitHub release v1.8.0" }),
+      screen.getByRole("link", { name: "GitHub release v1.9.0" }),
     ).toHaveProperty(
       "href",
-      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.8.0",
+      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.9.0",
     );
     expect(
-      screen.getByRole("link", { name: "@webaudio-kit/react 1.8.0" }),
+      screen.getByRole("link", { name: "@webaudio-kit/react 1.9.0" }),
     ).toHaveProperty(
       "href",
-      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.8.0",
+      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.9.0",
     );
   });
 

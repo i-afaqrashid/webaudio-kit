@@ -57,38 +57,27 @@ function DemoControls() {
   });
 
   const playTone = async () => {
-    sweep.stop();
-    noise.stop();
-    audioTest.stop();
+    stopAll();
     await tone.play();
   };
 
   const runSweep = async () => {
-    tone.stop();
-    noise.stop();
-    audioTest.stop();
+    stopAll();
     await sweep.play();
   };
 
   const playNoise = async () => {
-    tone.stop();
-    sweep.stop();
-    audioTest.stop();
+    stopAll();
     await noise.play();
   };
 
   const runTestMode = async () => {
-    tone.stop();
-    sweep.stop();
-    noise.stop();
+    stopAll();
     await audioTest.run();
   };
 
   const stopAll = () => {
-    tone.stop();
-    sweep.stop();
-    noise.stop();
-    audioTest.stop();
+    audio.stopAll();
   };
   const signalState = tone.isPlaying
     ? "tone"

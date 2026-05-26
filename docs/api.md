@@ -286,10 +286,16 @@ Returns the provider state and controls:
   gain: number;
   ensureAudioContext(): Promise<AudioRuntime>;
   setGain(gain: number): Promise<void>;
+  stopAll(): void;
 }
 ```
 
 Throws if used outside `AudioProvider`.
+
+`stopAll()` cancels active and scheduled playback handles created by React hooks
+inside the provider. Use it for panic buttons, alert acknowledgement, or route
+changes. `setGain(0)` mutes output; it does not cancel already scheduled
+playback.
 
 ### `useTone(options)`
 

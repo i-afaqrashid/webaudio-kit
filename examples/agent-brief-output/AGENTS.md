@@ -35,8 +35,8 @@ pnpm add @webaudio-kit/core @webaudio-kit/react
 ## Useful APIs
 
 - Playback: `useTone`, `useFrequencySweep`, `useNoise`
-- State and routing: `AudioProvider`, `useAudioContext`, `useVolume`,
-  `useAnalyser`
+- State and routing: `AudioProvider`, `useAudioContext().stopAll()`,
+  `useVolume`, `useAnalyser`
 - Visualizers: `WaveformCanvas`, `SpectrumCanvas`
 - Helpers: `dbToGain`, `gainToDb`, `clampFrequency`, `frequencyToNoteName`
 

@@ -59,15 +59,14 @@ test("buildReleaseNotes includes package links and release references", () => {
   assert.match(notes, /https:\/\/webaudio-kit\.afaqrashid\.com\/docs/);
 });
 
-test("current release notes include sound-shaping API work", () => {
+test("current release notes include provider stop-all API work", () => {
   const rootChangelog = readFileSync("CHANGELOG.md", "utf8");
-  const notes = buildReleaseNotes({ changelog: rootChangelog, tag: "v1.8.0" });
+  const notes = buildReleaseNotes({ changelog: rootChangelog, tag: "v1.9.0" });
 
-  assert.match(notes, /detuneCents/i);
-  assert.match(notes, /voices/i);
-  assert.match(notes, /filter/i);
-  assert.match(notes, /multi-voice/i);
-  assert.match(notes, /@webaudio-kit\/cli@1\.8\.0/);
+  assert.match(notes, /stopAll/i);
+  assert.match(notes, /panic controls/i);
+  assert.match(notes, /scheduled playback/i);
+  assert.match(notes, /@webaudio-kit\/cli@1\.9\.0/);
 });
 
 test("getReleasePackages reflects package history", () => {

@@ -14,6 +14,7 @@ import {
 
 export type RecipeDemoKind =
   | "autoplay"
+  | "stop-all"
   | "sweep"
   | "test-mode"
   | "tone"
@@ -22,6 +23,7 @@ export type RecipeDemoKind =
 
 const demoLabels: Record<RecipeDemoKind, string> = {
   autoplay: "Autoplay-safe start",
+  "stop-all": "Provider stop all",
   sweep: "250 Hz to 8000 Hz",
   "test-mode": "Low-gain sequence",
   tone: "440 Hz confirmation",
@@ -63,11 +65,7 @@ function RecipeLiveDemoControls({ kind }: { kind: RecipeDemoKind }) {
   const testMode = useAudioTestMode();
 
   const stopAll = () => {
-    tone.stop();
-    sweep.stop();
-    analyserPing.stop();
-    safeStart.stop();
-    testMode.stop();
+    audio.stopAll();
   };
 
   const runTone = async () => {
@@ -190,6 +188,26 @@ function RecipeLiveDemoControls({ kind }: { kind: RecipeDemoKind }) {
             </button>
             <button className="button" onClick={stopAll} type="button">
               Stop
+            </button>
+          </div>
+        </div>
+      ) : null}
+      {kind === "stop-all" ? (
+        <div className="recipeDemoBody">
+          <p>
+            Start a cue, then stop every active or scheduled provider-owned
+            playback handle.
+          </p>
+          <div className="demoActions">
+            <button
+              className="button buttonPrimary"
+              onClick={() => void runTone()}
+              type="button"
+            >
+              Start cue
+            </button>
+            <button className="button" onClick={stopAll} type="button">
+              Stop all cues
             </button>
           </div>
         </div>

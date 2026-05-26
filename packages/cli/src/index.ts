@@ -99,7 +99,7 @@ ${installCommand}
 ## Useful APIs
 
 - Playback: \`useTone\`, \`useFrequencySweep\`, \`useNoise\`, \`playTone\`, \`playFrequencySweep\`, \`playNoise\`
-- State and routing: \`AudioProvider\`, \`useAudioContext\`, \`useVolume\`, \`useAnalyser\`
+- State and routing: \`AudioProvider\`, \`useAudioContext().stopAll()\`, \`useVolume\`, \`useAnalyser\`
 - Visualizers: \`WaveformCanvas\`, \`SpectrumCanvas\`
 - Helpers: \`dbToGain\`, \`gainToDb\`, \`clampFrequency\`, \`midiToFrequency\`, \`frequencyToMidi\`, \`frequencyToNoteName\`
 

@@ -131,6 +131,59 @@ export function App() {
 }
 ```
 
+## Stop All Cues
+
+Use `stopAll()` when an acknowledge button, page transition, or emergency mute
+must cancel scheduled playback. Keep `useVolume().setGain(0)` for muting output
+without changing whether scheduled handles keep running.
+
+```tsx
+import {
+  AudioProvider,
+  useAudioContext,
+  useTone,
+  useVolume,
+} from "@webaudio-kit/react";
+
+function AlertControls() {
+  const audio = useAudioContext();
+  const volume = useVolume();
+  const alertTone = useTone();
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() =>
+          void alertTone.play({
+            frequency: 880,
+            durationMs: 120,
+            gain: 0.12,
+            pattern: { repeat: 3, gapMs: 90 },
+          })
+        }
+      >
+        Start alert
+      </button>
+      <button type="button" onClick={() => audio.stopAll()}>
+        Stop all cues
+      </button>
+      <button type="button" onClick={() => void volume.setGain(0)}>
+        Mute output
+      </button>
+    </>
+  );
+}
+
+export function App() {
+  return (
+    <AudioProvider>
+      <AlertControls />
+    </AudioProvider>
+  );
+}
+```
+
 ## Soft UI Sweep
 
 Use a short envelope for cues that should feel less abrupt, especially with

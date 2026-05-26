@@ -273,6 +273,9 @@ function Harness() {
       <button type="button" onClick={() => void volume.setGain(Number.NaN)}>
         reset bad volume
       </button>
+      <button type="button" onClick={() => audio.stopAll()}>
+        stop all
+      </button>
     </div>
   );
 }
@@ -339,6 +342,7 @@ function TimedNoiseHarness() {
 }
 
 function PatternToneHarness() {
+  const audio = useAudioContext();
   const tone = useTone();
 
   return (
@@ -358,6 +362,9 @@ function PatternToneHarness() {
       </button>
       <button type="button" onClick={() => tone.stop()}>
         stop pattern tone
+      </button>
+      <button type="button" onClick={() => audio.stopAll()}>
+        stop all pattern
       </button>
     </div>
   );
@@ -643,6 +650,41 @@ describe("AudioProvider", () => {
     expect(context.panners[0]?.connections).toEqual([context.gains[0]]);
   });
 
+  test("stopAll stops every active hook playback and clears hook state", async () => {
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <Harness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "play tone" }).click();
+    });
+    await act(async () => {
+      screen.getByRole("button", { name: "play sweep" }).click();
+    });
+    await act(async () => {
+      screen.getByRole("button", { name: "play noise" }).click();
+    });
+
+    await act(async () => {
+      screen.getByRole("button", { name: "stop all" }).click();
+    });
+
+    const context = FakeAudioContext.instances[0]!;
+    expect(screen.getByTestId("tone-playing").textContent).toBe("false");
+    expect(screen.getByTestId("sweep-playing").textContent).toBe("false");
+    expect(screen.getByTestId("noise-playing").textContent).toBe("false");
+    expect(
+      context.oscillators.every((oscillator) => oscillator.stopCalls > 0),
+    ).toBe(true);
+    expect(context.bufferSources.every((source) => source.stopCalls > 0)).toBe(
+      true,
+    );
+  });
+
   test("normalizes initial and updated volume values", async () => {
     vi.stubGlobal("AudioContext", FakeAudioContext);
 
@@ -816,6 +858,35 @@ describe("AudioProvider", () => {
     });
 
     expect(screen.getByTestId("pattern-playing").textContent).toBe("false");
+  });
+
+  test("stopAll cancels repeated pattern playback and clears its timer", async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <PatternToneHarness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "play pattern tone" }).click();
+    });
+
+    const context = FakeAudioContext.instances[0]!;
+    expect(context.oscillators).toHaveLength(3);
+    expect(screen.getByTestId("pattern-playing").textContent).toBe("true");
+
+    await act(async () => {
+      screen.getByRole("button", { name: "stop all pattern" }).click();
+      vi.advanceTimersByTime(200);
+    });
+
+    expect(screen.getByTestId("pattern-playing").textContent).toBe("false");
+    expect(
+      context.oscillators.every((oscillator) => oscillator.stopCalls > 1),
+    ).toBe(true);
   });
 
   test("passes envelope overrides through tone playback", async () => {

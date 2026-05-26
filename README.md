@@ -120,6 +120,30 @@ await alertTone.play({
 });
 ```
 
+## Stop all playback
+
+Use `useAudioContext().stopAll()` for panic buttons, alert acknowledge actions,
+or route changes that must cancel already scheduled library playback. This is
+different from setting master gain to `0`: muting affects volume, while
+`stopAll()` stops active tone, sweep, noise, repeated pattern, and test-mode
+handles created through the React provider.
+
+```tsx
+import { useAudioContext, useVolume } from "@webaudio-kit/react";
+
+function AlertControls() {
+  const audio = useAudioContext();
+  const volume = useVolume();
+
+  return (
+    <>
+      <button onClick={() => audio.stopAll()}>Stop all cues</button>
+      <button onClick={() => void volume.setGain(0)}>Mute future output</button>
+    </>
+  );
+}
+```
+
 ## Next.js App Router
 
 Keep controls that call hooks in a client component. The package entry includes
