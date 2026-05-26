@@ -437,6 +437,7 @@ Returns the current `AnalyserNode`, or `null` before the audio context exists.
   backgroundColor="#10110f"
   height={180}
   strokeColor="#c8ea3a"
+  style={{ width: "100%", height: 140 }}
   width={720}
 />
 ```
@@ -444,6 +445,10 @@ Returns the current `AnalyserNode`, or `null` before the audio context exists.
 Draws analyser time-domain data from the nearest `AudioProvider`. Before
 playback creates the provider graph, it renders an idle center line instead of a
 blank canvas.
+
+`width` and `height` are the canvas backing buffer used for drawing resolution.
+Use forwarded canvas attributes such as `style` or `className` for responsive
+CSS sizing.
 
 Useful props:
 
@@ -464,6 +469,7 @@ It also accepts standard canvas attributes such as `className`, `style`, and
   backgroundColor="#10110f"
   barColor="#8ed8ff"
   height={140}
+  style={{ width: "100%", height: 120 }}
   width={720}
 />
 ```
@@ -471,6 +477,10 @@ It also accepts standard canvas attributes such as `className`, `style`, and
 Draws analyser frequency-domain data from the nearest `AudioProvider`. Before
 playback creates the provider graph, it renders low idle bars so the canvas does
 not appear broken.
+
+`width` and `height` are the canvas backing buffer used for drawing resolution.
+Use forwarded canvas attributes such as `style` or `className` for responsive
+CSS sizing.
 
 Useful props:
 

@@ -595,7 +595,7 @@ function Meter() {
     title: "WaveformCanvas",
     packageName: "@webaudio-kit/react",
     summary:
-      "Draws analyser time-domain data into a canvas and renders an idle center line before audio exists.",
+      "Draws analyser time-domain data into a canvas and renders an idle center line before audio exists. Keep width/height as the backing buffer and use style or className for responsive CSS sizing.",
     signature: `function WaveformCanvas(props: WaveformCanvasProps): JSX.Element;
 
 type WaveformCanvasProps = Omit<
@@ -641,7 +641,10 @@ function Signal() {
     <WaveformCanvas
       aria-label="Waveform analyser"
       height={180}
+      idleStrokeColor="#394135"
+      lineWidth={2}
       strokeColor="#c8ea3a"
+      style={{ width: "100%", height: 140 }}
       width={720}
     />
   );
@@ -654,7 +657,7 @@ function Signal() {
     title: "SpectrumCanvas",
     packageName: "@webaudio-kit/react",
     summary:
-      "Draws analyser frequency-domain data into compact bars and renders low idle bars before audio exists.",
+      "Draws analyser frequency-domain data into compact bars and renders low idle bars before audio exists. Keep width/height as the backing buffer and use style or className for responsive CSS sizing.",
     signature: `function SpectrumCanvas(props: SpectrumCanvasProps): JSX.Element;
 
 type SpectrumCanvasProps = Omit<
@@ -674,6 +677,17 @@ type SpectrumCanvasProps = Omit<
         type: "string",
         defaultValue: '"#c8ea3a"',
         notes: "Bar color used when analyser data is available.",
+      },
+      {
+        name: "SpectrumCanvasProps.idleBarColor",
+        type: "string",
+        notes: "Optional separate bar color for the idle state.",
+      },
+      {
+        name: "SpectrumCanvasProps.backgroundColor",
+        type: "string",
+        defaultValue: '"#10110f"',
+        notes: "Canvas fill color.",
       },
       {
         name: "SpectrumCanvasProps.barCount",
@@ -702,8 +716,14 @@ function Spectrum() {
   return (
     <SpectrumCanvas
       aria-label="Spectrum analyser"
+      backgroundColor="#10110f"
+      barColor="#8ed8ff"
       barCount={48}
+      barGap={2}
       height={140}
+      idleBarColor="#394135"
+      minBarHeight={2}
+      style={{ width: "100%", height: 120 }}
       width={720}
     />
   );
