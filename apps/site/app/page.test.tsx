@@ -280,6 +280,32 @@ describe("site pages", () => {
     expect(
       screen.getAllByText("examples/incident-alert-console").length,
     ).toBeGreaterThan(0);
+    expect(screen.getByText("Vite React source excerpt")).toBeTruthy();
+    expect(screen.getByText("Next App Router source excerpt")).toBeTruthy();
+    expect(screen.getByText("Incident console source excerpt")).toBeTruthy();
+    expect(screen.getByText(/function AudioWorkbench/)).toBeTruthy();
+    expect(screen.getByText(/"use client";/)).toBeTruthy();
+    expect(screen.getByText(/function IncidentConsole/)).toBeTruthy();
+    expect(
+      screen.getByRole("link", { name: "View vite-react source" }),
+    ).toHaveProperty(
+      "href",
+      "https://github.com/i-afaqrashid/webaudio-kit/blob/main/examples/vite-react/src/main.tsx",
+    );
+    expect(
+      screen.getByRole("link", { name: "View next-app-router source" }),
+    ).toHaveProperty(
+      "href",
+      "https://github.com/i-afaqrashid/webaudio-kit/blob/main/examples/next-app-router/app/audio-controls.tsx",
+    );
+    expect(
+      screen.getByRole("link", {
+        name: "View incident-alert-console source",
+      }),
+    ).toHaveProperty(
+      "href",
+      "https://github.com/i-afaqrashid/webaudio-kit/blob/main/examples/incident-alert-console/src/main.tsx",
+    );
     expect(
       screen.getByRole("heading", { name: "Run in browser" }),
     ).toBeTruthy();
@@ -430,19 +456,19 @@ describe("site pages", () => {
     expect(
       screen.getByRole("heading", { name: "Release history." }),
     ).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "1.9.3" })).toBeTruthy();
-    expect(screen.getByText(/Monitoring Alert Cues/)).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "1.9.4" })).toBeTruthy();
+    expect(screen.getByText(/source-backed example snippets/)).toBeTruthy();
     expect(
-      screen.getByRole("link", { name: "GitHub release v1.9.3" }),
+      screen.getByRole("link", { name: "GitHub release v1.9.4" }),
     ).toHaveProperty(
       "href",
-      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.9.3",
+      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.9.4",
     );
     expect(
-      screen.getByRole("link", { name: "@webaudio-kit/react 1.9.3" }),
+      screen.getByRole("link", { name: "@webaudio-kit/react 1.9.4" }),
     ).toHaveProperty(
       "href",
-      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.9.3",
+      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.9.4",
     );
   });
 

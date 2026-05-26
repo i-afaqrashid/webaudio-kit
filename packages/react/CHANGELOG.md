@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.9.4 - 2026-05-26
+
+### Added
+
+- Embed source-backed example snippets directly on the public examples docs page
+  for Vite React, Next App Router, plain React, incident alert console, and
+  audio test mode.
+- Add direct GitHub source links beside each embedded snippet so docs visitors
+  can jump from the short excerpt to the full checked example file.
+
 ## 1.9.3 - 2026-05-26
 
 ### Added

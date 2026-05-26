@@ -21,6 +21,41 @@ const examples = [
     command: `cd examples/vite-react
 pnpm install
 pnpm dev`,
+    snippetPath: "examples/vite-react/src/main.tsx",
+    snippetSourceUrl:
+      "https://github.com/i-afaqrashid/webaudio-kit/blob/main/examples/vite-react/src/main.tsx",
+    snippetTitle: "Vite React source excerpt",
+    sourceLabel: "vite-react",
+    snippet: `function AudioWorkbench() {
+  const [frequency, setFrequency] = useState(440);
+  const tone = useTone({ frequency, gain: dbToGain(-18), type: "sine" });
+  const sweep = useFrequencySweep({ from: 250, to: 8000, durationMs: 2400 });
+  const noise = useNoise({ durationMs: 700, gain: 0.07, type: "pink" });
+  const volume = useVolume();
+
+  return (
+    <>
+      <button onClick={() => void tone.play()}>Play tone</button>
+      <button onClick={() => void sweep.play()}>Run sweep</button>
+      <button onClick={() => void noise.play()}>Pink noise</button>
+      <input
+        max="0.5"
+        min="0"
+        onChange={(event) => void volume.setGain(event.currentTarget.valueAsNumber)}
+        type="range"
+        value={volume.gain}
+      />
+      <WaveformCanvas backgroundColor="#10110f" strokeColor="#c8ea3a" />
+      <SpectrumCanvas backgroundColor="#10110f" barColor="#8ed8ff" />
+    </>
+  );
+}
+
+createRoot(document.getElementById("root")!).render(
+  <AudioProvider>
+    <AudioWorkbench />
+  </AudioProvider>,
+);`,
   },
   {
     path: "examples/next-app-router",
@@ -29,6 +64,57 @@ pnpm dev`,
     command: `cd examples/next-app-router
 pnpm install
 pnpm dev`,
+    snippetPath: "examples/next-app-router/app/audio-controls.tsx",
+    snippetSourceUrl:
+      "https://github.com/i-afaqrashid/webaudio-kit/blob/main/examples/next-app-router/app/audio-controls.tsx",
+    snippetTitle: "Next App Router source excerpt",
+    sourceLabel: "next-app-router",
+    snippet: `"use client";
+
+import {
+  AudioProvider,
+  SpectrumCanvas,
+  WaveformCanvas,
+  useFrequencySweep,
+  useNoise,
+  useTone,
+  useVolume,
+} from "@webaudio-kit/react";
+
+function Controls() {
+  const tone = useTone({ frequency: 440, gain: 0.14, type: "sine" });
+  const sweep = useFrequencySweep({ from: 250, to: 8000, durationMs: 2400 });
+  const noise = useNoise({ durationMs: 700, gain: 0.07, type: "pink" });
+  const volume = useVolume();
+
+  return (
+    <section aria-label="Browser audio controls">
+      <button onClick={() => void tone.play({ durationMs: 700 })}>
+        Play 440 Hz
+      </button>
+      <button onClick={() => void sweep.play()}>Run sweep</button>
+      <button onClick={() => void noise.play()}>Pink noise</button>
+      <input
+        max="0.5"
+        min="0"
+        onChange={(event) => void volume.setGain(event.currentTarget.valueAsNumber)}
+        step="0.01"
+        type="range"
+        value={volume.gain}
+      />
+      <WaveformCanvas />
+      <SpectrumCanvas />
+    </section>
+  );
+}
+
+export function AudioControls() {
+  return (
+    <AudioProvider>
+      <Controls />
+    </AudioProvider>
+  );
+}`,
   },
   {
     path: "examples/plain-react",
@@ -37,6 +123,32 @@ pnpm dev`,
     command: `cd examples/plain-react
 pnpm install
 pnpm dev`,
+    snippetPath: "examples/plain-react/src/main.tsx",
+    snippetSourceUrl:
+      "https://github.com/i-afaqrashid/webaudio-kit/blob/main/examples/plain-react/src/main.tsx",
+    snippetTitle: "Plain React source excerpt",
+    sourceLabel: "plain-react",
+    snippet: `function App() {
+  const tone = useTone({ frequency: 440, gain: 0.14, type: "sine" });
+  const volume = useVolume();
+
+  return (
+    <AudioProvider>
+      <button onClick={() => void tone.play({ durationMs: 600 })}>
+        Play tone
+      </button>
+      <input
+        max="0.5"
+        min="0"
+        onChange={(event) => void volume.setGain(event.currentTarget.valueAsNumber)}
+        type="range"
+        value={volume.gain}
+      />
+      <WaveformCanvas />
+      <SpectrumCanvas />
+    </AudioProvider>
+  );
+}`,
   },
   {
     path: "examples/incident-alert-console",
@@ -45,6 +157,38 @@ pnpm dev`,
     command: `cd examples/incident-alert-console
 pnpm install
 pnpm dev`,
+    snippetPath: "examples/incident-alert-console/src/main.tsx",
+    snippetSourceUrl:
+      "https://github.com/i-afaqrashid/webaudio-kit/blob/main/examples/incident-alert-console/src/main.tsx",
+    snippetTitle: "Incident console source excerpt",
+    sourceLabel: "incident-alert-console",
+    snippet: `function IncidentConsole() {
+  const audio = useAudioContext();
+  const warningTone = useTone({ frequency: 880, gain: 0.11 });
+  const criticalSweep = useFrequencySweep({
+    durationMs: 700,
+    from: 520,
+    to: 1800,
+    type: "sawtooth",
+  });
+
+  function stopAllLocalCues() {
+    audio.stopAll();
+  }
+
+  return (
+    <section aria-label="Audio runtime controls">
+      <button onClick={() => void audio.ensureAudioContext()}>
+        Enable audio
+      </button>
+      <button onClick={() => void warningTone.play()}>Warning cue</button>
+      <button onClick={() => void criticalSweep.play()}>Critical cue</button>
+      <button onClick={stopAllLocalCues}>Stop cues</button>
+      <WaveformCanvas idleStrokeColor="#384235" />
+      <SpectrumCanvas idleBarColor="#384235" />
+    </section>
+  );
+}`,
   },
   {
     path: "examples/audio-test-mode",
@@ -53,6 +197,24 @@ pnpm dev`,
     command: `cd examples/audio-test-mode
 pnpm install
 pnpm dev`,
+    snippetPath: "examples/audio-test-mode/src/main.tsx",
+    snippetSourceUrl:
+      "https://github.com/i-afaqrashid/webaudio-kit/blob/main/examples/audio-test-mode/src/main.tsx",
+    snippetTitle: "Audio test mode source excerpt",
+    sourceLabel: "audio-test-mode",
+    snippet: `function AudioSelfCheck() {
+  const testMode = useAudioTestMode();
+
+  return (
+    <AudioProvider>
+      <p>{testMode.currentStep?.label ?? "Idle"}</p>
+      <button onClick={() => void testMode.run()}>Run test mode</button>
+      <button onClick={testMode.stop}>Stop</button>
+      <WaveformCanvas />
+      <SpectrumCanvas />
+    </AudioProvider>
+  );
+}`,
   },
 ];
 
@@ -142,6 +304,17 @@ export default function ExampleDocsPage() {
                       <p>{example.copy}</p>
                     </div>
                     <CodeBlock title="run locally">{example.command}</CodeBlock>
+                    <CodeBlock title={example.snippetTitle}>
+                      {example.snippet}
+                    </CodeBlock>
+                    <a
+                      className="button"
+                      href={example.snippetSourceUrl}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      View {example.sourceLabel} source
+                    </a>
                   </article>
                 ))}
               </div>
