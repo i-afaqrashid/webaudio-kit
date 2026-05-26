@@ -85,8 +85,10 @@ export function buildReleaseNotes({ changelog, tag }) {
     [
       "- [Full changelog](https://github.com/i-afaqrashid/webaudio-kit/blob/main/CHANGELOG.md)",
       "- [npm package scope](https://www.npmjs.com/org/webaudio-kit)",
-      "- [Documentation](https://webaudio-kit.afaqrashid.com/docs)",
-      "- [Demo](https://webaudio-kit.afaqrashid.com/demo)",
+      "- [API reference](https://webaudio-kit.afaqrashid.com/docs/api)",
+      "- [Recipes](https://webaudio-kit.afaqrashid.com/docs/recipes)",
+      "- [Example apps](https://webaudio-kit.afaqrashid.com/docs/examples)",
+      "- [Interactive demos](https://webaudio-kit.afaqrashid.com/demos)",
     ].join("\n"),
   ].join("\n\n");
 }
