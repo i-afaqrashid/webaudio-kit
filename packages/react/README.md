@@ -80,14 +80,18 @@ function AnalyserPanel() {
 }
 ```
 
-See the repository API reference:
-https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/api.md.
+## Docs And Examples
+
+- API reference: https://webaudio-kit.afaqrashid.com/docs/api
+- Recipes: https://webaudio-kit.afaqrashid.com/docs/recipes
+- Example apps: https://webaudio-kit.afaqrashid.com/docs/examples
+- Interactive demos: https://webaudio-kit.afaqrashid.com/demos
 
 ## Release History
 
 Every npm version maps to a GitHub tag and a `CHANGELOG.md` section.
 
-- Full changelog: https://github.com/i-afaqrashid/webaudio-kit/blob/main/CHANGELOG.md
+- Changelog: https://webaudio-kit.afaqrashid.com/changelog
 - GitHub Releases: https://github.com/i-afaqrashid/webaudio-kit/releases
 - npm versions: https://www.npmjs.com/package/@webaudio-kit/react?activeTab=versions
 
