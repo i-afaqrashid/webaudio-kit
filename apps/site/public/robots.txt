@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Human and agent-readable docs index:
+# LLM docs index: https://webaudio-kit.afaqrashid.com/llms.txt

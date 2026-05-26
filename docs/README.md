@@ -11,6 +11,7 @@ shipping `webaudio-kit`.
 - [Recipes](./recipes.md)
 - [Architecture](./architecture.md)
 - [Browser audio guide](./browser-audio.md)
+- [Docs fetch access](./fetch-access.md)
 - [AI agent brief CLI](./agent-brief.md)
 - [Examples](./examples.md)
 - [Apps](./apps.md)

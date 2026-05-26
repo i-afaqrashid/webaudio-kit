@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.9.7 - 2026-05-26
+
+### Added
+
+- Add a deployed `llms.txt` docs index and permissive `robots.txt` so developer
+  tooling can discover the hosted docs and Markdown fallbacks.
+- Document deployed docs fetch checks for common non-browser user agents and
+  link Markdown docs from the root and package READMEs.
+
 ## 1.9.6 - 2026-05-26
 
 ### Added

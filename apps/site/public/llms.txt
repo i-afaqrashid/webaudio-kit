@@ -1,0 +1,44 @@
+# webaudio-kit
+
+React and TypeScript primitives for browser-safe Web Audio tone tools,
+frequency sweeps, noise bursts, volume control, analyser UI, and agent-friendly
+documentation.
+
+## Hosted docs
+
+- Docs overview: https://webaudio-kit.afaqrashid.com/docs
+- API reference: https://webaudio-kit.afaqrashid.com/docs/api
+- Recipes: https://webaudio-kit.afaqrashid.com/docs/recipes
+- Examples: https://webaudio-kit.afaqrashid.com/docs/examples
+- Framework setup: https://webaudio-kit.afaqrashid.com/docs/frameworks
+- Demos: https://webaudio-kit.afaqrashid.com/demos
+- Changelog: https://webaudio-kit.afaqrashid.com/changelog
+
+## Markdown docs
+
+- Docs directory: https://github.com/i-afaqrashid/webaudio-kit/tree/main/docs
+- Quick start: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/quick-start.md
+- API reference: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/api.md
+- Recipes: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/recipes.md
+- Browser audio guide: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/browser-audio.md
+- Troubleshooting: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/troubleshooting.md
+- Agent brief CLI: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/agent-brief.md
+- Fetch access note: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/fetch-access.md
+
+## Npm packages
+
+- @webaudio-kit/core: https://www.npmjs.com/package/@webaudio-kit/core
+- @webaudio-kit/react: https://www.npmjs.com/package/@webaudio-kit/react
+- @webaudio-kit/cli: https://www.npmjs.com/package/@webaudio-kit/cli
+
+## Source and examples
+
+- Repository: https://github.com/i-afaqrashid/webaudio-kit
+- Example apps: https://github.com/i-afaqrashid/webaudio-kit/tree/main/examples
+- StackBlitz starter: https://webaudio-kit.afaqrashid.com/new
+
+## Scope boundary
+
+webaudio-kit is for browser audio UI, developer tools, demos, and prototypes.
+It is not certified medical, audiology, life-safety, or calibrated test
+software.
