@@ -93,56 +93,47 @@ Core-first usage is a good fit for:
 
 ## React + core interop
 
-When a React screen needs one custom cue beyond the hooks, use
-`useAudioContext().ensureAudioContext()` instead of direct
-`audio.audioContext` null checks. `ensureAudioContext()` creates the provider
-graph on demand, resumes the context when the browser allows it, and returns the
-same runtime the hooks use.
+When a React screen needs one custom cue beyond the hooks, prefer
+`useAudioEngine()` for provider-scoped playback helpers. It wraps
+`playTone(options)`, `playFrequencySweep(options)`, and `playNoise(options)`,
+routes them through `runtime.masterGain`, and registers returned handles with
+provider `stopAll()`.
+
+Use `useAudioContext().ensureAudioContext()` or
+`engine.withAudioRuntime()` when custom Web Audio code needs the runtime itself
+instead of direct `audio.audioContext` null checks. These helpers create the
+provider graph on demand, resume the context when the browser allows it, and
+return the same runtime the hooks use.
 
 That avoids direct audio.audioContext null checks in every consumer component.
 
 ```tsx
-import { playNoise, playTone } from "@webaudio-kit/core";
-import { useAudioContext } from "@webaudio-kit/react";
+import { useAudioEngine } from "@webaudio-kit/react";
 
 function LayeredCueButton() {
-  const audio = useAudioContext();
+  const engine = useAudioEngine();
 
   async function playLayeredCue() {
-    const runtime = await audio.ensureAudioContext();
-    const tone = playTone(
-      runtime.audioContext,
-      {
-        durationMs: 180,
-        envelope: { attackMs: 8, releaseMs: 45 },
-        frequency: 880,
-        gain: 0.1,
-        pattern: { repeat: 2, gapMs: 80 },
-        type: "square",
-      },
-      runtime.masterGain,
-    );
-    const noise = playNoise(
-      runtime.audioContext,
-      {
-        durationMs: 120,
-        envelope: { attackMs: 4, releaseMs: 50 },
-        gain: 0.025,
-        type: "pink",
-      },
-      runtime.masterGain,
-    );
-
-    setTimeout(() => {
-      tone.stop();
-      noise.stop();
-    }, 700);
+    await engine.playTone({
+      durationMs: 180,
+      envelope: { attackMs: 8, releaseMs: 45 },
+      frequency: 880,
+      gain: 0.1,
+      pattern: { repeat: 2, gapMs: 80 },
+      type: "square",
+    });
+    await engine.playNoise({
+      durationMs: 120,
+      envelope: { attackMs: 4, releaseMs: 50 },
+      gain: 0.025,
+      type: "pink",
+    });
   }
 
   return (
     <>
       <button onClick={() => void playLayeredCue()}>Play layered cue</button>
-      <button onClick={() => audio.stopAll()}>Stop hook playback</button>
+      <button onClick={() => engine.stopAll()}>Stop playback</button>
     </>
   );
 }
@@ -158,10 +149,12 @@ core tone/noise/sweep -> runtime.masterGain -> analyser -> destination
 The call shape is `playTone(runtime.audioContext, options, runtime.masterGain)`
 or `playNoise(runtime.audioContext, options, runtime.masterGain)`.
 
+The engine call shape is `playTone(options)`, `playNoise(options)`, or
+`playFrequencySweep(options)`.
+
 That means `WaveformCanvas`, `SpectrumCanvas`, and the provider master volume
-still react to the custom sound. The returned core handles remain yours to
-stop. Use `audio.stopAll()` for playback created by React hooks and test mode;
-track direct core handles when you create them yourself.
+still react to the custom sound. Engine-created handles are registered with
+provider `stopAll()`; direct core handles remain yours to track.
 
 ## Decision checklist
 

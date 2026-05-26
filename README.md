@@ -169,6 +169,47 @@ function AlertControls() {
 }
 ```
 
+## Provider-scoped playback
+
+Use `useAudioEngine()` when a React screen needs custom or layered sounds but
+should still route through `AudioProvider` master gain and analyser output. The
+engine creates/resumes audio from the user action, returns stop handles, and
+registers playback with provider `stopAll()`.
+
+```tsx
+import { useAudioEngine } from "@webaudio-kit/react";
+
+function LayeredAlertButton() {
+  const engine = useAudioEngine();
+
+  async function playLayeredAlert() {
+    await engine.playTone({
+      frequency: 880,
+      durationMs: 160,
+      gain: 0.1,
+      type: "square",
+    });
+    await engine.playNoise({
+      durationMs: 120,
+      gain: 0.025,
+      type: "pink",
+    });
+  }
+
+  return (
+    <>
+      <button onClick={() => void playLayeredAlert()}>
+        Play layered alert
+      </button>
+      <button onClick={() => engine.stopAll()}>Stop all</button>
+    </>
+  );
+}
+```
+
+Use `engine.withAudioRuntime()` when custom Web Audio code needs the non-null
+provider runtime and should connect through `runtime.masterGain`.
+
 ## Responsive Visualizers
 
 `WaveformCanvas` and `SpectrumCanvas` forward standard canvas attributes, so
@@ -255,6 +296,7 @@ export function AudioIsland() {
 - `@webaudio-kit/react`
   - `AudioProvider`
   - `useAudioContext`
+  - `useAudioEngine`
   - `useTone`
   - `useFrequencySweep`
   - `useNoise`

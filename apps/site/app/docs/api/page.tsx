@@ -176,6 +176,78 @@ function AudioStateControls() {
     },
   },
   {
+    id: "use-audio-engine",
+    title: "useAudioEngine",
+    packageName: "@webaudio-kit/react",
+    summary:
+      "Returns provider-scoped wrappers around core playback helpers for custom or layered React sounds.",
+    signature: `function useAudioEngine(): AudioEngineControls;
+
+type AudioEngineControls = AudioProviderValue & {
+  playTone(options): Promise<PlaybackHandle>;
+  playFrequencySweep(options): Promise<PlaybackHandle>;
+  playNoise(options): Promise<PlaybackHandle>;
+  withAudioRuntime<T>(
+    callback: (runtime: AudioRuntime) => T | Promise<T>,
+  ): Promise<T>;
+};`,
+    rows: [
+      {
+        name: "playTone(options)",
+        type: "Promise<PlaybackHandle>",
+        notes:
+          "Ensures/resumes the provider runtime and routes tone playback through runtime.masterGain.",
+      },
+      {
+        name: "playFrequencySweep(options)",
+        type: "Promise<PlaybackHandle>",
+        notes:
+          "Runs provider-scoped frequency sweeps without manual audioContext or masterGain plumbing.",
+      },
+      {
+        name: "playNoise(options)",
+        type: "Promise<PlaybackHandle>",
+        notes:
+          "Runs provider-scoped white, pink, or brown noise bursts through the analyser graph.",
+      },
+      {
+        name: "withAudioRuntime(callback)",
+        type: "Promise<T>",
+        notes:
+          "Provides the non-null provider runtime for custom Web Audio code that needs runtime.masterGain.",
+      },
+    ],
+    example: {
+      title: "Provider-scoped layered cue",
+      code: `import { useAudioEngine } from "@webaudio-kit/react";
+
+function LayeredAlertButton() {
+  const engine = useAudioEngine();
+
+  async function playLayeredAlert() {
+    await engine.playTone({
+      frequency: 880,
+      durationMs: 160,
+      gain: 0.1,
+      type: "square",
+    });
+    await engine.playNoise({
+      durationMs: 120,
+      gain: 0.025,
+      type: "pink",
+    });
+  }
+
+  return (
+    <>
+      <button onClick={() => void playLayeredAlert()}>Play alert</button>
+      <button onClick={() => engine.stopAll()}>Stop all</button>
+    </>
+  );
+}`,
+    },
+  },
+  {
     id: "use-tone",
     title: "useTone",
     packageName: "@webaudio-kit/react",
@@ -917,6 +989,7 @@ export default function ApiDocsPage() {
               <a href="#audio-provider">AudioProvider</a>
               <a href="#audio-provider-state-machine">Provider state</a>
               <a href="#use-audio-context">useAudioContext</a>
+              <a href="#use-audio-engine">useAudioEngine</a>
               <a href="#use-tone">useTone</a>
               <a href="#use-frequency-sweep">useFrequencySweep</a>
               <a href="#use-noise">useNoise</a>

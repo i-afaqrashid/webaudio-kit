@@ -300,6 +300,65 @@ playback.
 For guidance on choosing hooks, direct core playback, or provider-routed core
 helpers, see [Hooks vs Core](./hooks-vs-core.md).
 
+### `useAudioEngine()`
+
+Returns provider-scoped playback helpers for advanced React use cases:
+
+```ts
+{
+  playTone(options): Promise<PlaybackHandle>;
+  playFrequencySweep(options): Promise<PlaybackHandle>;
+  playNoise(options): Promise<PlaybackHandle>;
+  withAudioRuntime<T>(
+    callback: (runtime: AudioRuntime) => T | Promise<T>,
+  ): Promise<T>;
+  stopAll(): void;
+}
+```
+
+`playTone(options)`, `playFrequencySweep(options)`, and `playNoise(options)`
+ensure/resume the provider runtime, call the matching core primitive, and route
+the sound through `runtime.masterGain` so master volume and analyser canvases
+still react.
+
+```tsx
+import { useAudioEngine } from "@webaudio-kit/react";
+
+function LayeredAlertButton() {
+  const engine = useAudioEngine();
+
+  async function playLayeredAlert() {
+    await engine.playTone({
+      frequency: 880,
+      durationMs: 160,
+      gain: 0.1,
+      type: "square",
+    });
+    await engine.playNoise({
+      durationMs: 120,
+      gain: 0.025,
+      type: "pink",
+    });
+  }
+
+  return (
+    <>
+      <button onClick={() => void playLayeredAlert()}>Play alert</button>
+      <button onClick={() => engine.stopAll()}>Stop all</button>
+    </>
+  );
+}
+```
+
+Use `withAudioRuntime()` when custom Web Audio code needs the provider graph
+without reading nullable context fields:
+
+```tsx
+await engine.withAudioRuntime((runtime) => {
+  customNode.connect(runtime.masterGain);
+});
+```
+
 ## `AudioProvider` State Machine
 
 `useAudioContext().state` can return `idle`, `suspended`, `running`, or

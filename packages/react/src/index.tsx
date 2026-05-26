@@ -40,6 +40,15 @@ export type AudioProviderValue = {
   stopAll(): void;
 };
 
+export type AudioEngineControls = AudioProviderValue & {
+  playTone(options: ToneOptions): Promise<PlaybackHandle>;
+  playFrequencySweep(options: FrequencySweepOptions): Promise<PlaybackHandle>;
+  playNoise(options: NoiseOptions): Promise<PlaybackHandle>;
+  withAudioRuntime<T>(
+    callback: (runtime: AudioRuntime) => T | Promise<T>,
+  ): Promise<T>;
+};
+
 export type AudioProviderProps = {
   children: ReactNode;
   initialGain?: number;
@@ -120,6 +129,13 @@ export type RequiredPlaybackControls<TOptions> = {
 };
 
 type PlaybackRegistration = symbol;
+
+type EnginePlaybackRecord = {
+  handle: PlaybackHandle;
+  registration: PlaybackRegistration;
+  stopped: boolean;
+  timeout: PlaybackTimer | undefined;
+};
 
 type AudioProviderContextValue = AudioProviderValue & {
   registerPlayback(stop: () => void): PlaybackRegistration;
@@ -306,6 +322,148 @@ export function AudioProvider({
 
 export function useAudioContext(): AudioProviderValue {
   return useAudioProviderContext();
+}
+
+export function useAudioEngine(): AudioEngineControls {
+  const provider = useAudioProviderContext();
+  const {
+    ensureAudioContext,
+    registerPlayback,
+    setGain,
+    stopAll,
+    unregisterPlayback,
+  } = provider;
+  const recordsRef = useRef(new Set<EnginePlaybackRecord>());
+
+  const registerEnginePlayback = useCallback(
+    (handle: PlaybackHandle, durationMs: number | undefined) => {
+      const wrapped: PlaybackHandle = {
+        stop() {
+          if (record.stopped) {
+            return;
+          }
+
+          record.stopped = true;
+          clearEnginePlaybackTimer(record);
+          handle.stop();
+          unregisterPlayback(record.registration);
+          recordsRef.current.delete(record);
+        },
+      };
+
+      const record: EnginePlaybackRecord = {
+        handle,
+        registration: registerPlayback(wrapped.stop),
+        stopped: false,
+        timeout: undefined,
+      };
+      recordsRef.current.add(record);
+
+      if (
+        durationMs !== undefined &&
+        Number.isFinite(durationMs) &&
+        durationMs > 0
+      ) {
+        record.timeout = globalThis.setTimeout(() => {
+          if (record.stopped) {
+            return;
+          }
+
+          record.stopped = true;
+          record.timeout = undefined;
+          unregisterPlayback(record.registration);
+          recordsRef.current.delete(record);
+        }, durationMs);
+      }
+
+      return wrapped;
+    },
+    [registerPlayback, unregisterPlayback],
+  );
+
+  const playEngineTone = useCallback(
+    async (options: ToneOptions) => {
+      const runtime = await ensureAudioContext();
+      const handle = playTone(
+        runtime.audioContext,
+        options,
+        runtime.masterGain,
+      );
+      return registerEnginePlayback(handle, getPlaybackDurationMs(options));
+    },
+    [ensureAudioContext, registerEnginePlayback],
+  );
+
+  const playEngineFrequencySweep = useCallback(
+    async (options: FrequencySweepOptions) => {
+      const runtime = await ensureAudioContext();
+      const handle = playFrequencySweep(
+        runtime.audioContext,
+        options,
+        runtime.masterGain,
+      );
+      return registerEnginePlayback(handle, getPlaybackDurationMs(options));
+    },
+    [ensureAudioContext, registerEnginePlayback],
+  );
+
+  const playEngineNoise = useCallback(
+    async (options: NoiseOptions) => {
+      const runtime = await ensureAudioContext();
+      const handle = playNoise(
+        runtime.audioContext,
+        options,
+        runtime.masterGain,
+      );
+      return registerEnginePlayback(handle, getPlaybackDurationMs(options));
+    },
+    [ensureAudioContext, registerEnginePlayback],
+  );
+
+  const withAudioRuntime = useCallback(
+    async <T,>(callback: (runtime: AudioRuntime) => T | Promise<T>) => {
+      const runtime = await ensureAudioContext();
+      return callback(runtime);
+    },
+    [ensureAudioContext],
+  );
+
+  useEffect(() => {
+    return () => {
+      stopEnginePlayback(recordsRef.current, unregisterPlayback);
+    };
+  }, [unregisterPlayback]);
+
+  return useMemo<AudioEngineControls>(
+    () => ({
+      audioContext: provider.audioContext,
+      masterGain: provider.masterGain,
+      analyser: provider.analyser,
+      state: provider.state,
+      gain: provider.gain,
+      ensureAudioContext,
+      setGain,
+      stopAll,
+      playTone: playEngineTone,
+      playFrequencySweep: playEngineFrequencySweep,
+      playNoise: playEngineNoise,
+      withAudioRuntime,
+    }),
+    [
+      ensureAudioContext,
+      playEngineFrequencySweep,
+      playEngineNoise,
+      playEngineTone,
+      provider.analyser,
+      provider.audioContext,
+      provider.gain,
+      provider.masterGain,
+      provider.state,
+      setGain,
+      stopAll,
+      withAudioRuntime,
+    ],
+  );
 }
 
 function useAudioProviderContext(): AudioProviderContextValue {
@@ -852,6 +1010,32 @@ function stopRegisteredPlayback(
 
   for (const stop of stops) {
     stop();
+  }
+}
+
+function stopEnginePlayback(
+  records: Set<EnginePlaybackRecord>,
+  unregisterPlayback: (registration: PlaybackRegistration) => void,
+): void {
+  const activeRecords = Array.from(records);
+  records.clear();
+
+  for (const record of activeRecords) {
+    if (record.stopped) {
+      continue;
+    }
+
+    record.stopped = true;
+    clearEnginePlaybackTimer(record);
+    unregisterPlayback(record.registration);
+    record.handle.stop();
+  }
+}
+
+function clearEnginePlaybackTimer(record: EnginePlaybackRecord): void {
+  if (record.timeout !== undefined) {
+    globalThis.clearTimeout(record.timeout);
+    record.timeout = undefined;
   }
 }
 

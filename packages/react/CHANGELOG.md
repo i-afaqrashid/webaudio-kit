@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.9.9 - 2026-05-26
+
+### Added
+
+- Add `useAudioEngine()` for provider-scoped `playTone`, `playNoise`,
+  `playFrequencySweep`, and `withAudioRuntime` helpers in advanced React
+  playback flows.
+- Register engine-created handles with provider `stopAll()` and clean up timed
+  handles after their scheduled playback duration.
+- Document provider-scoped playback in the root README, React README, API
+  reference, and Hooks vs Core guide.
+
 ## 1.9.8 - 2026-05-26
 
 ### Added

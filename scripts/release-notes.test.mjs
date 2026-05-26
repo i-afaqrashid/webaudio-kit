@@ -59,14 +59,14 @@ test("buildReleaseNotes includes package links and release references", () => {
   assert.match(notes, /https:\/\/webaudio-kit\.afaqrashid\.com\/docs/);
 });
 
-test("current release notes include hooks vs core interop guide work", () => {
+test("current release notes include provider-scoped playback helper work", () => {
   const rootChangelog = readFileSync("CHANGELOG.md", "utf8");
-  const notes = buildReleaseNotes({ changelog: rootChangelog, tag: "v1.9.8" });
+  const notes = buildReleaseNotes({ changelog: rootChangelog, tag: "v1.9.9" });
 
-  assert.match(notes, /Hooks vs Core/i);
-  assert.match(notes, /ensureAudioContext/i);
-  assert.match(notes, /\/docs\/hooks-vs-core/i);
-  assert.match(notes, /@webaudio-kit\/cli@1\.9\.8/);
+  assert.match(notes, /useAudioEngine/i);
+  assert.match(notes, /withAudioRuntime/i);
+  assert.match(notes, /provider-scoped/i);
+  assert.match(notes, /@webaudio-kit\/cli@1\.9\.9/);
 });
 
 test("getReleasePackages reflects package history", () => {
