@@ -112,6 +112,7 @@ function AlertCueButton() {
           durationMs: 120,
           gain: 0.12,
           type: "square",
+          envelope: { attackMs: 8, releaseMs: 45 },
           pattern: { repeat: profiles.critical.repeat, gapMs: 90 },
         })
       }
@@ -125,6 +126,40 @@ export function App() {
   return (
     <AudioProvider>
       <AlertCueButton />
+    </AudioProvider>
+  );
+}
+```
+
+## Soft UI Sweep
+
+Use a short envelope for cues that should feel less abrupt, especially with
+square or sawtooth tones.
+
+```tsx
+import { AudioProvider, useFrequencySweep } from "@webaudio-kit/react";
+
+function SoftSweepButton() {
+  const sweep = useFrequencySweep({
+    from: 440,
+    to: 880,
+    durationMs: 500,
+    gain: 0.12,
+    type: "sine",
+    envelope: { attackMs: 10, decayMs: 40, sustain: 0.7, releaseMs: 80 },
+  });
+
+  return (
+    <button type="button" onClick={() => void sweep.play()}>
+      Play soft sweep
+    </button>
+  );
+}
+
+export function App() {
+  return (
+    <AudioProvider>
+      <SoftSweepButton />
     </AudioProvider>
   );
 }

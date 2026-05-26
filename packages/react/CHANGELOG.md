@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.7.0 - 2026-05-26
+
+### Added
+
+- Add `envelope: { attackMs, decayMs, sustain, releaseMs }` support for tones,
+  frequency sweeps, and noise bursts.
+- Add gain envelope scheduling for finite playback and release fades for manual
+  stops.
+- Add React type exports for `PlaybackEnvelope` so hook options can be shared
+  across app code.
+
+### Changed
+
+- Document envelope usage in the root README, package READMEs, API reference,
+  recipes, and public website docs.
+
 ## 1.6.0 - 2026-05-26
 
 ### Added

@@ -11,6 +11,7 @@ type ToneOptions = {
   type?: OscillatorType;
   pan?: number;
   durationMs?: number;
+  envelope?: PlaybackEnvelope;
   pattern?: PlaybackPattern;
 };
 ```
@@ -21,7 +22,24 @@ type ToneOptions = {
 - `pan`: stereo pan from `-1` left to `1` right. Defaults to `0`.
 - `durationMs`: optional playback duration. If omitted, playback continues
   until stopped.
+- `envelope`: optional gain envelope for attack, decay, sustain, and release.
 - `pattern`: optional repeat pattern. Repeated tones require `durationMs`.
+
+### `PlaybackEnvelope`
+
+```ts
+type PlaybackEnvelope = {
+  attackMs?: number;
+  decayMs?: number;
+  sustain?: number;
+  releaseMs?: number;
+};
+```
+
+- `attackMs`: fade-in duration in milliseconds. Defaults to `0`.
+- `decayMs`: time to ramp from peak gain to sustain gain. Defaults to `0`.
+- `sustain`: `0..1` multiplier of the requested gain. Defaults to `1`.
+- `releaseMs`: fade-out duration in milliseconds. Defaults to `0`.
 
 ### `PlaybackPattern`
 
@@ -46,6 +64,7 @@ type FrequencySweepOptions = {
   gain?: number;
   type?: OscillatorType;
   pan?: number;
+  envelope?: PlaybackEnvelope;
   pattern?: PlaybackPattern;
 };
 ```
@@ -63,6 +82,7 @@ type NoiseOptions = {
   gain?: number;
   pan?: number;
   type?: NoiseType;
+  envelope?: PlaybackEnvelope;
   pattern?: PlaybackPattern;
 };
 ```
@@ -106,6 +126,7 @@ const handle = playTone(audioContext, {
   durationMs: 120,
   gain: 0.12,
   type: "square",
+  envelope: { attackMs: 8, releaseMs: 45 },
   pattern: { repeat: 3, gapMs: 90 },
 });
 
@@ -266,6 +287,7 @@ const alertTone = useTone();
 await alertTone.play({
   frequency: 880,
   durationMs: 120,
+  envelope: { attackMs: 8, releaseMs: 45 },
   pattern: { repeat: 3, gapMs: 90 },
 });
 ```

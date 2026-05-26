@@ -98,12 +98,25 @@ const alertTone = useTone();
       durationMs: 120,
       gain: 0.12,
       type: "square",
+      envelope: { attackMs: 8, releaseMs: 45 },
       pattern: { repeat: 3, gapMs: 90 },
     })
   }
 >
   Play alert
 </button>;
+```
+
+Envelope options are available on tone, sweep, and noise hooks:
+
+```tsx
+const sweep = useFrequencySweep({
+  from: 440,
+  to: 880,
+  durationMs: 500,
+  gain: 0.12,
+  envelope: { attackMs: 10, decayMs: 40, sustain: 0.7, releaseMs: 80 },
+});
 ```
 
 ## API

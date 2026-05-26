@@ -94,6 +94,18 @@ await alertTone.play({
 alertTone.stop();
 ```
 
+Add a short envelope when the cue should fade in or out instead of gating
+abruptly:
+
+```tsx
+await alertTone.play({
+  frequency: 880,
+  durationMs: 180,
+  gain: 0.12,
+  envelope: { attackMs: 8, releaseMs: 45 },
+});
+```
+
 ## Next.js App Router
 
 Keep controls that call hooks in a client component. The package entry includes

@@ -962,6 +962,7 @@ export type {
   NoiseOptions,
   NoiseType,
   NoteNameOptions,
+  PlaybackEnvelope,
   PlaybackHandle,
   PlaybackPattern,
   ToneOptions,

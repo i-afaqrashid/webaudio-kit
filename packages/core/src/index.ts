@@ -4,6 +4,7 @@ export type ToneOptions = {
   type?: OscillatorType;
   pan?: number;
   durationMs?: number;
+  envelope?: PlaybackEnvelope;
   pattern?: PlaybackPattern;
 };
 
@@ -14,6 +15,7 @@ export type FrequencySweepOptions = {
   gain?: number;
   type?: OscillatorType;
   pan?: number;
+  envelope?: PlaybackEnvelope;
   pattern?: PlaybackPattern;
 };
 
@@ -24,11 +26,19 @@ export type NoiseOptions = {
   gain?: number;
   pan?: number;
   type?: NoiseType;
+  envelope?: PlaybackEnvelope;
   pattern?: PlaybackPattern;
 };
 
 export type PlaybackHandle = {
   stop(): void;
+};
+
+export type PlaybackEnvelope = {
+  attackMs?: number;
+  decayMs?: number;
+  sustain?: number;
+  releaseMs?: number;
 };
 
 export type PlaybackPattern = {
@@ -237,6 +247,7 @@ function playToneAt(
     options,
     destination,
     startTime,
+    durationSeconds,
   );
 
   graph.source.frequency.setValueAtTime(
@@ -264,6 +275,7 @@ function playFrequencySweepAt(
     options,
     destination,
     startTime,
+    sweepDurationSeconds,
   );
   const end = startTime + sweepDurationSeconds;
 
@@ -302,6 +314,7 @@ function playNoiseAt(
     options,
     destination,
     startTime,
+    durationSeconds,
   );
   const end = startTime + durationSeconds;
 
@@ -315,6 +328,7 @@ type PlaybackGraph<TSource extends AudioScheduledSourceNode> = {
   source: TSource;
   gain: GainNode;
   panner?: StereoPannerNode;
+  releaseSeconds: number;
 };
 
 function createSourcePlaybackGraph<TSource extends AudioScheduledSourceNode>(
@@ -323,6 +337,7 @@ function createSourcePlaybackGraph<TSource extends AudioScheduledSourceNode>(
   options: PlaybackGraphOptions,
   destination: AudioNode,
   startTime = context.currentTime,
+  durationSeconds?: number,
 ): PlaybackGraph<TSource> {
   const gain = context.createGain();
   const panner =
@@ -333,7 +348,12 @@ function createSourcePlaybackGraph<TSource extends AudioScheduledSourceNode>(
   if ("type" in source && typeof options.type === "string") {
     source.type = options.type;
   }
-  gain.gain.setValueAtTime(normalizeGain(options.gain), startTime);
+  const releaseSeconds = scheduleGainEnvelope(
+    gain.gain,
+    options,
+    startTime,
+    durationSeconds,
+  );
 
   source.connect(gain);
   if (panner) {
@@ -344,13 +364,21 @@ function createSourcePlaybackGraph<TSource extends AudioScheduledSourceNode>(
     gain.connect(destination);
   }
 
-  return { source, gain, panner };
+  return { source, gain, panner, releaseSeconds };
 }
 
 type PlaybackGraphOptions = {
+  envelope?: PlaybackEnvelope;
   gain?: number;
   pan?: number;
   type?: string;
+};
+
+type NormalizedPlaybackEnvelope = {
+  attackSeconds: number;
+  decaySeconds: number;
+  sustain: number;
+  releaseSeconds: number;
 };
 
 type NormalizedPlaybackPattern = {
@@ -418,12 +446,33 @@ function createPlaybackHandle<TSource extends AudioScheduledSourceNode>(
       }
 
       try {
-        graph.source.stop(context.currentTime);
+        graph.source.stop(getManualStopTime(context, graph));
       } catch {
         cleanup();
       }
     },
   };
+}
+
+function getManualStopTime<TSource extends AudioScheduledSourceNode>(
+  context: AudioContext,
+  graph: PlaybackGraph<TSource>,
+): number {
+  const now = context.currentTime;
+  if (graph.releaseSeconds <= 0) {
+    return now;
+  }
+
+  const stopTime = now + graph.releaseSeconds;
+  const currentGain = Number.isFinite(graph.gain.gain.value)
+    ? graph.gain.gain.value
+    : 0;
+
+  graph.gain.gain.cancelScheduledValues(now);
+  graph.gain.gain.setValueAtTime(currentGain, now);
+  graph.gain.gain.linearRampToValueAtTime(0, stopTime);
+
+  return stopTime;
 }
 
 function createNoiseBuffer(
@@ -513,6 +562,51 @@ function normalizeNoiseType(value: NoiseType | undefined): NoiseType {
   return "white";
 }
 
+function scheduleGainEnvelope(
+  gain: AudioParam,
+  options: PlaybackGraphOptions,
+  startTime: number,
+  durationSeconds: number | undefined,
+): number {
+  const targetGain = normalizeGain(options.gain);
+  const envelope = normalizePlaybackEnvelope(options.envelope);
+
+  if (!envelope) {
+    gain.setValueAtTime(targetGain, startTime);
+    return 0;
+  }
+
+  const sustainGain = targetGain * envelope.sustain;
+  const attackEnd = startTime + envelope.attackSeconds;
+  const decayEnd = attackEnd + envelope.decaySeconds;
+
+  gain.cancelScheduledValues(startTime);
+  gain.setValueAtTime(0, startTime);
+
+  if (envelope.attackSeconds > 0) {
+    gain.linearRampToValueAtTime(targetGain, attackEnd);
+  } else {
+    gain.setValueAtTime(targetGain, startTime);
+  }
+
+  if (envelope.decaySeconds > 0) {
+    gain.linearRampToValueAtTime(sustainGain, decayEnd);
+  } else if (envelope.sustain !== 1) {
+    gain.setValueAtTime(sustainGain, attackEnd);
+  }
+
+  if (durationSeconds !== undefined && envelope.releaseSeconds > 0) {
+    const endTime = startTime + durationSeconds;
+    const releaseSeconds = Math.min(envelope.releaseSeconds, durationSeconds);
+    const releaseStart = endTime - releaseSeconds;
+
+    gain.setValueAtTime(sustainGain, releaseStart);
+    gain.linearRampToValueAtTime(0, endTime);
+  }
+
+  return envelope.releaseSeconds;
+}
+
 function normalizePlaybackPattern(
   pattern: PlaybackPattern | undefined,
 ): NormalizedPlaybackPattern {
@@ -528,6 +622,48 @@ function normalizePlaybackPattern(
   }
 
   return { repeat, gapSeconds: gapMs / 1000 };
+}
+
+function normalizePlaybackEnvelope(
+  envelope: PlaybackEnvelope | undefined,
+): NormalizedPlaybackEnvelope | undefined {
+  if (!envelope) {
+    return undefined;
+  }
+
+  return {
+    attackSeconds: normalizeEnvelopeDuration(envelope.attackMs, "attackMs"),
+    decaySeconds: normalizeEnvelopeDuration(envelope.decayMs, "decayMs"),
+    sustain: normalizeEnvelopeSustain(envelope.sustain),
+    releaseSeconds: normalizeEnvelopeDuration(envelope.releaseMs, "releaseMs"),
+  };
+}
+
+function normalizeEnvelopeDuration(
+  value: number | undefined,
+  name: "attackMs" | "decayMs" | "releaseMs",
+): number {
+  if (value === undefined) {
+    return 0;
+  }
+
+  if (!Number.isFinite(value) || value < 0) {
+    throw new Error(`envelope.${name} must be a non-negative number`);
+  }
+
+  return value / 1000;
+}
+
+function normalizeEnvelopeSustain(value: number | undefined): number {
+  if (value === undefined) {
+    return 1;
+  }
+
+  if (!Number.isFinite(value) || value < 0 || value > 1) {
+    throw new Error("envelope.sustain must be between 0 and 1");
+  }
+
+  return value;
 }
 
 function randomBipolar(): number {
