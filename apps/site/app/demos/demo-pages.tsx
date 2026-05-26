@@ -230,6 +230,12 @@ export function DemoDetail({ slug }: { slug: DemoSlug }) {
               <Link className="button" href="/docs">
                 Docs
               </Link>
+              <Link className="button" href="/docs/recipes">
+                Recipes
+              </Link>
+              <Link className="button" href="/docs/examples">
+                Examples
+              </Link>
               <Link className="button" href="/docs/api">
                 API reference
               </Link>

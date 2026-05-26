@@ -31,6 +31,28 @@ export const SITE_QA_ROUTES = [
       { text: "ToneOptions.frequency" },
       { text: "frequencyToNoteName(frequency, options)" },
       { role: "link", name: "Open tone demo" },
+      { role: "link", name: "Recipes" },
+      { role: "link", name: "Examples" },
+    ],
+  },
+  {
+    path: "/docs/examples",
+    heading: "Standalone example apps.",
+    checks: [
+      { text: "examples/vite-react" },
+      { text: "examples/next-app-router" },
+      { text: "pnpm examples:check" },
+      { role: "link", name: "Recipes" },
+    ],
+  },
+  {
+    path: "/docs/recipes",
+    heading: "Copy-paste audio recipes.",
+    checks: [
+      { text: "Tone Button" },
+      { text: "Safe Autoplay Pattern" },
+      { text: "browser autoplay behavior" },
+      { role: "link", name: "Examples" },
     ],
   },
   {
