@@ -183,3 +183,4 @@ Use both when:
 - [Examples](./examples.md)
 - [Recipes](./recipes.md)
 - [Browser audio guide](./browser-audio.md)
+- [Scope and limitations](./scope-and-limitations.md)

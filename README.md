@@ -9,6 +9,11 @@ generation, frequency sweeps, noise bursts, volume controls, stereo panning,
 pitch helpers, and analyser data without hand-managing raw Web Audio node
 lifecycles.
 
+It is intentionally scoped to safe procedural UI audio. If you need a full synth
+engine, transport, effects chain, AudioWorklets, or deep custom routing, read the
+[scope and limitations guide](./docs/scope-and-limitations.md) before choosing
+the package.
+
 ![webaudio-kit demo](./docs/assets/demo.gif)
 
 ## Install
@@ -480,6 +485,7 @@ a certified audiology or medical testing system.
 - [Publicity plan](./publicity-plan.md)
 - [Technical docs](./docs/README.md)
 - [Hooks vs Core](./docs/hooks-vs-core.md)
+- [Scope and limitations](./docs/scope-and-limitations.md)
 - [Markdown docs fallback](https://github.com/i-afaqrashid/webaudio-kit/tree/main/docs)
 - [LLM docs index](https://webaudio-kit.afaqrashid.com/llms.txt)
 - [Live demos](https://webaudio-kit.afaqrashid.com/demos)

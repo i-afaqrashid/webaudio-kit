@@ -9,6 +9,7 @@ shipping `webaudio-kit`.
 - [Live demos](https://webaudio-kit.afaqrashid.com/demos)
 - [API reference](./api.md)
 - [Hooks vs Core](./hooks-vs-core.md)
+- [Scope and limitations](./scope-and-limitations.md)
 - [Recipes](./recipes.md)
 - [Architecture](./architecture.md)
 - [Browser audio guide](./browser-audio.md)
@@ -73,3 +74,5 @@ tap, or keyboard handlers.
 
 Microphone support, AudioWorklets, and larger visualizer packages are future
 work.
+
+For candid product boundaries, see [Scope and limitations](./scope-and-limitations.md).
