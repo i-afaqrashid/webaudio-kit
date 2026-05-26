@@ -544,6 +544,8 @@ Returns:
   currentStep: AudioTestModeStep | null;
   currentStepIndex: number;
   isRunning: boolean;
+  previewStep: AudioTestModeStep | null;
+  previewStepIndex: number;
   run(): Promise<void>;
   stop(): void;
   steps: AudioTestModeStep[];
@@ -553,6 +555,15 @@ Returns:
 Default steps cover centered tone output, left/right pan, a short sweep, and a
 pink-noise burst. The helper is for browser integration diagnostics only, not
 medical or audiology testing.
+
+`currentStep` remains `null` before a run starts and after it stops because it
+means "active right now." Use `previewStep` for stable first-render UI:
+`previewStep` points at the first planned step before run, follows the active
+step while running, and returns to the first planned step when the sequence
+stops. `previewStepIndex` follows the same index semantics.
+
+In short: `currentStep` remains `null` before a run starts, and `previewStep`
+is the initial display value for planned-step UI.
 
 ### `createDefaultAudioTestModeSteps()`
 

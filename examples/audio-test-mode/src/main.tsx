@@ -25,14 +25,14 @@ function AudioTestModeExample() {
       <section className="panel">
         <div className="panelHead">
           <span>Current step</span>
-          <strong>{testMode.currentStep?.label ?? "Idle"}</strong>
+          <strong>{testMode.previewStep?.label ?? "Idle"}</strong>
         </div>
 
         <ol className="steps">
           {testMode.steps.map((step, index) => (
             <li
               className={
-                testMode.currentStepIndex === index ? "active" : undefined
+                testMode.previewStepIndex === index ? "active" : undefined
               }
               key={step.id}
             >

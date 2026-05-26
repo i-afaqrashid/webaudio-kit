@@ -325,7 +325,7 @@ function RecipeLiveDemoControls({ kind }: { kind: RecipeDemoKind }) {
             {testMode.steps.map((step, index) => (
               <li
                 className={
-                  testMode.currentStepIndex === index ? "active" : undefined
+                  testMode.previewStepIndex === index ? "active" : undefined
                 }
                 key={step.id}
               >

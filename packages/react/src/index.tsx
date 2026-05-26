@@ -157,6 +157,8 @@ export type AudioTestModeControls = {
   currentStep: AudioTestModeStep | null;
   currentStepIndex: number;
   isRunning: boolean;
+  previewStep: AudioTestModeStep | null;
+  previewStepIndex: number;
   run(): Promise<void>;
   stop(): void;
   steps: AudioTestModeStep[];
@@ -873,6 +875,10 @@ export function useAudioTestMode(
   const [isRunning, setIsRunning] = useState(false);
   const currentStep =
     currentStepIndex >= 0 ? (steps[currentStepIndex] ?? null) : null;
+  const previewStepIndex =
+    currentStepIndex >= 0 ? currentStepIndex : steps.length > 0 ? 0 : -1;
+  const previewStep =
+    previewStepIndex >= 0 ? (steps[previewStepIndex] ?? null) : null;
 
   const stop = useCallback(() => {
     runTokenRef.current += 1;
@@ -953,7 +959,16 @@ export function useAudioTestMode(
 
   useEffect(() => stop, [stop]);
 
-  return { currentStep, currentStepIndex, isRunning, run, stop, steps };
+  return {
+    currentStep,
+    currentStepIndex,
+    isRunning,
+    previewStep,
+    previewStepIndex,
+    run,
+    stop,
+    steps,
+  };
 }
 
 export function WaveformCanvas({

@@ -137,7 +137,8 @@ function AudioSelfCheck() {
         {testMode.isRunning ? "Restart test mode" : "Run test mode"}
       </button>
       <button onClick={testMode.stop}>Stop</button>
-      <p>{testMode.currentStep?.label ?? "Idle"}</p>
+      <p>{testMode.previewStep?.label ?? "Idle"}</p>
+      <p>Preview index: {testMode.previewStepIndex}</p>
     </>
   );
 }

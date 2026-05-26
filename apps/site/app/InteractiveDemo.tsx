@@ -283,7 +283,7 @@ function DemoControls() {
         <div className="controlPanel testModeControls">
           <div className="controlHead">
             <span>Test mode</span>
-            <strong>{audioTest.currentStep?.label ?? "ready"}</strong>
+            <strong>{audioTest.previewStep?.label ?? "ready"}</strong>
           </div>
           <p>
             A short low-gain sequence checks center tone, stereo pan, sweep,
@@ -293,7 +293,7 @@ function DemoControls() {
             {audioTest.steps.map((step, index) => (
               <li
                 className={
-                  audioTest.currentStepIndex === index ? "active" : undefined
+                  audioTest.previewStepIndex === index ? "active" : undefined
                 }
                 key={step.id}
               >
