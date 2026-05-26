@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.11 - 2026-05-26
+
+### Changed
+
+- Make runnable examples directly visible from the primary site navigation.
+- Add homepage actions for the one-click starter and runnable examples page.
+- Extend site tests and browser QA so the examples entry points stay visible.
+
 ## 1.5.10 - 2026-05-26
 
 ### Added

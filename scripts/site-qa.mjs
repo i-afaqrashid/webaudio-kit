@@ -16,6 +16,9 @@ export const SITE_QA_ROUTES = [
     },
     checks: [
       { role: "button", name: "Play tone" },
+      { role: "link", name: "Examples" },
+      { role: "link", name: "Run starter" },
+      { role: "link", name: "Run examples" },
       { label: "Waveform analyser" },
       { text: "Latest release" },
     ],

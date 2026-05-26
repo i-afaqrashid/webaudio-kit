@@ -58,7 +58,7 @@ pnpm dev`,
 
 export default function ExampleDocsPage() {
   return (
-    <PageShell active="docs">
+    <PageShell active="examples">
       <main className="docPage">
         <section className="docHero">
           <div className="wrap">

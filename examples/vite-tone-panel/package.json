@@ -9,7 +9,7 @@
     "preview": "vite preview --host 127.0.0.1 --port 4273"
   },
   "dependencies": {
-    "@webaudio-kit/react": "^1.5.10",
+    "@webaudio-kit/react": "^1.5.11",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "vite": "^8.0.14"
