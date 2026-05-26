@@ -213,16 +213,34 @@ function useTone(options: ToneOptions): {
         notes: "Optional duration. Omit it for manual stop control.",
       },
       {
+        name: "ToneOptions.detuneCents",
+        type: "number",
+        defaultValue: "0",
+        notes: "Oscillator detune in cents.",
+      },
+      {
         name: "ToneOptions.envelope",
         type: "{ attackMs?: number; decayMs?: number; sustain?: number; releaseMs?: number }",
         notes:
           "Optional gain envelope. Durations are milliseconds; sustain is a 0..1 gain multiplier.",
       },
       {
+        name: "ToneOptions.filter",
+        type: "{ frequency: number; q?: number; type?: BiquadFilterType }",
+        notes:
+          "Optional filter node. Defaults to lowpass when set; frequency is clamped to the playable range.",
+      },
+      {
         name: "ToneOptions.pattern",
         type: "{ repeat?: number; gapMs?: number }",
         notes:
           "Optional repeat pattern. Repeated tones require durationMs and share one stop handle.",
+      },
+      {
+        name: "ToneOptions.voices",
+        type: "{ count?: number; spreadCents?: number }",
+        notes:
+          "Optional 1..8 oscillator layering. Requested gain is divided across voices.",
       },
     ],
     returns: [
@@ -259,7 +277,9 @@ function AlertCueButton() {
         gain: 0.12,
         type: "square",
         envelope: { attackMs: 8, releaseMs: 45 },
+        filter: { frequency: 1800, q: 0.7 },
         pattern: { repeat: 3, gapMs: 90 },
+        voices: { count: 2, spreadCents: 10 },
       })}>
         Play alert cue
       </button>
@@ -327,15 +347,31 @@ function useFrequencySweep(options: FrequencySweepOptions): {
           "Stereo pan from -1 left to 1 right when supported by the browser.",
       },
       {
+        name: "FrequencySweepOptions.detuneCents",
+        type: "number",
+        defaultValue: "0",
+        notes: "Oscillator detune in cents for sweep voices.",
+      },
+      {
         name: "FrequencySweepOptions.envelope",
         type: "{ attackMs?: number; decayMs?: number; sustain?: number; releaseMs?: number }",
         notes: "Optional gain envelope for softer sweep starts and stops.",
+      },
+      {
+        name: "FrequencySweepOptions.filter",
+        type: "{ frequency: number; q?: number; type?: BiquadFilterType }",
+        notes: "Optional filter node for taming bright sweep waveforms.",
       },
       {
         name: "FrequencySweepOptions.pattern",
         type: "{ repeat?: number; gapMs?: number }",
         notes:
           "Optional repeat pattern for chirps or repeated sweeps without app-owned timers.",
+      },
+      {
+        name: "FrequencySweepOptions.voices",
+        type: "{ count?: number; spreadCents?: number }",
+        notes: "Optional 1..8 oscillator layering for fuller sweep cues.",
       },
     ],
     returns: [
@@ -419,6 +455,11 @@ function useNoise(options: NoiseOptions): {
         type: "{ attackMs?: number; decayMs?: number; sustain?: number; releaseMs?: number }",
         notes:
           "Optional gain envelope for noise bursts that should fade in or out.",
+      },
+      {
+        name: "NoiseOptions.filter",
+        type: "{ frequency: number; q?: number; type?: BiquadFilterType }",
+        notes: "Optional filter node for shaping white, pink, or brown noise.",
       },
       {
         name: "NoiseOptions.pattern",
@@ -724,6 +765,18 @@ function AudioSelfCheck() {
 ];
 
 const coreRows: ApiRow[] = [
+  {
+    name: "PlaybackFilter",
+    type: "{ frequency: number; q?: number; type?: BiquadFilterType }",
+    notes:
+      "Optional filter routing shared by tone, sweep, and noise options. Defaults to lowpass when set.",
+  },
+  {
+    name: "PlaybackVoices",
+    type: "{ count?: number; spreadCents?: number }",
+    notes:
+      "Optional oscillator voice layering for tone and sweep options. count is bounded to 1..8.",
+  },
   {
     name: "PlaybackEnvelope",
     type: "{ attackMs?: number; decayMs?: number; sustain?: number; releaseMs?: number }",

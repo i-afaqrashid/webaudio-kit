@@ -63,6 +63,7 @@ class FakeAudioNode {
 }
 
 class FakeOscillatorNode extends FakeAudioNode {
+  detune = new FakeAudioParam(0);
   frequency = new FakeAudioParam(440);
   type: OscillatorType = "sine";
   startedAt?: number;
@@ -138,6 +139,12 @@ class FakeStereoPannerNode extends FakeAudioNode {
   pan = new FakeAudioParam(0);
 }
 
+class FakeBiquadFilterNode extends FakeAudioNode {
+  frequency = new FakeAudioParam(350);
+  Q = new FakeAudioParam(1);
+  type: BiquadFilterType = "lowpass";
+}
+
 class FakeAudioContext {
   currentTime = 5;
   sampleRate = 48_000;
@@ -145,6 +152,7 @@ class FakeAudioContext {
   oscillators: FakeOscillatorNode[] = [];
   bufferSources: FakeAudioBufferSourceNode[] = [];
   buffers: FakeAudioBuffer[] = [];
+  filters: FakeBiquadFilterNode[] = [];
   gains: FakeGainNode[] = [];
   panners: FakeStereoPannerNode[] = [];
 
@@ -170,6 +178,12 @@ class FakeAudioContext {
     const gain = new FakeGainNode();
     this.gains.push(gain);
     return gain;
+  }
+
+  createBiquadFilter() {
+    const filter = new FakeBiquadFilterNode();
+    this.filters.push(filter);
+    return filter;
   }
 
   createStereoPanner() {
@@ -317,6 +331,75 @@ describe("playTone", () => {
       { method: "setValueAtTime", value: 0.2, time: 5.88 },
       { method: "linearRampToValueAtTime", value: 0, time: 6 },
     ]);
+  });
+
+  test("routes tones through a filter and schedules oscillator detune", () => {
+    const context = new FakeAudioContext();
+    const destination = new FakeAudioNode();
+
+    playTone(
+      context as unknown as AudioContext,
+      {
+        frequency: 440,
+        detuneCents: -12,
+        filter: { frequency: 1200, q: 0.7 },
+      },
+      destination as unknown as AudioNode,
+    );
+
+    expect(context.filters).toHaveLength(1);
+    expect(context.oscillators[0]?.detune.events).toContainEqual({
+      method: "setValueAtTime",
+      value: -12,
+      time: 5,
+    });
+    expect(context.filters[0]?.type).toBe("lowpass");
+    expect(context.filters[0]?.frequency.events).toContainEqual({
+      method: "setValueAtTime",
+      value: 1200,
+      time: 5,
+    });
+    expect(context.filters[0]?.Q.events).toContainEqual({
+      method: "setValueAtTime",
+      value: 0.7,
+      time: 5,
+    });
+    expect(context.oscillators[0]?.connections).toEqual([context.gains[0]]);
+    expect(context.gains[0]?.connections).toEqual([context.filters[0]]);
+    expect(context.filters[0]?.connections).toEqual([context.panners[0]]);
+    expect(context.panners[0]?.connections).toEqual([destination]);
+  });
+
+  test("creates detuned multi-voice tones with shared requested gain", () => {
+    const context = new FakeAudioContext();
+
+    const handle = playTone(context as unknown as AudioContext, {
+      frequency: 440,
+      gain: 0.3,
+      durationMs: 200,
+      voices: { count: 3, spreadCents: 12 },
+    });
+
+    expect(context.oscillators).toHaveLength(3);
+    expect(context.gains[0]?.gain.value).toBeCloseTo(0.1);
+    expect(context.gains[1]?.gain.value).toBeCloseTo(0.1);
+    expect(context.gains[2]?.gain.value).toBeCloseTo(0.1);
+    expect(
+      context.oscillators.map((oscillator) => oscillator.detune.value),
+    ).toEqual([-6, 0, 6]);
+    expect(
+      context.oscillators.map((oscillator) => oscillator.startedAt),
+    ).toEqual([5, 5, 5]);
+    expect(
+      context.oscillators.map((oscillator) => oscillator.stoppedAt),
+    ).toEqual([5.2, 5.2, 5.2]);
+
+    handle.stop();
+    handle.stop();
+
+    expect(
+      context.oscillators.map((oscillator) => oscillator.stopCalls),
+    ).toEqual([2, 2, 2]);
   });
 
   test("manual stop uses envelope release before stopping indefinite tones", () => {
@@ -491,6 +574,35 @@ describe("playTone", () => {
         envelope: { releaseMs: Number.POSITIVE_INFINITY },
       }),
     ).toThrow("envelope.releaseMs must be a non-negative number");
+  });
+
+  test("rejects invalid filter and voice values", () => {
+    const context = new FakeAudioContext();
+
+    expect(() =>
+      playTone(context as unknown as AudioContext, {
+        frequency: 440,
+        filter: { frequency: -1 },
+      }),
+    ).toThrow("filter.frequency must be a positive number");
+    expect(() =>
+      playTone(context as unknown as AudioContext, {
+        frequency: 440,
+        filter: { frequency: 1000, q: -1 },
+      }),
+    ).toThrow("filter.q must be a non-negative number");
+    expect(() =>
+      playTone(context as unknown as AudioContext, {
+        frequency: 440,
+        voices: { count: 0 },
+      }),
+    ).toThrow("voices.count must be an integer between 1 and 8");
+    expect(() =>
+      playTone(context as unknown as AudioContext, {
+        frequency: 440,
+        voices: { count: 2, spreadCents: Number.NaN },
+      }),
+    ).toThrow("voices.spreadCents must be a finite number");
   });
 
   test("requires finite tone durations and valid spacing for repeat patterns", () => {

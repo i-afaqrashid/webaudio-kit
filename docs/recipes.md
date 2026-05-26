@@ -165,6 +165,64 @@ export function App() {
 }
 ```
 
+## Styled Alert Profiles
+
+Use filters and detuned voices to make warning, error, and success cues distinct
+without shipping audio files.
+
+```tsx
+import { AudioProvider, useTone } from "@webaudio-kit/react";
+
+const cueProfiles = {
+  success: {
+    frequency: 523.25,
+    type: "sine" as const,
+    filter: { frequency: 3000 },
+    voices: { count: 1 },
+  },
+  warning: {
+    frequency: 660,
+    type: "sawtooth" as const,
+    filter: { frequency: 1800, q: 0.7 },
+    voices: { count: 2, spreadCents: 10 },
+  },
+  error: {
+    frequency: 220,
+    type: "square" as const,
+    filter: { frequency: 1200, q: 0.9 },
+    voices: { count: 3, spreadCents: 16 },
+  },
+};
+
+function AlertProfileButton() {
+  const tone = useTone();
+
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        void tone.play({
+          ...cueProfiles.warning,
+          durationMs: 220,
+          gain: 0.14,
+          envelope: { attackMs: 8, releaseMs: 55 },
+        })
+      }
+    >
+      Play warning cue
+    </button>
+  );
+}
+
+export function App() {
+  return (
+    <AudioProvider>
+      <AlertProfileButton />
+    </AudioProvider>
+  );
+}
+```
+
 ## Master Volume Slider
 
 Use provider volume for one shared master gain across tone, sweep, and noise

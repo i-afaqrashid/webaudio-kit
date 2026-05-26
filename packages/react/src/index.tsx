@@ -963,8 +963,10 @@ export type {
   NoiseType,
   NoteNameOptions,
   PlaybackEnvelope,
+  PlaybackFilter,
   PlaybackHandle,
   PlaybackPattern,
+  PlaybackVoices,
   ToneOptions,
 } from "@webaudio-kit/core";
 export {

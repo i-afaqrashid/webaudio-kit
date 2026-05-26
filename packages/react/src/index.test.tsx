@@ -60,6 +60,7 @@ class FakeAudioNode {
 }
 
 class FakeOscillatorNode extends FakeAudioNode {
+  detune = new FakeAudioParam(0);
   frequency = new FakeAudioParam(440);
   type: OscillatorType = "sine";
   startedAt?: number;
@@ -142,6 +143,12 @@ class FakeStereoPannerNode extends FakeAudioNode {
   pan = new FakeAudioParam(0);
 }
 
+class FakeBiquadFilterNode extends FakeAudioNode {
+  frequency = new FakeAudioParam(350);
+  Q = new FakeAudioParam(1);
+  type: BiquadFilterType = "lowpass";
+}
+
 class FakeAudioContext {
   static instances: FakeAudioContext[] = [];
 
@@ -158,6 +165,7 @@ class FakeAudioContext {
   oscillators: FakeOscillatorNode[] = [];
   bufferSources: FakeAudioBufferSourceNode[] = [];
   buffers: FakeAudioBuffer[] = [];
+  filters: FakeBiquadFilterNode[] = [];
   gains: FakeGainNode[] = [];
   analysers: FakeAnalyserNode[] = [];
   panners: FakeStereoPannerNode[] = [];
@@ -188,6 +196,12 @@ class FakeAudioContext {
     const gain = new FakeGainNode();
     this.gains.push(gain);
     return gain;
+  }
+
+  createBiquadFilter() {
+    const filter = new FakeBiquadFilterNode();
+    this.filters.push(filter);
+    return filter;
   }
 
   createAnalyser() {
@@ -374,6 +388,24 @@ function EnvelopeToneHarness() {
         }
       >
         play envelope tone
+      </button>
+    </div>
+  );
+}
+
+function VoiceFilterToneHarness() {
+  const tone = useTone({
+    frequency: 440,
+    durationMs: 100,
+    gain: 0.18,
+    filter: { frequency: 1500, q: 0.8 },
+    voices: { count: 2, spreadCents: 10 },
+  });
+
+  return (
+    <div>
+      <button type="button" onClick={() => void tone.play()}>
+        play voiced tone
       </button>
     </div>
   );
@@ -809,6 +841,32 @@ describe("AudioProvider", () => {
       { method: "setValueAtTime", value: 0.1, time: 0.14 },
       { method: "linearRampToValueAtTime", value: 0, time: 0.2 },
     ]);
+  });
+
+  test("passes voice and filter options through tone playback", async () => {
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <VoiceFilterToneHarness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "play voiced tone" }).click();
+    });
+
+    const context = FakeAudioContext.instances[0]!;
+    expect(context.oscillators).toHaveLength(2);
+    expect(context.filters).toHaveLength(2);
+    expect(
+      context.oscillators.map((oscillator) => oscillator.detune.value),
+    ).toEqual([-5, 5]);
+    expect(context.gains.slice(1).map((gain) => gain.gain.value)).toEqual([
+      0.09, 0.09,
+    ]);
+    expect(context.filters[0]?.frequency.value).toBe(1500);
+    expect(context.filters[0]?.Q.value).toBe(0.8);
   });
 
   test("runs audio test mode steps sequentially with conservative playback", async () => {

@@ -64,6 +64,24 @@ playFrequencySweep(context, {
 });
 ```
 
+## Filters And Voices
+
+Use `filter`, `detuneCents`, and `voices` for richer procedural UI sounds
+without audio files. Voice gain is divided across the voice count so the
+requested gain stays the target loudness.
+
+```ts
+playTone(context, {
+  frequency: 660,
+  durationMs: 220,
+  gain: 0.15,
+  type: "sawtooth",
+  envelope: { attackMs: 8, releaseMs: 55 },
+  filter: { frequency: 1800, q: 0.7 },
+  voices: { count: 2, spreadCents: 10 },
+});
+```
+
 ## Browser Gesture Setup
 
 ```ts

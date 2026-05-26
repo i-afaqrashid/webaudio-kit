@@ -4,8 +4,11 @@ export type ToneOptions = {
   type?: OscillatorType;
   pan?: number;
   durationMs?: number;
+  detuneCents?: number;
   envelope?: PlaybackEnvelope;
+  filter?: PlaybackFilter;
   pattern?: PlaybackPattern;
+  voices?: PlaybackVoices;
 };
 
 export type FrequencySweepOptions = {
@@ -15,8 +18,11 @@ export type FrequencySweepOptions = {
   gain?: number;
   type?: OscillatorType;
   pan?: number;
+  detuneCents?: number;
   envelope?: PlaybackEnvelope;
+  filter?: PlaybackFilter;
   pattern?: PlaybackPattern;
+  voices?: PlaybackVoices;
 };
 
 export type NoiseType = "white" | "pink" | "brown";
@@ -27,6 +33,7 @@ export type NoiseOptions = {
   pan?: number;
   type?: NoiseType;
   envelope?: PlaybackEnvelope;
+  filter?: PlaybackFilter;
   pattern?: PlaybackPattern;
 };
 
@@ -41,9 +48,20 @@ export type PlaybackEnvelope = {
   releaseMs?: number;
 };
 
+export type PlaybackFilter = {
+  frequency: number;
+  q?: number;
+  type?: BiquadFilterType;
+};
+
 export type PlaybackPattern = {
   repeat?: number;
   gapMs?: number;
+};
+
+export type PlaybackVoices = {
+  count?: number;
+  spreadCents?: number;
 };
 
 export type NoteNameOptions = {
@@ -241,15 +259,54 @@ function playToneAt(
   startTime: number,
   durationSeconds: number | undefined,
 ): PlaybackHandle {
+  const voiceConfigs = normalizeVoiceConfigs(options);
+
+  if (voiceConfigs.length > 1) {
+    return createCompositePlaybackHandle(
+      voiceConfigs.map((voiceConfig) =>
+        playToneVoiceAt(
+          context,
+          options,
+          destination,
+          startTime,
+          durationSeconds,
+          voiceConfig,
+          voiceConfigs.length,
+        ),
+      ),
+    );
+  }
+
+  return playToneVoiceAt(
+    context,
+    options,
+    destination,
+    startTime,
+    durationSeconds,
+    voiceConfigs[0]!,
+    voiceConfigs.length,
+  );
+}
+
+function playToneVoiceAt(
+  context: AudioContext,
+  options: ToneOptions,
+  destination: AudioNode,
+  startTime: number,
+  durationSeconds: number | undefined,
+  voiceConfig: VoiceConfig,
+  voiceCount: number,
+): PlaybackHandle {
   const graph = createSourcePlaybackGraph(
     context,
     context.createOscillator(),
-    options,
+    getVoiceGraphOptions(options, voiceCount),
     destination,
     startTime,
     durationSeconds,
   );
 
+  setOscillatorDetune(graph.source, voiceConfig.detuneCents, startTime);
   graph.source.frequency.setValueAtTime(
     clampFrequency(options.frequency),
     startTime,
@@ -269,16 +326,55 @@ function playFrequencySweepAt(
   startTime: number,
   sweepDurationSeconds: number,
 ): PlaybackHandle {
+  const voiceConfigs = normalizeVoiceConfigs(options);
+
+  if (voiceConfigs.length > 1) {
+    return createCompositePlaybackHandle(
+      voiceConfigs.map((voiceConfig) =>
+        playFrequencySweepVoiceAt(
+          context,
+          options,
+          destination,
+          startTime,
+          sweepDurationSeconds,
+          voiceConfig,
+          voiceConfigs.length,
+        ),
+      ),
+    );
+  }
+
+  return playFrequencySweepVoiceAt(
+    context,
+    options,
+    destination,
+    startTime,
+    sweepDurationSeconds,
+    voiceConfigs[0]!,
+    voiceConfigs.length,
+  );
+}
+
+function playFrequencySweepVoiceAt(
+  context: AudioContext,
+  options: FrequencySweepOptions,
+  destination: AudioNode,
+  startTime: number,
+  sweepDurationSeconds: number,
+  voiceConfig: VoiceConfig,
+  voiceCount: number,
+): PlaybackHandle {
   const graph = createSourcePlaybackGraph(
     context,
     context.createOscillator(),
-    options,
+    getVoiceGraphOptions(options, voiceCount),
     destination,
     startTime,
     sweepDurationSeconds,
   );
   const end = startTime + sweepDurationSeconds;
 
+  setOscillatorDetune(graph.source, voiceConfig.detuneCents, startTime);
   graph.source.frequency.cancelScheduledValues(startTime);
   graph.source.frequency.setValueAtTime(
     clampFrequency(options.from),
@@ -324,8 +420,17 @@ function playNoiseAt(
   return createPlaybackHandle(context, graph);
 }
 
+function setOscillatorDetune(
+  source: OscillatorNode & { detune?: AudioParam },
+  detuneCents: number,
+  startTime: number,
+): void {
+  source.detune?.setValueAtTime(detuneCents, startTime);
+}
+
 type PlaybackGraph<TSource extends AudioScheduledSourceNode> = {
   source: TSource;
+  filter?: BiquadFilterNode;
   gain: GainNode;
   panner?: StereoPannerNode;
   releaseSeconds: number;
@@ -340,6 +445,7 @@ function createSourcePlaybackGraph<TSource extends AudioScheduledSourceNode>(
   durationSeconds?: number,
 ): PlaybackGraph<TSource> {
   const gain = context.createGain();
+  const filter = createPlaybackFilter(context, options.filter, startTime);
   const panner =
     typeof context.createStereoPanner === "function"
       ? context.createStereoPanner()
@@ -356,19 +462,26 @@ function createSourcePlaybackGraph<TSource extends AudioScheduledSourceNode>(
   );
 
   source.connect(gain);
-  if (panner) {
-    panner.pan.setValueAtTime(normalizePan(options.pan), startTime);
-    gain.connect(panner);
-    panner.connect(destination);
-  } else {
-    gain.connect(destination);
+  let graphOutput: AudioNode = gain;
+  if (filter) {
+    gain.connect(filter);
+    graphOutput = filter;
   }
 
-  return { source, gain, panner, releaseSeconds };
+  if (panner) {
+    panner.pan.setValueAtTime(normalizePan(options.pan), startTime);
+    graphOutput.connect(panner);
+    panner.connect(destination);
+  } else {
+    graphOutput.connect(destination);
+  }
+
+  return { source, filter, gain, panner, releaseSeconds };
 }
 
 type PlaybackGraphOptions = {
   envelope?: PlaybackEnvelope;
+  filter?: PlaybackFilter;
   gain?: number;
   pan?: number;
   type?: string;
@@ -379,6 +492,16 @@ type NormalizedPlaybackEnvelope = {
   decaySeconds: number;
   sustain: number;
   releaseSeconds: number;
+};
+
+type NormalizedPlaybackFilter = {
+  frequency: number;
+  q: number;
+  type: BiquadFilterType;
+};
+
+type VoiceConfig = {
+  detuneCents: number;
 };
 
 type NormalizedPlaybackPattern = {
@@ -432,6 +555,9 @@ function createPlaybackHandle<TSource extends AudioScheduledSourceNode>(
     stopped = true;
     safeDisconnect(graph.source);
     safeDisconnect(graph.gain);
+    if (graph.filter) {
+      safeDisconnect(graph.filter);
+    }
     if (graph.panner) {
       safeDisconnect(graph.panner);
     }
@@ -562,6 +688,24 @@ function normalizeNoiseType(value: NoiseType | undefined): NoiseType {
   return "white";
 }
 
+function createPlaybackFilter(
+  context: AudioContext,
+  filterOptions: PlaybackFilter | undefined,
+  startTime: number,
+): BiquadFilterNode | undefined {
+  const filter = normalizePlaybackFilter(filterOptions);
+  if (!filter) {
+    return undefined;
+  }
+
+  const filterNode = context.createBiquadFilter();
+  filterNode.type = filter.type;
+  filterNode.frequency.setValueAtTime(filter.frequency, startTime);
+  filterNode.Q.setValueAtTime(filter.q, startTime);
+
+  return filterNode;
+}
+
 function scheduleGainEnvelope(
   gain: AudioParam,
   options: PlaybackGraphOptions,
@@ -624,6 +768,29 @@ function normalizePlaybackPattern(
   return { repeat, gapSeconds: gapMs / 1000 };
 }
 
+function normalizePlaybackFilter(
+  filter: PlaybackFilter | undefined,
+): NormalizedPlaybackFilter | undefined {
+  if (!filter) {
+    return undefined;
+  }
+
+  if (!Number.isFinite(filter.frequency) || filter.frequency <= 0) {
+    throw new Error("filter.frequency must be a positive number");
+  }
+
+  const q = filter.q ?? 1;
+  if (!Number.isFinite(q) || q < 0) {
+    throw new Error("filter.q must be a non-negative number");
+  }
+
+  return {
+    frequency: clampFrequency(filter.frequency),
+    q,
+    type: filter.type ?? "lowpass",
+  };
+}
+
 function normalizePlaybackEnvelope(
   envelope: PlaybackEnvelope | undefined,
 ): NormalizedPlaybackEnvelope | undefined {
@@ -664,6 +831,45 @@ function normalizeEnvelopeSustain(value: number | undefined): number {
   }
 
   return value;
+}
+
+function normalizeVoiceConfigs(options: {
+  detuneCents?: number;
+  voices?: PlaybackVoices;
+}): VoiceConfig[] {
+  const baseDetuneCents = options.detuneCents ?? 0;
+  if (!Number.isFinite(baseDetuneCents)) {
+    throw new Error("detuneCents must be a finite number");
+  }
+
+  const count = options.voices?.count ?? 1;
+  if (!Number.isInteger(count) || count < 1 || count > 8) {
+    throw new Error("voices.count must be an integer between 1 and 8");
+  }
+
+  const spreadCents = options.voices?.spreadCents ?? 0;
+  if (!Number.isFinite(spreadCents)) {
+    throw new Error("voices.spreadCents must be a finite number");
+  }
+
+  if (count === 1) {
+    return [{ detuneCents: baseDetuneCents }];
+  }
+
+  return Array.from({ length: count }, (_, index) => {
+    const offset = -spreadCents / 2 + (spreadCents * index) / (count - 1);
+    return { detuneCents: baseDetuneCents + offset };
+  });
+}
+
+function getVoiceGraphOptions(
+  options: PlaybackGraphOptions,
+  voiceCount: number,
+): PlaybackGraphOptions {
+  return {
+    ...options,
+    gain: normalizeGain(options.gain) / voiceCount,
+  };
 }
 
 function randomBipolar(): number {

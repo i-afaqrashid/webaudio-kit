@@ -119,6 +119,20 @@ const sweep = useFrequencySweep({
 });
 ```
 
+Filters and voices are useful for alert cue styling:
+
+```tsx
+const warningTone = useTone({
+  frequency: 660,
+  durationMs: 220,
+  gain: 0.15,
+  type: "sawtooth",
+  envelope: { attackMs: 8, releaseMs: 55 },
+  filter: { frequency: 1800, q: 0.7 },
+  voices: { count: 2, spreadCents: 10 },
+});
+```
+
 ## API
 
 - `AudioProvider`
