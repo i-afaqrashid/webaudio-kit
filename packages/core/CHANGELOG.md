@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.9.6 - 2026-05-26
+
+### Added
+
+- Document the AudioProvider state machine, including the custom `idle` state
+  returned by `useAudioContext()` before browser `AudioContext` creation.
+- Add a copy-paste `AudioStateBadge` example and link the state model from the
+  API, browser audio, and troubleshooting docs.
+
 ## 1.9.5 - 2026-05-26
 
 ### Changed

@@ -59,14 +59,14 @@ test("buildReleaseNotes includes package links and release references", () => {
   assert.match(notes, /https:\/\/webaudio-kit\.afaqrashid\.com\/docs/);
 });
 
-test("current release notes include Node 20 and peer dependency work", () => {
+test("current release notes include AudioProvider state machine docs", () => {
   const rootChangelog = readFileSync("CHANGELOG.md", "utf8");
-  const notes = buildReleaseNotes({ changelog: rootChangelog, tag: "v1.9.5" });
+  const notes = buildReleaseNotes({ changelog: rootChangelog, tag: "v1.9.6" });
 
-  assert.match(notes, /Node support floor/i);
-  assert.match(notes, />=20\.19/);
-  assert.match(notes, /peer dependency/i);
-  assert.match(notes, /@webaudio-kit\/cli@1\.9\.5/);
+  assert.match(notes, /AudioProvider state machine/i);
+  assert.match(notes, /custom `idle` state/i);
+  assert.match(notes, /AudioStateBadge/);
+  assert.match(notes, /@webaudio-kit\/cli@1\.9\.6/);
 });
 
 test("getReleasePackages reflects package history", () => {

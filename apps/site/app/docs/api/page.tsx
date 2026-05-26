@@ -912,6 +912,7 @@ export default function ApiDocsPage() {
           <div className="wrap docLayout apiReferenceLayout">
             <aside className="toc" aria-label="API sections">
               <a href="#audio-provider">AudioProvider</a>
+              <a href="#audio-provider-state-machine">Provider state</a>
               <a href="#use-audio-context">useAudioContext</a>
               <a href="#use-tone">useTone</a>
               <a href="#use-frequency-sweep">useFrequencySweep</a>
@@ -934,6 +935,93 @@ export default function ApiDocsPage() {
               {reactSections.map((section) => (
                 <ApiReferenceSection key={section.id} section={section} />
               ))}
+
+              <section
+                className="apiReferenceSection"
+                id="audio-provider-state-machine"
+              >
+                <div className="apiSectionHeader">
+                  <span className="apiPackage">@webaudio-kit/react</span>
+                  <h2>AudioProvider state machine</h2>
+                  <p>
+                    <code>useAudioContext().state</code> can return{" "}
+                    <code>idle</code>, <code>suspended</code>,{" "}
+                    <code>running</code>, or <code>closed</code>.{" "}
+                    <code>idle</code> is a webaudio-kit value, not a native
+                    browser AudioContextState.
+                  </p>
+                </div>
+                <ApiTable
+                  rows={[
+                    {
+                      name: "initial render",
+                      type: '"idle"',
+                      notes:
+                        "No AudioContext, master gain, or analyser has been created.",
+                    },
+                    {
+                      name: "first user gesture",
+                      type: '"suspended" | "running"',
+                      notes:
+                        "play(), setGain(), or ensureAudioContext() creates the graph and asks the browser to resume audio.",
+                    },
+                    {
+                      name: "resume allowed",
+                      type: '"running"',
+                      notes:
+                        "The provider mirrors the native AudioContext state after browser autoplay policy allows playback.",
+                    },
+                    {
+                      name: "stopAll()",
+                      type: '"running" | "suspended"',
+                      notes:
+                        "Stops active and scheduled hook playback, but does not close the shared AudioContext.",
+                    },
+                    {
+                      name: "provider unmount",
+                      type: '"closed"',
+                      notes:
+                        "The provider closes the context when the browser allows close().",
+                    },
+                    {
+                      name: "audio unavailable",
+                      type: '"idle"',
+                      notes:
+                        "If AudioContext creation fails, hooks reject with the browser error and state remains usable for UI.",
+                    },
+                  ]}
+                />
+                <CodeBlock title="AudioStateBadge">{`import { useAudioContext } from "@webaudio-kit/react";
+
+function AudioStateBadge() {
+  const audio = useAudioContext();
+  const label =
+    audio.state === "idle"
+      ? "Idle: audio has not been created yet"
+      : \`AudioContext: \${audio.state}\`;
+
+  return <span aria-label={label}>{audio.state}</span>;
+}`}</CodeBlock>
+                <p>
+                  Keep first playback directly inside click, tap, or keyboard
+                  handlers. Browsers may leave the context{" "}
+                  <code>suspended</code> until a gesture satisfies autoplay
+                  policy.
+                </p>
+                <div className="docActionLinks">
+                  <Link className="button" href="/docs#browser">
+                    Browser behavior
+                  </Link>
+                  <a
+                    className="button"
+                    href="https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/troubleshooting.md#audio-state-stays-idle"
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    Troubleshooting
+                  </a>
+                </div>
+              </section>
 
               <section className="apiReferenceSection" id="core-helpers">
                 <div className="apiSectionHeader">

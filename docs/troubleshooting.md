@@ -31,6 +31,16 @@ Move the playback call directly into the button handler:
 
 Avoid starting playback from `useEffect` on first render.
 
+## Audio state stays `idle`
+
+`idle` means `AudioProvider` has not created an `AudioContext` yet. It is a
+webaudio-kit state, not a native browser `AudioContextState`. Call a hook
+`play()` method or `ensureAudioContext()` from a click, tap, or keyboard handler
+to let the provider create and resume the context.
+
+See the [AudioProvider state machine](./api.md#audioprovider-state-machine) for
+the full transition model.
+
 ## Sweep Throws `durationMs must be a positive number`
 
 Sweeps require a positive finite duration:

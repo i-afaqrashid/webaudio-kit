@@ -297,6 +297,50 @@ inside the provider. Use it for panic buttons, alert acknowledgement, or route
 changes. `setGain(0)` mutes output; it does not cancel already scheduled
 playback.
 
+## `AudioProvider` State Machine
+
+`useAudioContext().state` can return `idle`, `suspended`, `running`, or
+`closed`. `idle` is a webaudio-kit state, not a native browser
+`AudioContextState`. Once `AudioProvider` creates an `AudioContext`, the value
+mirrors the browser context state.
+
+Expected transitions:
+
+- Initial render: `state` is `idle`, `audioContext`, `masterGain`, and
+  `analyser` are `null`, and no Web Audio nodes exist.
+- First user gesture: a hook such as `useTone().play()` or
+  `ensureAudioContext()` creates the provider graph and asks the browser to
+  resume audio.
+- Resume allowed: the browser context becomes `running`, and the provider
+  reports `running`.
+- Resume deferred: some browsers create the context as `suspended` until the
+  click, tap, or keyboard action is considered valid. Keep playback directly in
+  the user handler.
+- Stop or `stopAll()`: active and scheduled playback stops, but the shared
+  context usually remains `running` or `suspended`; stopping sounds does not
+  close the context.
+- Provider unmount: the provider closes the context when possible, so the last
+  native state may be `closed`.
+- Audio unavailable or creation failed: hooks reject with the browser error and
+  the provider keeps state usable for UI. If no context was created, state stays
+  `idle`.
+
+Small state badge:
+
+```tsx
+import { useAudioContext } from "@webaudio-kit/react";
+
+function AudioStateBadge() {
+  const audio = useAudioContext();
+  const label =
+    audio.state === "idle"
+      ? "Idle: audio has not been created yet"
+      : `AudioContext: ${audio.state}`;
+
+  return <span aria-label={label}>{audio.state}</span>;
+}
+```
+
 ### `useTone(options)`
 
 ```tsx
