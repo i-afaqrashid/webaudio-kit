@@ -256,6 +256,17 @@ const frequency = clampFrequency(inputFrequency); // 20..20000 by default
 const gain = dbToGain(-14);
 const db = gainToDb(0.2);
 const note = frequencyToNoteName(440); // A4`}</CodeBlock>
+              <div className="docActionLinks">
+                <Link className="button" href="/demos/volume">
+                  Open volume demo
+                </Link>
+                <Link className="button" href="/demos/visualizer">
+                  Open visualizer demo
+                </Link>
+                <Link className="button" href="/demos/pitch">
+                  Open pitch helper demo
+                </Link>
+              </div>
 
               <h2 id="api-reference">API reference</h2>
               <p>

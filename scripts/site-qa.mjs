@@ -73,6 +73,24 @@ export const SITE_QA_ROUTES = [
     ],
   },
   {
+    path: "/demos/visualizer",
+    heading: "Visualizer lab.",
+    checks: [
+      { role: "button", name: "Pulse visualizer" },
+      { label: "Focused waveform analyser" },
+      { label: "Focused spectrum analyser" },
+    ],
+  },
+  {
+    path: "/demos/pitch",
+    heading: "Pitch helper.",
+    checks: [
+      { role: "button", name: "Play pitch" },
+      { label: "Pitch frequency" },
+      { text: "A4" },
+    ],
+  },
+  {
     path: "/changelog",
     heading: "Release history.",
     checks: [

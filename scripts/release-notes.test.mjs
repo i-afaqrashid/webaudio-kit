@@ -59,16 +59,17 @@ test("buildReleaseNotes includes package links and release references", () => {
   assert.match(notes, /https:\/\/webaudio-kit\.afaqrashid\.com\/docs/);
 });
 
-test("current release notes include live recipe demo work", () => {
+test("current release notes include focused demo page work", () => {
   const rootChangelog = readFileSync("CHANGELOG.md", "utf8");
-  const notes = buildReleaseNotes({ changelog: rootChangelog, tag: "v1.5.4" });
+  const notes = buildReleaseNotes({ changelog: rootChangelog, tag: "v1.5.5" });
 
-  assert.match(notes, /live recipe demos/i);
-  assert.match(notes, /tone/);
-  assert.match(notes, /frequency sweep/);
-  assert.match(notes, /https:\/\/webaudio-kit\.afaqrashid\.com\/docs\/recipes/);
+  assert.match(notes, /focused live demo pages/i);
+  assert.match(notes, /visualizer-only/i);
+  assert.match(notes, /stereo pan/i);
+  assert.match(notes, /pitch helper/i);
+  assert.match(notes, /combined tone\/noise/i);
   assert.match(notes, /https:\/\/webaudio-kit\.afaqrashid\.com\/demos/);
-  assert.match(notes, /@webaudio-kit\/cli@1\.5\.4/);
+  assert.match(notes, /@webaudio-kit\/cli@1\.5\.5/);
 });
 
 test("getReleasePackages reflects package history", () => {

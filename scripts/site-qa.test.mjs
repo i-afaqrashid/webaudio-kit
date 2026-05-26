@@ -26,6 +26,8 @@ test("site QA is wired into scripts and CI", async () => {
       "/docs/recipes",
       "/demos",
       "/demos/tone",
+      "/demos/visualizer",
+      "/demos/pitch",
       "/changelog",
     ],
   );

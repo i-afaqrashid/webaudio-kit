@@ -3,8 +3,18 @@ import Link from "next/link";
 import { CodeBlock, IconBadge, PageShell, SectionHeader } from "../components";
 import type { IconName } from "../components";
 import { InteractiveDemo } from "../InteractiveDemo";
+import { FocusedDemoPanel } from "./FocusedDemoPanel";
 
-export type DemoSlug = "tone" | "sweep" | "noise" | "test-mode";
+export type DemoSlug =
+  | "combo"
+  | "noise"
+  | "pan"
+  | "pitch"
+  | "sweep"
+  | "test-mode"
+  | "tone"
+  | "visualizer"
+  | "volume";
 
 type DemoConfig = {
   copy: string;
@@ -139,6 +149,174 @@ export function App() {
   );
 }`,
   },
+  {
+    copy: "Render waveform and spectrum canvases as the primary surface with a small pulse control for analyser verification.",
+    icon: "activity",
+    label: "Visualizer demo",
+    slug: "visualizer",
+    title: "Visualizer lab",
+    snippet: `import {
+  AudioProvider,
+  SpectrumCanvas,
+  WaveformCanvas,
+  useTone,
+} from "@webaudio-kit/react";
+
+function VisualizerOnly() {
+  const tone = useTone({ frequency: 523.25, gain: 0.1, type: "triangle" });
+
+  return (
+    <>
+      <button onClick={() => void tone.play({ durationMs: 700 })}>
+        Pulse visualizer
+      </button>
+      <WaveformCanvas aria-label="Waveform analyser" />
+      <SpectrumCanvas aria-label="Spectrum analyser" />
+    </>
+  );
+}
+
+export function App() {
+  return (
+    <AudioProvider>
+      <VisualizerOnly />
+    </AudioProvider>
+  );
+}`,
+  },
+  {
+    copy: "Expose provider master gain as a bounded UI control and play a reference tone through that shared gain.",
+    icon: "volume",
+    label: "Volume demo",
+    slug: "volume",
+    title: "Master volume",
+    snippet: `import { AudioProvider, useTone, useVolume } from "@webaudio-kit/react";
+
+function MasterVolumeDemo() {
+  const volume = useVolume();
+  const tone = useTone({ frequency: 440, gain: 0.12 });
+
+  return (
+    <>
+      <input
+        max={0.5}
+        min={0}
+        onChange={(event) => void volume.setGain(event.currentTarget.valueAsNumber)}
+        step={0.01}
+        type="range"
+        value={volume.gain}
+      />
+      <button onClick={() => void tone.play({ durationMs: 700 })}>
+        Play volume reference
+      </button>
+    </>
+  );
+}
+
+export function App() {
+  return (
+    <AudioProvider>
+      <MasterVolumeDemo />
+    </AudioProvider>
+  );
+}`,
+  },
+  {
+    copy: "Check left, center, and right pan values with short low-gain tones and a visible pan slider.",
+    icon: "sliders",
+    label: "Pan demo",
+    slug: "pan",
+    title: "Stereo pan",
+    snippet: `import { AudioProvider, useTone } from "@webaudio-kit/react";
+
+function StereoPanChecks() {
+  const tone = useTone({ frequency: 660, gain: 0.1, durationMs: 600 });
+
+  return (
+    <>
+      <button onClick={() => void tone.play({ pan: -1 })}>Left check</button>
+      <button onClick={() => void tone.play({ pan: 0 })}>Center check</button>
+      <button onClick={() => void tone.play({ pan: 1 })}>Right check</button>
+    </>
+  );
+}
+
+export function App() {
+  return (
+    <AudioProvider>
+      <StereoPanChecks />
+    </AudioProvider>
+  );
+}`,
+  },
+  {
+    copy: "Use frequency clamping and note-name helpers next to playback so pitch UI stays readable.",
+    icon: "gauge",
+    label: "Pitch demo",
+    slug: "pitch",
+    title: "Pitch helper",
+    snippet: `import {
+  AudioProvider,
+  clampFrequency,
+  frequencyToNoteName,
+  useTone,
+} from "@webaudio-kit/react";
+
+function PitchHelperDemo({ frequency = 440 }) {
+  const safeFrequency = clampFrequency(frequency);
+  const tone = useTone({ frequency: safeFrequency, gain: 0.12 });
+
+  return (
+    <>
+      <span>{frequencyToNoteName(safeFrequency)}</span>
+      <button onClick={() => void tone.play({ durationMs: 700 })}>
+        Play pitch
+      </button>
+    </>
+  );
+}
+
+export function App() {
+  return (
+    <AudioProvider>
+      <PitchHelperDemo />
+    </AudioProvider>
+  );
+}`,
+  },
+  {
+    copy: "Combine tone and noise hooks under one provider to model richer UI feedback with one shared stop control.",
+    icon: "zap",
+    label: "Combo demo",
+    slug: "combo",
+    title: "Tone and noise combo",
+    snippet: `import { AudioProvider, useNoise, useTone } from "@webaudio-kit/react";
+
+function ComboFeedback() {
+  const tone = useTone({ frequency: 523.25, gain: 0.1, durationMs: 420 });
+  const noise = useNoise({ type: "pink", durationMs: 520, gain: 0.04 });
+
+  const play = async () => {
+    await tone.play();
+    await noise.play();
+  };
+
+  return (
+    <>
+      <button onClick={() => void play()}>Play combo pattern</button>
+      <button onClick={() => { tone.stop(); noise.stop(); }}>Stop combo</button>
+    </>
+  );
+}
+
+export function App() {
+  return (
+    <AudioProvider>
+      <ComboFeedback />
+    </AudioProvider>
+  );
+}`,
+  },
 ];
 
 export function getDemo(slug: DemoSlug) {
@@ -163,9 +341,9 @@ export function DemoIndex() {
             <span className="kicker">Interactive demos</span>
             <h1>Focused browser audio workspaces.</h1>
             <p>
-              Open a direct demo for tone generation, frequency sweeps, noise
-              bursts, or test mode. Each page keeps the full analyser-backed
-              demo nearby so behavior is visible while you read.
+              Open a direct demo for tone generation, sweeps, noise, test mode,
+              visualizer components, master volume, stereo pan, pitch helpers,
+              or combined hook workflows.
             </p>
           </div>
         </section>
@@ -271,9 +449,20 @@ export function DemoDetail({ slug }: { slug: DemoSlug }) {
         <section className="section demoSection">
           <div className="wrap">
             <SectionHeader
-              kicker="Live controls"
-              title="Run it in the browser."
-              copy="The same component drives all focused demo pages, so you can move between docs and demos without losing the full workspace."
+              kicker="Focused controls"
+              title="Run the focused surface."
+              copy="Each page keeps one primary workflow near the snippet, then leaves the full workspace below for broader testing."
+            />
+            <FocusedDemoPanel slug={slug} />
+          </div>
+        </section>
+
+        <section className="section demoSection">
+          <div className="wrap">
+            <SectionHeader
+              kicker="Full workspace"
+              title="Try every control together."
+              copy="Use the shared workspace when you want tone, sweep, noise, test mode, volume, pan, waveform, and spectrum controls on one screen."
             />
             <InteractiveDemo />
           </div>

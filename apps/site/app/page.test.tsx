@@ -151,6 +151,15 @@ describe("site pages", () => {
     expect(
       screen.getByRole("link", { name: "Open test mode demo" }),
     ).toHaveProperty("href", "http://localhost:3000/demos/test-mode");
+    expect(
+      screen.getByRole("link", { name: "Open volume demo" }),
+    ).toHaveProperty("href", "http://localhost:3000/demos/volume");
+    expect(
+      screen.getByRole("link", { name: "Open visualizer demo" }),
+    ).toHaveProperty("href", "http://localhost:3000/demos/visualizer");
+    expect(
+      screen.getByRole("link", { name: "Open pitch helper demo" }),
+    ).toHaveProperty("href", "http://localhost:3000/demos/pitch");
   });
 
   test("site exposes a public API reference route for React and core exports", () => {
@@ -189,6 +198,19 @@ describe("site pages", () => {
     expect(
       screen.getAllByRole("link", { name: "Open tone demo" })[0],
     ).toHaveProperty("href", "http://localhost:3000/demos/tone");
+    expect(screen.getByRole("link", { name: "Open pan demo" })).toHaveProperty(
+      "href",
+      "http://localhost:3000/demos/pan",
+    );
+    expect(
+      screen.getByRole("link", { name: "Open volume demo" }),
+    ).toHaveProperty("href", "http://localhost:3000/demos/volume");
+    expect(
+      screen.getAllByRole("link", { name: "Open visualizer demo" })[0],
+    ).toHaveProperty("href", "http://localhost:3000/demos/visualizer");
+    expect(
+      screen.getByRole("link", { name: "Open pitch helper demo" }),
+    ).toHaveProperty("href", "http://localhost:3000/demos/pitch");
     expect(screen.getByRole("link", { name: "Recipes" })).toHaveProperty(
       "href",
       "http://localhost:3000/docs/recipes",
@@ -242,7 +264,17 @@ describe("site pages", () => {
   });
 
   test("site exposes dedicated demo routes", () => {
-    for (const slug of ["tone", "sweep", "noise", "test-mode"]) {
+    for (const slug of [
+      "tone",
+      "sweep",
+      "noise",
+      "test-mode",
+      "visualizer",
+      "volume",
+      "pan",
+      "pitch",
+      "combo",
+    ]) {
       expect(existsSync(`apps/site/app/demos/${slug}/page.tsx`)).toBe(true);
     }
   });
@@ -255,19 +287,19 @@ describe("site pages", () => {
     expect(
       screen.getByRole("heading", { name: "Release history." }),
     ).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "1.5.4" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "1.5.5" })).toBeTruthy();
     expect(screen.getByText("npm Trusted Publishing")).toBeTruthy();
     expect(
-      screen.getByRole("link", { name: "GitHub release v1.5.4" }),
+      screen.getByRole("link", { name: "GitHub release v1.5.5" }),
     ).toHaveProperty(
       "href",
-      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.5.4",
+      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.5.5",
     );
     expect(
-      screen.getByRole("link", { name: "@webaudio-kit/react 1.5.4" }),
+      screen.getByRole("link", { name: "@webaudio-kit/react 1.5.5" }),
     ).toHaveProperty(
       "href",
-      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.5.4",
+      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.5.5",
     );
   });
 
@@ -289,14 +321,47 @@ describe("site pages", () => {
     expect(
       screen.getByRole("heading", { name: "Audio test mode" }),
     ).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { name: "Visualizer lab" }),
+    ).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Master volume" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Stereo pan" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Pitch helper" })).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { name: "Tone and noise combo" }),
+    ).toBeTruthy();
 
     cleanup();
-    render(createElement(DemoDetail, { slug: "tone" }));
+    render(createElement(DemoDetail, { slug: "visualizer" }));
 
     expect(
-      screen.getByRole("heading", { name: "Tone generator." }),
+      screen.getByRole("heading", { name: "Visualizer lab." }),
     ).toBeTruthy();
-    expect(screen.getByText("tone.tsx")).toBeTruthy();
+    expect(screen.getByText("visualizer.tsx")).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: "Pulse visualizer" }),
+    ).toBeTruthy();
+    expect(screen.getByLabelText("Focused waveform analyser")).toBeTruthy();
+    expect(screen.getByLabelText("Focused spectrum analyser")).toBeTruthy();
+
+    cleanup();
+    render(createElement(DemoDetail, { slug: "volume" }));
+
+    expect(
+      screen.getByRole("heading", { name: "Master volume." }),
+    ).toBeTruthy();
+    expect(screen.getByLabelText("Demo master volume")).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: "Play volume reference" }),
+    ).toBeTruthy();
+
+    cleanup();
+    render(createElement(DemoDetail, { slug: "pitch" }));
+
+    expect(screen.getByRole("heading", { name: "Pitch helper." })).toBeTruthy();
+    expect(screen.getByLabelText("Pitch frequency")).toBeTruthy();
+    expect(screen.getByText("A4")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Play pitch" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "API reference" })).toHaveProperty(
       "href",
       "http://localhost:3000/docs/api",
