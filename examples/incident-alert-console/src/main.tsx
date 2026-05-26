@@ -1,4 +1,4 @@
-import { StrictMode, useMemo, useState } from "react";
+import { StrictMode, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   AudioProvider,
@@ -61,6 +61,7 @@ function IncidentConsole() {
   const volume = useVolume();
   const [selected, setSelected] = useState(incidents[2]!);
   const [muted, setMuted] = useState(false);
+  const pendingCueTimers = useRef<number[]>([]);
 
   const infoTone = useTone({
     durationMs: 160,
@@ -102,8 +103,11 @@ function IncidentConsole() {
 
   async function fireCue(severity: Severity) {
     if (muted || severity === "healthy") {
+      stopAllLocalCues();
       return;
     }
+
+    stopAllLocalCues();
 
     if (severity === "info") {
       await infoTone.play();
@@ -112,25 +116,35 @@ function IncidentConsole() {
 
     if (severity === "warning") {
       await warningTone.play();
-      window.setTimeout(() => void warningTone.play({ frequency: 1040 }), 260);
+      scheduleCue(() => void warningTone.play({ frequency: 1040 }), 260);
       return;
     }
 
     if (severity === "critical") {
       await criticalSweep.play();
-      window.setTimeout(() => void noise.play(), 140);
+      scheduleCue(() => void noise.play(), 140);
       return;
     }
 
     await resolvedSweep.play();
   }
 
+  function scheduleCue(callback: () => void, delayMs: number) {
+    const timer = window.setTimeout(() => {
+      pendingCueTimers.current = pendingCueTimers.current.filter(
+        (value) => value !== timer,
+      );
+      callback();
+    }, delayMs);
+    pendingCueTimers.current.push(timer);
+  }
+
   function stopAllLocalCues() {
-    infoTone.stop();
-    warningTone.stop();
-    criticalSweep.stop();
-    resolvedSweep.stop();
-    noise.stop();
+    for (const timer of pendingCueTimers.current) {
+      window.clearTimeout(timer);
+    }
+    pendingCueTimers.current = [];
+    audio.stopAll();
   }
 
   return (

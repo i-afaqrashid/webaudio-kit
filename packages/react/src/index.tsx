@@ -37,6 +37,7 @@ export type AudioProviderValue = {
   gain: number;
   ensureAudioContext(): Promise<AudioRuntime>;
   setGain(gain: number): Promise<void>;
+  stopAll(): void;
 };
 
 export type AudioProviderProps = {
@@ -118,9 +119,16 @@ export type RequiredPlaybackControls<TOptions> = {
   isPlaying: boolean;
 };
 
-const AudioContextStateContext = createContext<AudioProviderValue | undefined>(
-  undefined,
-);
+type PlaybackRegistration = symbol;
+
+type AudioProviderContextValue = AudioProviderValue & {
+  registerPlayback(stop: () => void): PlaybackRegistration;
+  unregisterPlayback(registration: PlaybackRegistration): void;
+};
+
+const AudioContextStateContext = createContext<
+  AudioProviderContextValue | undefined
+>(undefined);
 
 const DEFAULT_AUDIO_TEST_STEPS: AudioTestModeStep[] = [
   {
@@ -190,6 +198,7 @@ export function AudioProvider({
 }: AudioProviderProps) {
   const runtimeRef = useRef<AudioRuntime | null>(null);
   const gainRef = useRef(normalizeGain(initialGain));
+  const playbackStopsRef = useRef(new Map<PlaybackRegistration, () => void>());
   const [runtime, setRuntime] = useState<AudioRuntime | null>(null);
   const [state, setState] = useState<AudioContextState | "idle">("idle");
   const [gain, setGainState] = useState(gainRef.current);
@@ -236,8 +245,26 @@ export function AudioProvider({
     }
   }, []);
 
+  const registerPlayback = useCallback((stop: () => void) => {
+    const registration = Symbol("webaudio-kit-playback");
+    playbackStopsRef.current.set(registration, stop);
+    return registration;
+  }, []);
+
+  const unregisterPlayback = useCallback(
+    (registration: PlaybackRegistration) => {
+      playbackStopsRef.current.delete(registration);
+    },
+    [],
+  );
+
+  const stopAll = useCallback(() => {
+    stopRegisteredPlayback(playbackStopsRef.current);
+  }, []);
+
   useEffect(() => {
     return () => {
+      stopRegisteredPlayback(playbackStopsRef.current);
       const current = runtimeRef.current;
       if (current && current.audioContext.state !== "closed") {
         void current.audioContext.close();
@@ -245,7 +272,7 @@ export function AudioProvider({
     };
   }, []);
 
-  const value = useMemo<AudioProviderValue>(
+  const value = useMemo<AudioProviderContextValue>(
     () => ({
       audioContext: runtime?.audioContext ?? null,
       masterGain: runtime?.masterGain ?? null,
@@ -253,9 +280,21 @@ export function AudioProvider({
       state,
       gain,
       ensureAudioContext,
+      registerPlayback,
       setGain,
+      stopAll,
+      unregisterPlayback,
     }),
-    [ensureAudioContext, gain, runtime, setGain, state],
+    [
+      ensureAudioContext,
+      gain,
+      registerPlayback,
+      runtime,
+      setGain,
+      state,
+      stopAll,
+      unregisterPlayback,
+    ],
   );
 
   return (
@@ -266,6 +305,10 @@ export function AudioProvider({
 }
 
 export function useAudioContext(): AudioProviderValue {
+  return useAudioProviderContext();
+}
+
+function useAudioProviderContext(): AudioProviderContextValue {
   const context = useContext(AudioContextStateContext);
   if (!context) {
     throw new Error("useAudioContext must be used inside AudioProvider");
@@ -279,9 +322,11 @@ export function useTone(options: ToneOptions): PlaybackControls<ToneOptions>;
 export function useTone(
   options?: ToneOptions,
 ): PlaybackControls<ToneOptions> | RequiredPlaybackControls<ToneOptions> {
-  const audio = useAudioContext();
+  const { ensureAudioContext, registerPlayback, unregisterPlayback } =
+    useAudioProviderContext();
   const optionsRef = useLatest(options);
   const handleRef = useRef<PlaybackHandle | null>(null);
+  const registrationRef = useRef<PlaybackRegistration | null>(null);
   const timeoutRef = useRef<PlaybackTimer | undefined>(undefined);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -289,28 +334,47 @@ export function useTone(
     clearPlaybackTimer(timeoutRef);
     handleRef.current?.stop();
     handleRef.current = null;
+    if (registrationRef.current) {
+      unregisterPlayback(registrationRef.current);
+      registrationRef.current = null;
+    }
     setIsPlaying(false);
-  }, []);
+  }, [unregisterPlayback]);
 
   const play = useCallback(
     async (overrides: Partial<ToneOptions> = {}) => {
-      const runtime = await audio.ensureAudioContext();
+      const runtime = await ensureAudioContext();
       const nextOptions = resolveToneOptions(optionsRef.current, overrides);
 
       stop();
-      handleRef.current = playTone(
+      const handle = playTone(
         runtime.audioContext,
         nextOptions,
         runtime.masterGain,
       );
+      handleRef.current = handle;
+      registrationRef.current = registerPlayback(stop);
       setIsPlaying(true);
       schedulePlaybackEnd(
         getPlaybackDurationMs(nextOptions),
         timeoutRef,
-        setIsPlaying,
+        () => {
+          if (registrationRef.current) {
+            unregisterPlayback(registrationRef.current);
+            registrationRef.current = null;
+          }
+          handleRef.current = null;
+          setIsPlaying(false);
+        },
       );
     },
-    [audio, optionsRef, stop],
+    [
+      ensureAudioContext,
+      optionsRef,
+      registerPlayback,
+      stop,
+      unregisterPlayback,
+    ],
   );
 
   useEffect(() => stop, [stop]);
@@ -327,9 +391,11 @@ export function useFrequencySweep(
 ):
   | PlaybackControls<FrequencySweepOptions>
   | RequiredPlaybackControls<FrequencySweepOptions> {
-  const audio = useAudioContext();
+  const { ensureAudioContext, registerPlayback, unregisterPlayback } =
+    useAudioProviderContext();
   const optionsRef = useLatest(options);
   const handleRef = useRef<PlaybackHandle | null>(null);
+  const registrationRef = useRef<PlaybackRegistration | null>(null);
   const timeoutRef = useRef<PlaybackTimer | undefined>(undefined);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -337,31 +403,50 @@ export function useFrequencySweep(
     clearPlaybackTimer(timeoutRef);
     handleRef.current?.stop();
     handleRef.current = null;
+    if (registrationRef.current) {
+      unregisterPlayback(registrationRef.current);
+      registrationRef.current = null;
+    }
     setIsPlaying(false);
-  }, []);
+  }, [unregisterPlayback]);
 
   const play = useCallback(
     async (overrides: Partial<FrequencySweepOptions> = {}) => {
-      const runtime = await audio.ensureAudioContext();
+      const runtime = await ensureAudioContext();
       const nextOptions = resolveFrequencySweepOptions(
         optionsRef.current,
         overrides,
       );
 
       stop();
-      handleRef.current = playFrequencySweep(
+      const handle = playFrequencySweep(
         runtime.audioContext,
         nextOptions,
         runtime.masterGain,
       );
+      handleRef.current = handle;
+      registrationRef.current = registerPlayback(stop);
       setIsPlaying(true);
       schedulePlaybackEnd(
         getPlaybackDurationMs(nextOptions),
         timeoutRef,
-        setIsPlaying,
+        () => {
+          if (registrationRef.current) {
+            unregisterPlayback(registrationRef.current);
+            registrationRef.current = null;
+          }
+          handleRef.current = null;
+          setIsPlaying(false);
+        },
       );
     },
-    [audio, optionsRef, stop],
+    [
+      ensureAudioContext,
+      optionsRef,
+      registerPlayback,
+      stop,
+      unregisterPlayback,
+    ],
   );
 
   useEffect(() => stop, [stop]);
@@ -374,9 +459,11 @@ export function useNoise(options: NoiseOptions): PlaybackControls<NoiseOptions>;
 export function useNoise(
   options?: NoiseOptions,
 ): PlaybackControls<NoiseOptions> | RequiredPlaybackControls<NoiseOptions> {
-  const audio = useAudioContext();
+  const { ensureAudioContext, registerPlayback, unregisterPlayback } =
+    useAudioProviderContext();
   const optionsRef = useLatest(options);
   const handleRef = useRef<PlaybackHandle | null>(null);
+  const registrationRef = useRef<PlaybackRegistration | null>(null);
   const timeoutRef = useRef<PlaybackTimer | undefined>(undefined);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -384,28 +471,47 @@ export function useNoise(
     clearPlaybackTimer(timeoutRef);
     handleRef.current?.stop();
     handleRef.current = null;
+    if (registrationRef.current) {
+      unregisterPlayback(registrationRef.current);
+      registrationRef.current = null;
+    }
     setIsPlaying(false);
-  }, []);
+  }, [unregisterPlayback]);
 
   const play = useCallback(
     async (overrides: Partial<NoiseOptions> = {}) => {
-      const runtime = await audio.ensureAudioContext();
+      const runtime = await ensureAudioContext();
       const nextOptions = resolveNoiseOptions(optionsRef.current, overrides);
 
       stop();
-      handleRef.current = playNoise(
+      const handle = playNoise(
         runtime.audioContext,
         nextOptions,
         runtime.masterGain,
       );
+      handleRef.current = handle;
+      registrationRef.current = registerPlayback(stop);
       setIsPlaying(true);
       schedulePlaybackEnd(
         getPlaybackDurationMs(nextOptions),
         timeoutRef,
-        setIsPlaying,
+        () => {
+          if (registrationRef.current) {
+            unregisterPlayback(registrationRef.current);
+            registrationRef.current = null;
+          }
+          handleRef.current = null;
+          setIsPlaying(false);
+        },
       );
     },
-    [audio, optionsRef, stop],
+    [
+      ensureAudioContext,
+      optionsRef,
+      registerPlayback,
+      stop,
+      unregisterPlayback,
+    ],
   );
 
   useEffect(() => stop, [stop]);
@@ -436,7 +542,8 @@ export function createDefaultAudioTestModeSteps(): AudioTestModeStep[] {
 export function useAudioTestMode(
   options: AudioTestModeOptions = {},
 ): AudioTestModeControls {
-  const audio = useAudioContext();
+  const { ensureAudioContext, registerPlayback, unregisterPlayback } =
+    useAudioProviderContext();
   const steps = useMemo(
     () =>
       options.steps && options.steps.length > 0
@@ -448,6 +555,7 @@ export function useAudioTestMode(
   const stepsRef = useLatest(steps);
   const gapMsRef = useLatest(gapMs);
   const activeHandleRef = useRef<PlaybackHandle | null>(null);
+  const registrationRef = useRef<PlaybackRegistration | null>(null);
   const runTokenRef = useRef(0);
   const [currentStepIndex, setCurrentStepIndex] = useState(-1);
   const [isRunning, setIsRunning] = useState(false);
@@ -458,19 +566,27 @@ export function useAudioTestMode(
     runTokenRef.current += 1;
     activeHandleRef.current?.stop();
     activeHandleRef.current = null;
+    if (registrationRef.current) {
+      unregisterPlayback(registrationRef.current);
+      registrationRef.current = null;
+    }
     setCurrentStepIndex(-1);
     setIsRunning(false);
-  }, []);
+  }, [unregisterPlayback]);
 
   const run = useCallback(async () => {
     const token = runTokenRef.current + 1;
     runTokenRef.current = token;
     activeHandleRef.current?.stop();
     activeHandleRef.current = null;
+    if (registrationRef.current) {
+      unregisterPlayback(registrationRef.current);
+      registrationRef.current = null;
+    }
     setIsRunning(true);
 
     try {
-      const runtime = await audio.ensureAudioContext();
+      const runtime = await ensureAudioContext();
       const nextSteps = stepsRef.current;
       const nextGapMs = gapMsRef.current;
 
@@ -484,6 +600,7 @@ export function useAudioTestMode(
         setCurrentStepIndex(index);
         const handle = playAudioTestModeStep(runtime, step, durationMs);
         activeHandleRef.current = handle;
+        registrationRef.current = registerPlayback(stop);
         await wait(durationMs);
         if (runTokenRef.current !== token) {
           return;
@@ -493,6 +610,10 @@ export function useAudioTestMode(
         if (activeHandleRef.current === handle) {
           activeHandleRef.current = null;
         }
+        if (registrationRef.current) {
+          unregisterPlayback(registrationRef.current);
+          registrationRef.current = null;
+        }
 
         if (index < nextSteps.length - 1 && nextGapMs > 0) {
           await wait(nextGapMs);
@@ -501,11 +622,22 @@ export function useAudioTestMode(
     } finally {
       if (runTokenRef.current === token) {
         activeHandleRef.current = null;
+        if (registrationRef.current) {
+          unregisterPlayback(registrationRef.current);
+          registrationRef.current = null;
+        }
         setCurrentStepIndex(-1);
         setIsRunning(false);
       }
     }
-  }, [audio, gapMsRef, stepsRef]);
+  }, [
+    ensureAudioContext,
+    gapMsRef,
+    registerPlayback,
+    stop,
+    stepsRef,
+    unregisterPlayback,
+  ]);
 
   useEffect(() => stop, [stop]);
 
@@ -712,6 +844,17 @@ function useLatest<T>(value: T) {
   return ref;
 }
 
+function stopRegisteredPlayback(
+  playbackStops: Map<PlaybackRegistration, () => void>,
+): void {
+  const stops = Array.from(playbackStops.values());
+  playbackStops.clear();
+
+  for (const stop of stops) {
+    stop();
+  }
+}
+
 function getAudioContextConstructor(): typeof AudioContext {
   const globalWithWebkit = globalThis as typeof globalThis & {
     webkitAudioContext?: typeof AudioContext;
@@ -874,7 +1017,7 @@ function wait(durationMs: number): Promise<void> {
 function schedulePlaybackEnd(
   durationMs: number | undefined,
   timeoutRef: { current: PlaybackTimer | undefined },
-  setIsPlaying: (value: boolean) => void,
+  onEnd: () => void,
 ): void {
   clearPlaybackTimer(timeoutRef);
 
@@ -887,7 +1030,7 @@ function schedulePlaybackEnd(
   }
 
   timeoutRef.current = globalThis.setTimeout(() => {
-    setIsPlaying(false);
+    onEnd();
     timeoutRef.current = undefined;
   }, durationMs);
 }

@@ -88,6 +88,43 @@ function MasterVolumeSlider() {
 }`,
   },
   {
+    id: "stop-all-cues",
+    title: "Stop All Cues",
+    copy: "Use provider cancellation when an acknowledge button must stop active and scheduled playback, not just mute output.",
+    demo: "stop-all",
+    code: `import { useAudioContext, useTone, useVolume } from "@webaudio-kit/react";
+
+function AlertControls() {
+  const audio = useAudioContext();
+  const volume = useVolume();
+  const alertTone = useTone();
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() =>
+          void alertTone.play({
+            frequency: 880,
+            durationMs: 120,
+            gain: 0.12,
+            pattern: { repeat: 3, gapMs: 90 },
+          })
+        }
+      >
+        Start alert
+      </button>
+      <button type="button" onClick={() => audio.stopAll()}>
+        Stop all cues
+      </button>
+      <button type="button" onClick={() => void volume.setGain(0)}>
+        Mute output
+      </button>
+    </>
+  );
+}`,
+  },
+  {
     id: "waveform-and-spectrum-panel",
     title: "Waveform And Spectrum Panel",
     copy: "Render both analyser views so developers can see that the provider graph is live.",

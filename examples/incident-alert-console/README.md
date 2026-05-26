@@ -11,6 +11,7 @@ It shows:
 - `AudioProvider` as the shared browser audio runtime
 - `useAudioContext` for an explicit enable-audio action and state display
 - `useTone`, `useFrequencySweep`, and `useNoise` for severity-specific cues
+- `useAudioContext().stopAll()` for an acknowledge-style stop control
 - `useVolume` for a bounded master volume control
 - `WaveformCanvas` and `SpectrumCanvas` for visible analyser output
 

@@ -133,6 +133,28 @@ const warningTone = useTone({
 });
 ```
 
+Provider-level stop controls are available through `useAudioContext()`:
+
+```tsx
+import { useAudioContext, useVolume } from "@webaudio-kit/react";
+
+function AlertControls() {
+  const audio = useAudioContext();
+  const volume = useVolume();
+
+  return (
+    <>
+      <button onClick={() => audio.stopAll()}>Stop all cues</button>
+      <button onClick={() => void volume.setGain(0)}>Mute output</button>
+    </>
+  );
+}
+```
+
+`stopAll()` cancels active and scheduled React hook playback handles. Muting with
+`useVolume().setGain(0)` changes master output level, but it does not cancel
+already scheduled tones, sweeps, noise bursts, patterns, or test-mode steps.
+
 ## API
 
 - `AudioProvider`

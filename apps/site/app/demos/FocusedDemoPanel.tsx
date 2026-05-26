@@ -53,9 +53,7 @@ function FocusedDemoControls({ slug }: { slug: DemoSlug }) {
   });
 
   const stopAll = () => {
-    tone.stop();
-    sweep.stop();
-    noise.stop();
+    audio.stopAll();
   };
   const boundedFrequency = clampFrequency(frequency);
   const noteName = frequencyToNoteName(boundedFrequency);

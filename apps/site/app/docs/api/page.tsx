@@ -131,6 +131,7 @@ type AudioProviderValue = {
   gain: number;
   ensureAudioContext(): Promise<AudioRuntime>;
   setGain(gain: number): Promise<void>;
+  stopAll(): void;
 };`,
     rows: [
       {
@@ -151,15 +152,26 @@ type AudioProviderValue = {
         notes:
           "Updates provider master gain and clamps invalid input to safe values.",
       },
+      {
+        name: "stopAll()",
+        type: "void",
+        notes:
+          "Stops active and scheduled hook playback handles. Use this for panic buttons or alert acknowledgement; it is stronger than muting gain.",
+      },
     ],
     example: {
-      title: "Context state badge",
+      title: "Context state and panic control",
       code: `import { useAudioContext } from "@webaudio-kit/react";
 
-function AudioStateBadge() {
+function AudioStateControls() {
   const audio = useAudioContext();
 
-  return <span>{audio.state}</span>;
+  return (
+    <>
+      <span>{audio.state}</span>
+      <button onClick={() => audio.stopAll()}>Stop all</button>
+    </>
+  );
 }`,
     },
   },

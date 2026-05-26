@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.9.0 - 2026-05-26
+
+### Added
+
+- Add `stopAll()` to `useAudioContext()` for provider-level panic controls that
+  stop every active or scheduled React hook playback handle.
+- Track playback created by `useTone`, `useFrequencySweep`, `useNoise`, and
+  `useAudioTestMode` so global cancellation clears hook state and timers.
+
+### Changed
+
+- Document the difference between lowering master gain with `useVolume()` and
+  cancelling already scheduled playback with `stopAll()`.
+
 ## 1.8.0 - 2026-05-26
 
 ### Added
