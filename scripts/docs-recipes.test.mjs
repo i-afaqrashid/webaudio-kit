@@ -33,6 +33,7 @@ test("recipe documentation covers common audio patterns", () => {
   }
 
   assert.match(recipes, /browser autoplay/i);
+  assert.match(recipes, /live recipe demos/i);
   assert.match(recipes, /not medical/i);
   assert.match(docsIndex, /Recipes/);
   assert.match(rootReadme, /Recipes/);

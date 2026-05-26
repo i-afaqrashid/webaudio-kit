@@ -939,6 +939,100 @@ select {
   margin: 18px 0;
 }
 
+.recipePatternGrid {
+  align-items: start;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(0, 1fr) minmax(270px, 0.58fr);
+  margin-top: 18px;
+}
+
+.recipeDemoCard {
+  background: #f9fbf4;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  min-width: 0;
+  padding: 14px;
+}
+
+.recipeDemoHeader {
+  align-items: start;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.recipeDemoHeader strong {
+  display: block;
+  font-size: 16px;
+  line-height: 1.15;
+  margin-top: 6px;
+}
+
+.recipeDemoState {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 3px;
+  min-width: 92px;
+  padding: 8px;
+  text-align: right;
+}
+
+.recipeDemoState span,
+.recipeMetricGrid span {
+  color: var(--muted);
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+  font-size: 11px;
+}
+
+.recipeDemoBody {
+  margin-top: 14px;
+}
+
+.recipeDemoBody p {
+  font-size: 13px;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.recipeMetricGrid {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 12px;
+}
+
+.recipeMetricGrid span {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  color: var(--ink);
+  padding: 8px;
+  text-align: center;
+}
+
+.recipeVisualizerStack {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.recipeVisualizerStack canvas {
+  background: #0f120f;
+  border-radius: 6px;
+  display: block;
+  height: auto;
+  width: 100%;
+}
+
+.recipeTestSteps {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .apiTableWrap {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -1250,6 +1344,10 @@ select {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .recipePatternGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .exampleDocItem {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -1356,6 +1454,14 @@ select {
 
   .apiTable {
     min-width: 0;
+  }
+
+  .recipeDemoHeader {
+    display: grid;
+  }
+
+  .recipeDemoState {
+    text-align: left;
   }
 
   .apiTable thead {

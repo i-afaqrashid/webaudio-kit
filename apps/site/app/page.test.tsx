@@ -224,6 +224,21 @@ describe("site pages", () => {
       screen.getByRole("heading", { name: "Safe Autoplay Pattern" }),
     ).toBeTruthy();
     expect(screen.getByText("browser autoplay behavior")).toBeTruthy();
+    expect(screen.getAllByText("Live recipe demo")).toHaveLength(6);
+    expect(
+      screen.getByRole("button", { name: "Play recipe tone" }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: "Run recipe sweep" }),
+    ).toBeTruthy();
+    expect(screen.getByLabelText("Recipe master volume")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Ping analyser" })).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: "Run recipe test" }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: "Start safe audio" }),
+    ).toBeTruthy();
   });
 
   test("site exposes dedicated demo routes", () => {
@@ -240,19 +255,19 @@ describe("site pages", () => {
     expect(
       screen.getByRole("heading", { name: "Release history." }),
     ).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "1.5.3" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "1.5.4" })).toBeTruthy();
     expect(screen.getByText("npm Trusted Publishing")).toBeTruthy();
     expect(
-      screen.getByRole("link", { name: "GitHub release v1.5.3" }),
+      screen.getByRole("link", { name: "GitHub release v1.5.4" }),
     ).toHaveProperty(
       "href",
-      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.5.3",
+      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.5.4",
     );
     expect(
-      screen.getByRole("link", { name: "@webaudio-kit/react 1.5.3" }),
+      screen.getByRole("link", { name: "@webaudio-kit/react 1.5.4" }),
     ).toHaveProperty(
       "href",
-      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.5.3",
+      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.5.4",
     );
   });
 

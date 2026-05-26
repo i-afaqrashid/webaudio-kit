@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CodeBlock, PageShell, SectionHeader } from "../../components";
+import { RecipeLiveDemo, type RecipeDemoKind } from "./RecipeLiveDemo";
 
 export const metadata: Metadata = {
   title: "Recipes",
@@ -8,11 +9,20 @@ export const metadata: Metadata = {
     "Copy-paste webaudio-kit recipes for tone buttons, sweeps, volume controls, visualizers, test mode, and browser autoplay.",
 };
 
-const recipes = [
+type Recipe = {
+  code: string;
+  copy: string;
+  demo: RecipeDemoKind;
+  id: string;
+  title: string;
+};
+
+const recipes: Recipe[] = [
   {
     id: "tone-button",
     title: "Tone Button",
     copy: "Use this when a UI needs one audible confirmation tone.",
+    demo: "tone",
     code: `import { AudioProvider, useTone } from "@webaudio-kit/react";
 
 function ToneButton() {
@@ -37,6 +47,7 @@ export function App() {
     id: "frequency-sweep-control",
     title: "Frequency Sweep Control",
     copy: "Use a bounded sweep when you need to prove scheduling and frequency ramping.",
+    demo: "sweep",
     code: `import { AudioProvider, useFrequencySweep } from "@webaudio-kit/react";
 
 function SweepControl() {
@@ -54,6 +65,7 @@ function SweepControl() {
     id: "master-volume-slider",
     title: "Master Volume Slider",
     copy: "Use provider volume for one shared master gain across tone, sweep, and noise controls.",
+    demo: "volume",
     code: `import { useVolume } from "@webaudio-kit/react";
 
 function MasterVolumeSlider() {
@@ -75,6 +87,7 @@ function MasterVolumeSlider() {
     id: "waveform-and-spectrum-panel",
     title: "Waveform And Spectrum Panel",
     copy: "Render both analyser views so developers can see that the provider graph is live.",
+    demo: "visualizer",
     code: `import { SpectrumCanvas, WaveformCanvas } from "@webaudio-kit/react";
 
 function SignalPanel() {
@@ -90,6 +103,7 @@ function SignalPanel() {
     id: "audio-test-mode",
     title: "Audio Test Mode",
     copy: "Run short low-gain steps for tone output, pan, sweep scheduling, noise buffers, and analyser routing.",
+    demo: "test-mode",
     code: `import { useAudioTestMode } from "@webaudio-kit/react";
 
 function AudioSelfCheck() {
@@ -108,6 +122,7 @@ function AudioSelfCheck() {
     id: "safe-autoplay-pattern",
     title: "Safe Autoplay Pattern",
     copy: "Create and resume audio from a click, tap, or keyboard handler. Browser autoplay behavior is the main rule.",
+    demo: "autoplay",
     code: `import { AudioProvider, useTone } from "@webaudio-kit/react";
 
 function StartAudioButton() {
@@ -173,7 +188,10 @@ export default function RecipeDocsPage() {
                     <h2>{recipe.title}</h2>
                     <p>{recipe.copy}</p>
                   </div>
-                  <CodeBlock title={recipe.title}>{recipe.code}</CodeBlock>
+                  <div className="recipePatternGrid">
+                    <CodeBlock title={recipe.title}>{recipe.code}</CodeBlock>
+                    <RecipeLiveDemo kind={recipe.demo} />
+                  </div>
                 </section>
               ))}
 

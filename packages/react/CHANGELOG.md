@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.5.4 - 2026-05-26
+
+### Added
+
+- Add live recipe demos beside every public recipes page snippet for tone,
+  frequency sweep, master volume, visualizer, audio test mode, and autoplay-safe
+  start patterns.
+
+### Changed
+
+- Link the source Markdown recipes to the public live recipe demos.
+
 ## 1.5.3 - 2026-05-26
 
 ### Added
