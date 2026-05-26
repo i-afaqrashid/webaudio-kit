@@ -8,6 +8,7 @@ documentation.
 
 - Docs overview: https://webaudio-kit.afaqrashid.com/docs
 - API reference: https://webaudio-kit.afaqrashid.com/docs/api
+- Hooks vs Core: https://webaudio-kit.afaqrashid.com/docs/hooks-vs-core
 - Recipes: https://webaudio-kit.afaqrashid.com/docs/recipes
 - Examples: https://webaudio-kit.afaqrashid.com/docs/examples
 - Framework setup: https://webaudio-kit.afaqrashid.com/docs/frameworks
@@ -19,6 +20,7 @@ documentation.
 - Docs directory: https://github.com/i-afaqrashid/webaudio-kit/tree/main/docs
 - Quick start: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/quick-start.md
 - API reference: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/api.md
+- Hooks vs Core: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/hooks-vs-core.md
 - Recipes: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/recipes.md
 - Browser audio guide: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/browser-audio.md
 - Troubleshooting: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/troubleshooting.md

@@ -6,8 +6,10 @@ import {
   SpectrumCanvas,
   WaveformCanvas,
   createDefaultAudioTestModeSteps,
+  type PlaybackHandle,
   useAnalyser,
   useAudioContext,
+  useAudioEngine,
   useAudioTestMode,
   useFrequencySweep,
   useNoise,
@@ -283,6 +285,86 @@ function Harness() {
 function MissingProviderHarness() {
   useAudioContext();
   return null;
+}
+
+function EngineHarness() {
+  const engine = useAudioEngine();
+  const [savedHandle, setSavedHandle] = useState<PlaybackHandle | null>(null);
+  const [runtimeTarget, setRuntimeTarget] = useState("idle");
+
+  return (
+    <div>
+      <span data-testid="engine-state">{engine.state}</span>
+      <span data-testid="engine-runtime-target">{runtimeTarget}</span>
+      <button
+        type="button"
+        onClick={() =>
+          void (async () => {
+            const tone = await engine.playTone({
+              frequency: 880,
+              gain: 0.1,
+            });
+            await engine.playNoise({
+              durationMs: 120,
+              gain: 0.025,
+              type: "pink",
+            });
+            setSavedHandle(tone);
+          })()
+        }
+      >
+        engine layered
+      </button>
+      <button
+        type="button"
+        onClick={() =>
+          void engine.playFrequencySweep({
+            durationMs: 500,
+            from: 250,
+            gain: 0.05,
+            to: 1200,
+          })
+        }
+      >
+        engine sweep
+      </button>
+      <button
+        type="button"
+        onClick={() =>
+          void engine.playTone({
+            durationMs: 50,
+            frequency: 660,
+            gain: 0.08,
+          })
+        }
+      >
+        engine timed tone
+      </button>
+      <button
+        type="button"
+        onClick={() =>
+          void engine.withAudioRuntime((runtime) => {
+            const masterGain = runtime.masterGain as unknown as {
+              connections: unknown[];
+            };
+            setRuntimeTarget(
+              masterGain.connections.includes(runtime.analyser)
+                ? "provider"
+                : "other",
+            );
+          })
+        }
+      >
+        engine runtime
+      </button>
+      <button type="button" onClick={() => savedHandle?.stop()}>
+        engine handle stop
+      </button>
+      <button type="button" onClick={() => engine.stopAll()}>
+        engine stop all
+      </button>
+    </div>
+  );
 }
 
 function ToneOptionsHarness() {
@@ -683,6 +765,97 @@ describe("AudioProvider", () => {
     expect(context.bufferSources.every((source) => source.stopCalls > 0)).toBe(
       true,
     );
+  });
+
+  test("useAudioEngine creates provider-routed layered playback", async () => {
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <EngineHarness />
+      </AudioProvider>,
+    );
+
+    expect(FakeAudioContext.instances).toHaveLength(0);
+    expect(screen.getByTestId("engine-state").textContent).toBe("idle");
+
+    await act(async () => {
+      screen.getByRole("button", { name: "engine layered" }).click();
+    });
+
+    const context = FakeAudioContext.instances[0]!;
+    expect(context.resume).toHaveBeenCalledTimes(1);
+    expect(context.oscillators).toHaveLength(1);
+    expect(context.bufferSources).toHaveLength(1);
+    expect(context.oscillators[0]?.connections).toEqual([context.gains[1]]);
+    expect(context.gains[1]?.connections).toEqual([context.panners[0]]);
+    expect(context.panners[0]?.connections).toEqual([context.gains[0]]);
+    expect(context.bufferSources[0]?.connections).toEqual([context.gains[2]]);
+    expect(context.gains[2]?.connections).toEqual([context.panners[1]]);
+    expect(context.panners[1]?.connections).toEqual([context.gains[0]]);
+  });
+
+  test("useAudioEngine exposes provider runtime without raw context null checks", async () => {
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <EngineHarness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "engine runtime" }).click();
+    });
+
+    expect(screen.getByTestId("engine-runtime-target").textContent).toBe(
+      "provider",
+    );
+    expect(FakeAudioContext.instances[0]?.resume).toHaveBeenCalledTimes(1);
+  });
+
+  test("useAudioEngine stopAll stops provider-scoped core handles", async () => {
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <EngineHarness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "engine layered" }).click();
+    });
+    await act(async () => {
+      screen.getByRole("button", { name: "engine stop all" }).click();
+    });
+
+    const context = FakeAudioContext.instances[0]!;
+    expect(context.oscillators[0]?.stopCalls).toBe(1);
+    expect(context.bufferSources[0]?.stopCalls).toBeGreaterThan(0);
+  });
+
+  test("useAudioEngine removes timed handles from stopAll after playback ends", async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <EngineHarness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "engine timed tone" }).click();
+    });
+    await act(async () => {
+      vi.advanceTimersByTime(50);
+    });
+    await act(async () => {
+      screen.getByRole("button", { name: "engine stop all" }).click();
+    });
+
+    expect(FakeAudioContext.instances[0]?.oscillators[0]?.stopCalls).toBe(1);
   });
 
   test("normalizes initial and updated volume values", async () => {

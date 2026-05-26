@@ -161,10 +161,48 @@ function AlertControls() {
 `useVolume().setGain(0)` changes master output level, but it does not cancel
 already scheduled tones, sweeps, noise bursts, patterns, or test-mode steps.
 
+Provider-scoped playback helpers are available through `useAudioEngine()` when
+custom or layered sounds still need the shared master gain and analyser graph:
+
+```tsx
+import { useAudioEngine } from "@webaudio-kit/react";
+
+function LayeredAlertButton() {
+  const engine = useAudioEngine();
+
+  async function playLayeredAlert() {
+    await engine.playTone({
+      frequency: 880,
+      durationMs: 160,
+      gain: 0.1,
+      type: "square",
+    });
+    await engine.playNoise({
+      durationMs: 120,
+      gain: 0.025,
+      type: "pink",
+    });
+  }
+
+  return (
+    <>
+      <button onClick={() => void playLayeredAlert()}>
+        Play layered alert
+      </button>
+      <button onClick={() => engine.stopAll()}>Stop all</button>
+    </>
+  );
+}
+```
+
+For lower-level work, `engine.withAudioRuntime()` provides the provider runtime
+so custom code can route through `runtime.masterGain`.
+
 ## API
 
 - `AudioProvider`
 - `useAudioContext`
+- `useAudioEngine`
 - `useTone`
 - `useFrequencySweep`
 - `useNoise`
