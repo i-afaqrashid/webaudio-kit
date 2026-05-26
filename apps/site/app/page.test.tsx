@@ -237,15 +237,51 @@ describe("site pages", () => {
   test("site exposes public examples and recipes docs routes", () => {
     expect(existsSync("apps/site/app/docs/examples/page.tsx")).toBe(true);
     expect(existsSync("apps/site/app/docs/recipes/page.tsx")).toBe(true);
+    expect(existsSync("apps/site/app/new/route.ts")).toBe(true);
 
     render(createElement(ExampleDocsPage));
 
     expect(
       screen.getByRole("heading", { name: "Standalone example apps." }),
     ).toBeTruthy();
-    expect(screen.getByText("examples/vite-react")).toBeTruthy();
-    expect(screen.getByText("examples/next-app-router")).toBeTruthy();
-    expect(screen.getByText("examples/plain-react")).toBeTruthy();
+    expect(screen.getAllByText("examples/vite-react").length).toBeGreaterThan(
+      0,
+    );
+    expect(
+      screen.getAllByText("examples/next-app-router").length,
+    ).toBeGreaterThan(0);
+    expect(screen.getAllByText("examples/plain-react").length).toBeGreaterThan(
+      0,
+    );
+    expect(
+      screen.getAllByText("examples/incident-alert-console").length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getByRole("heading", { name: "Run in browser" }),
+    ).toBeTruthy();
+    expect(
+      screen.getAllByRole("link", { name: "Run in StackBlitz" }).length,
+    ).toBeGreaterThanOrEqual(4);
+    expect(
+      screen
+        .getAllByRole("link", { name: "Run in StackBlitz" })
+        .some((link) =>
+          link
+            .getAttribute("href")
+            ?.includes(
+              "stackblitz.com/fork/github/i-afaqrashid/webaudio-kit/tree/main/examples/vite-react",
+            ),
+        ),
+    ).toBe(true);
+    expect(
+      screen
+        .getAllByRole("link", { name: "Run in StackBlitz" })
+        .some((link) =>
+          link
+            .getAttribute("href")
+            ?.includes("examples/incident-alert-console"),
+        ),
+    ).toBe(true);
     expect(screen.getByText("pnpm examples:check")).toBeTruthy();
     expect(
       screen.getAllByRole("link", { name: "Framework comparison" })[0],
@@ -363,19 +399,19 @@ describe("site pages", () => {
     expect(
       screen.getByRole("heading", { name: "Release history." }),
     ).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "1.5.9" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "1.5.10" })).toBeTruthy();
     expect(screen.getByText("npm Trusted Publishing")).toBeTruthy();
     expect(
-      screen.getByRole("link", { name: "GitHub release v1.5.9" }),
+      screen.getByRole("link", { name: "GitHub release v1.5.10" }),
     ).toHaveProperty(
       "href",
-      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.5.9",
+      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.5.10",
     );
     expect(
-      screen.getByRole("link", { name: "@webaudio-kit/react 1.5.9" }),
+      screen.getByRole("link", { name: "@webaudio-kit/react 1.5.10" }),
     ).toHaveProperty(
       "href",
-      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.5.9",
+      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.5.10",
     );
   });
 

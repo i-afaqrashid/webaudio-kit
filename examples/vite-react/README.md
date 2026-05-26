@@ -11,6 +11,10 @@ It shows:
 - `useVolume` for shared master gain
 - `WaveformCanvas` and `SpectrumCanvas` connected to the provider analyser
 
+## Run in StackBlitz
+
+https://stackblitz.com/fork/github/i-afaqrashid/webaudio-kit/tree/main/examples/vite-react?title=webaudio-kit%20Vite%20React%20starter
+
 ## Run
 
 ```sh

@@ -4,15 +4,27 @@ The examples are intentionally small copy-paste references. They use the
 published package API shape and are checked from packed tarballs with
 `pnpm examples:check`.
 
-| Example                 | What to inspect                                                                           | Local command                                                           |
-| ----------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| `vite-react`            | Main Vite React tone, sweep, noise, volume, waveform, and spectrum controls               | `cd examples/vite-react && pnpm install && pnpm dev`                    |
-| `next-app-router`       | Next App Router server/client boundary for `AudioProvider` and hooks                      | `cd examples/next-app-router && pnpm install && pnpm dev`               |
-| `plain-react`           | Smallest plain React provider, tone, volume, waveform, and spectrum setup                 | `cd examples/plain-react && pnpm install && pnpm dev`                   |
-| `vite-tone-panel`       | Legacy Vite React tone panel kept for compatibility                                       | `cd examples/vite-tone-panel && pnpm install && pnpm dev`               |
-| `next-provider-example` | Legacy Next provider example kept for compatibility                                       | `cd examples/next-provider-example && pnpm install && pnpm dev`         |
-| `audio-test-mode`       | Low-gain test mode sequence with analyser canvases                                        | `cd examples/audio-test-mode && pnpm install && pnpm dev`               |
-| `agent-brief-output`    | Example `AGENTS.md` context for Codex, Claude Code, Gemini CLI, OpenCode, and Antigravity | `pnpm dlx @webaudio-kit/cli agent-brief --target codex --out AGENTS.md` |
+| Example                  | What to inspect                                                                           | Local command                                                           |
+| ------------------------ | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `vite-react`             | Main Vite React tone, sweep, noise, volume, waveform, and spectrum controls               | `cd examples/vite-react && pnpm install && pnpm dev`                    |
+| `next-app-router`        | Next App Router server/client boundary for `AudioProvider` and hooks                      | `cd examples/next-app-router && pnpm install && pnpm dev`               |
+| `plain-react`            | Smallest plain React provider, tone, volume, waveform, and spectrum setup                 | `cd examples/plain-react && pnpm install && pnpm dev`                   |
+| `incident-alert-console` | Product-style monitoring console with severity cues and analyser output                   | `cd examples/incident-alert-console && pnpm install && pnpm dev`        |
+| `vite-tone-panel`        | Legacy Vite React tone panel kept for compatibility                                       | `cd examples/vite-tone-panel && pnpm install && pnpm dev`               |
+| `next-provider-example`  | Legacy Next provider example kept for compatibility                                       | `cd examples/next-provider-example && pnpm install && pnpm dev`         |
+| `audio-test-mode`        | Low-gain test mode sequence with analyser canvases                                        | `cd examples/audio-test-mode && pnpm install && pnpm dev`               |
+| `agent-brief-output`     | Example `AGENTS.md` context for Codex, Claude Code, Gemini CLI, OpenCode, and Antigravity | `pnpm dlx @webaudio-kit/cli agent-brief --target codex --out AGENTS.md` |
+
+## Run in browser
+
+These links open the standalone GitHub example folders in StackBlitz:
+
+- Vite React starter: [Run in StackBlitz](https://stackblitz.com/fork/github/i-afaqrashid/webaudio-kit/tree/main/examples/vite-react?title=webaudio-kit%20Vite%20React%20starter)
+- Next App Router starter: [Run in StackBlitz](https://stackblitz.com/fork/github/i-afaqrashid/webaudio-kit/tree/main/examples/next-app-router?title=webaudio-kit%20Next%20App%20Router%20starter)
+- Incident Alert Console: [Run in StackBlitz](https://stackblitz.com/fork/github/i-afaqrashid/webaudio-kit/tree/main/examples/incident-alert-console?title=webaudio-kit%20Incident%20Alert%20Console)
+- Audio test mode: [Run in StackBlitz](https://stackblitz.com/fork/github/i-afaqrashid/webaudio-kit/tree/main/examples/audio-test-mode?title=webaudio-kit%20Audio%20test%20mode)
+
+Default starter: https://webaudio-kit.afaqrashid.com/new
 
 ## Vite React
 
@@ -49,6 +61,15 @@ local dev server and bundler.
 - stop the sequence manually
 - keep volume conservative
 - render waveform and spectrum canvases beside the test sequence
+
+## Incident Alert Console
+
+`examples/incident-alert-console` shows a realistic product UI pattern:
+
+- enable browser audio from an explicit user action
+- map service severity to tone, sweep, and noise cues
+- expose mute, stop, and bounded master volume controls
+- render waveform and spectrum canvases beside incident state
 
 ## Agent brief output
 

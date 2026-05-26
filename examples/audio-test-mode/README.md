@@ -11,6 +11,10 @@ canvases.
 - master volume reset
 - analyser-driven waveform and spectrum output
 
+## Run in StackBlitz
+
+https://stackblitz.com/fork/github/i-afaqrashid/webaudio-kit/tree/main/examples/audio-test-mode?title=webaudio-kit%20Audio%20test%20mode
+
 ## Run
 
 ```sh

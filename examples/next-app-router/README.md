@@ -11,6 +11,10 @@ It shows:
 - tone, sweep, noise, volume, waveform, and spectrum controls
 - playback started from button clicks
 
+## Run in StackBlitz
+
+https://stackblitz.com/fork/github/i-afaqrashid/webaudio-kit/tree/main/examples/next-app-router?title=webaudio-kit%20Next%20App%20Router%20starter
+
 ## Run
 
 ```sh

@@ -1,12 +1,12 @@
 {
   "private": true,
-  "name": "webaudio-kit-plain-react-example",
+  "name": "webaudio-kit-incident-alert-console-example",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "dev": "vite --host 127.0.0.1 --port 4275",
-    "preview": "vite preview --host 127.0.0.1 --port 4275"
+    "dev": "vite --host 127.0.0.1 --port 4473",
+    "preview": "vite preview --host 127.0.0.1 --port 4473"
   },
   "dependencies": {
     "@webaudio-kit/react": "^1.5.10",

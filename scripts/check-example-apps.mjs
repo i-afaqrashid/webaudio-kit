@@ -17,6 +17,7 @@ const examples = [
   "vite-tone-panel",
   "next-provider-example",
   "audio-test-mode",
+  "incident-alert-console",
 ];
 
 if (!skipBuild) {

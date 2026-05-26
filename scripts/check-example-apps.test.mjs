@@ -3,8 +3,15 @@ import { existsSync, readFileSync } from "node:fs";
 import test from "node:test";
 import { join } from "node:path";
 
-const expectedExamples = ["vite-react", "next-app-router", "plain-react"];
+const expectedExamples = [
+  "vite-react",
+  "next-app-router",
+  "plain-react",
+  "incident-alert-console",
+];
 const packageVersion = JSON.parse(readFileSync("package.json", "utf8")).version;
+const stackBlitzBase =
+  "https://stackblitz.com/fork/github/i-afaqrashid/webaudio-kit/tree/main/examples";
 
 test("standalone framework examples are documented and checked", () => {
   const checker = readFileSync("scripts/check-example-apps.mjs", "utf8");
@@ -35,5 +42,26 @@ test("standalone framework examples are documented and checked", () => {
     const readme = readFileSync(join(directory, "README.md"), "utf8");
     assert.match(readme, /pnpm examples:check/);
     assert.match(readme, /@webaudio-kit\/react/);
+    assert.match(readme, new RegExp(`${stackBlitzBase}/${example}`));
   }
+});
+
+test("docs expose one-click browser examples", () => {
+  const readme = readFileSync("README.md", "utf8");
+  const examplesReadme = readFileSync("examples/README.md", "utf8");
+  const docsExamples = readFileSync("docs/examples.md", "utf8");
+  const newRoute = readFileSync("apps/site/app/new/route.ts", "utf8");
+
+  for (const content of [readme, examplesReadme, docsExamples]) {
+    assert.match(content, /Run in StackBlitz/);
+    assert.match(content, new RegExp(`${stackBlitzBase}/vite-react`));
+    assert.match(content, new RegExp(`${stackBlitzBase}/next-app-router`));
+    assert.match(
+      content,
+      new RegExp(`${stackBlitzBase}/incident-alert-console`),
+    );
+  }
+
+  assert.match(readme, /https:\/\/webaudio-kit\.afaqrashid\.com\/new/);
+  assert.match(newRoute, new RegExp(`${stackBlitzBase}/vite-react`));
 });

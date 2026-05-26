@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.5.10 - 2026-05-26
+
+### Added
+
+- Add one-click StackBlitz links for runnable Vite React, Next App Router,
+  audio test mode, and incident alert console examples.
+- Add a `/new` starter route that redirects to the recommended Vite React
+  browser playground.
+- Add `examples/incident-alert-console`, a product-style monitoring dashboard
+  that uses tone, sweep, noise, volume, audio state, waveform, and spectrum
+  surfaces together.
+
+### Changed
+
+- Expand example docs and README coverage so users can launch browser examples
+  before installing or cloning the repository.
+- Extend example and site QA coverage for runnable browser example links.
+
 ## 1.5.9 - 2026-05-26
 
 ### Added

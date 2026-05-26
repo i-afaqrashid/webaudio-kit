@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CodeBlock, PageShell, SectionHeader } from "../../components";
 import { createPageMetadata } from "../../metadata";
+import { playgroundExamples } from "../../playground-links";
 
 const description =
   "Standalone webaudio-kit example apps for Vite React, Next App Router, plain React, and audio test mode.";
@@ -34,6 +35,14 @@ pnpm dev`,
     title: "Plain React",
     copy: "Smallest provider, tone, volume, waveform, and spectrum setup.",
     command: `cd examples/plain-react
+pnpm install
+pnpm dev`,
+  },
+  {
+    path: "examples/incident-alert-console",
+    title: "Incident Alert Console",
+    copy: "Product-style monitoring console with severity cues, master volume, audio state, waveform, and spectrum output.",
+    command: `cd examples/incident-alert-console
 pnpm install
 pnpm dev`,
   },
@@ -93,6 +102,32 @@ export default function ExampleDocsPage() {
 
               <h2 id="check">Check examples</h2>
               <CodeBlock title="repo check">{`pnpm examples:check`}</CodeBlock>
+
+              <h2 id="run-in-browser">Run in browser</h2>
+              <p>
+                These links open standalone GitHub example folders in
+                StackBlitz. The repository remains the source of truth, so the
+                browser examples follow the same package files that CI checks.
+              </p>
+              <div className="exampleDocList">
+                {playgroundExamples.map((example) => (
+                  <article className="exampleDocItem" key={example.path}>
+                    <div>
+                      <span className="kicker">{example.path}</span>
+                      <h3>{example.title}</h3>
+                      <p>{example.copy}</p>
+                    </div>
+                    <a
+                      className="button buttonPrimary"
+                      href={example.url}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      Run in StackBlitz
+                    </a>
+                  </article>
+                ))}
+              </div>
 
               <div className="exampleDocList">
                 {examples.map((example) => (
