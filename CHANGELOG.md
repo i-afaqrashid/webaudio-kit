@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.6.0 - 2026-05-26
+
+### Added
+
+- Add repeat pattern playback to tones, frequency sweeps, and noise bursts with
+  `pattern: { repeat, gapMs }`.
+- Add composite playback handles that stop the full scheduled pattern, including
+  future voices.
+- Allow `useTone()`, `useFrequencySweep()`, and `useNoise()` to be created
+  without construction-time defaults when each `play()` call supplies options.
+
+### Changed
+
+- Keep React `isPlaying` active for the full repeated cue duration.
+- Document alert-cue pattern usage across README, package READMEs, Markdown
+  docs, and the website API reference.
+
 ## 1.5.11 - 2026-05-26
 
 ### Changed

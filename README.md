@@ -75,6 +75,25 @@ Browsers require audio playback to begin from a user gesture. `AudioProvider`
 therefore creates and resumes `AudioContext` lazily when a hook action such as
 `tone.play()` runs from a click or similar interaction.
 
+## Alert cue pattern
+
+Use `pattern` when a UI needs repeated cues such as beep-beep-beep alerts. The
+handle controls the full scheduled pattern, including future voices.
+
+```tsx
+const alertTone = useTone();
+
+await alertTone.play({
+  frequency: 880,
+  durationMs: 120,
+  gain: 0.12,
+  type: "square",
+  pattern: { repeat: 3, gapMs: 90 },
+});
+
+alertTone.stop();
+```
+
 ## Next.js App Router
 
 Keep controls that call hooks in a client component. The package entry includes

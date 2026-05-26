@@ -11,6 +11,7 @@ type ToneOptions = {
   type?: OscillatorType;
   pan?: number;
   durationMs?: number;
+  pattern?: PlaybackPattern;
 };
 ```
 
@@ -20,6 +21,20 @@ type ToneOptions = {
 - `pan`: stereo pan from `-1` left to `1` right. Defaults to `0`.
 - `durationMs`: optional playback duration. If omitted, playback continues
   until stopped.
+- `pattern`: optional repeat pattern. Repeated tones require `durationMs`.
+
+### `PlaybackPattern`
+
+```ts
+type PlaybackPattern = {
+  repeat?: number;
+  gapMs?: number;
+};
+```
+
+- `repeat`: total number of plays. Defaults to `1` and must be a positive
+  integer.
+- `gapMs`: silence between plays. Defaults to `0` and must be non-negative.
 
 ### `FrequencySweepOptions`
 
@@ -31,10 +46,12 @@ type FrequencySweepOptions = {
   gain?: number;
   type?: OscillatorType;
   pan?: number;
+  pattern?: PlaybackPattern;
 };
 ```
 
 `durationMs` is required for sweeps and must be a positive finite number.
+`pattern` schedules repeated sweeps with the same duration and gap.
 
 ### `NoiseOptions`
 
@@ -46,12 +63,14 @@ type NoiseOptions = {
   gain?: number;
   pan?: number;
   type?: NoiseType;
+  pattern?: PlaybackPattern;
 };
 ```
 
 `durationMs` is required for noise playback and must be a positive finite
 number. Noise is generated into a short mono buffer per play call, then routed
 through the same gain and optional stereo panner graph as tones and sweeps.
+`pattern` schedules multiple short buffers without consumer-owned timers.
 
 ### `PlaybackHandle`
 
@@ -74,6 +93,20 @@ const handle = playTone(audioContext, {
   frequency: 440,
   gain: 0.2,
   type: "sine",
+});
+
+handle.stop();
+```
+
+Repeated alert cue:
+
+```ts
+const handle = playTone(audioContext, {
+  frequency: 880,
+  durationMs: 120,
+  gain: 0.12,
+  type: "square",
+  pattern: { repeat: 3, gapMs: 90 },
 });
 
 handle.stop();
@@ -222,6 +255,19 @@ state:
 
 ```tsx
 void tone.play({ frequency: 880, type: "square" });
+```
+
+Hooks can also be created without defaults when every play call supplies the
+required options:
+
+```tsx
+const alertTone = useTone();
+
+await alertTone.play({
+  frequency: 880,
+  durationMs: 120,
+  pattern: { repeat: 3, gapMs: 90 },
+});
 ```
 
 ### `useFrequencySweep(options)`

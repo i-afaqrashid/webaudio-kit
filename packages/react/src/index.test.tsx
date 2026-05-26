@@ -324,6 +324,31 @@ function TimedNoiseHarness() {
   );
 }
 
+function PatternToneHarness() {
+  const tone = useTone();
+
+  return (
+    <div>
+      <span data-testid="pattern-playing">{String(tone.isPlaying)}</span>
+      <button
+        type="button"
+        onClick={() =>
+          void tone.play({
+            durationMs: 50,
+            frequency: 660,
+            pattern: { repeat: 3, gapMs: 25 },
+          })
+        }
+      >
+        play pattern tone
+      </button>
+      <button type="button" onClick={() => tone.stop()}>
+        stop pattern tone
+      </button>
+    </div>
+  );
+}
+
 function AudioTestModeHarness() {
   const testMode = useAudioTestMode({
     gapMs: 20,
@@ -695,6 +720,40 @@ describe("AudioProvider", () => {
     });
 
     expect(screen.getByTestId("timed-noise-playing").textContent).toBe("false");
+  });
+
+  test("supports per-play tone patterns without construction-time defaults", async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <PatternToneHarness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "play pattern tone" }).click();
+    });
+
+    const context = FakeAudioContext.instances[0]!;
+    expect(screen.getByTestId("pattern-playing").textContent).toBe("true");
+    expect(context.oscillators).toHaveLength(3);
+    expect(context.oscillators[0]?.startedAt).toBe(0);
+    expect(context.oscillators[1]?.startedAt).toBeCloseTo(0.075);
+    expect(context.oscillators[2]?.startedAt).toBeCloseTo(0.15);
+
+    await act(async () => {
+      vi.advanceTimersByTime(199);
+    });
+
+    expect(screen.getByTestId("pattern-playing").textContent).toBe("true");
+
+    await act(async () => {
+      vi.advanceTimersByTime(1);
+    });
+
+    expect(screen.getByTestId("pattern-playing").textContent).toBe("false");
   });
 
   test("runs audio test mode steps sequentially with conservative playback", async () => {

@@ -4,6 +4,7 @@ export type ToneOptions = {
   type?: OscillatorType;
   pan?: number;
   durationMs?: number;
+  pattern?: PlaybackPattern;
 };
 
 export type FrequencySweepOptions = {
@@ -13,6 +14,7 @@ export type FrequencySweepOptions = {
   gain?: number;
   type?: OscillatorType;
   pan?: number;
+  pattern?: PlaybackPattern;
 };
 
 export type NoiseType = "white" | "pink" | "brown";
@@ -22,10 +24,16 @@ export type NoiseOptions = {
   gain?: number;
   pan?: number;
   type?: NoiseType;
+  pattern?: PlaybackPattern;
 };
 
 export type PlaybackHandle = {
   stop(): void;
+};
+
+export type PlaybackPattern = {
+  repeat?: number;
+  gapMs?: number;
 };
 
 export type NoteNameOptions = {
@@ -133,23 +141,28 @@ export function playTone(
   options: ToneOptions,
   destination: AudioNode = context.destination,
 ): PlaybackHandle {
-  const graph = createSourcePlaybackGraph(
-    context,
-    context.createOscillator(),
-    options,
-    destination,
-  );
-  const now = context.currentTime;
+  const pattern = normalizePlaybackPattern(options.pattern);
 
-  graph.source.frequency.setValueAtTime(clampFrequency(options.frequency), now);
-  graph.source.start(now);
+  if (pattern.repeat > 1) {
+    const durationSeconds = durationToSeconds(options.durationMs, true);
 
-  const durationSeconds = durationToSeconds(options.durationMs);
-  if (durationSeconds !== undefined) {
-    graph.source.stop(now + durationSeconds);
+    return createPatternPlaybackHandle(
+      context,
+      pattern,
+      durationSeconds,
+      (at) => playToneAt(context, options, destination, at, durationSeconds),
+    );
   }
 
-  return createPlaybackHandle(context, graph);
+  const durationSeconds = durationToSeconds(options.durationMs);
+
+  return playToneAt(
+    context,
+    options,
+    destination,
+    context.currentTime,
+    durationSeconds,
+  );
 }
 
 export function playFrequencySweep(
@@ -157,26 +170,32 @@ export function playFrequencySweep(
   options: FrequencySweepOptions,
   destination: AudioNode = context.destination,
 ): PlaybackHandle {
-  const graph = createSourcePlaybackGraph(
+  const pattern = normalizePlaybackPattern(options.pattern);
+  const durationSeconds = durationToSeconds(options.durationMs, true);
+
+  if (pattern.repeat > 1) {
+    return createPatternPlaybackHandle(
+      context,
+      pattern,
+      durationSeconds,
+      (at) =>
+        playFrequencySweepAt(
+          context,
+          options,
+          destination,
+          at,
+          durationSeconds,
+        ),
+    );
+  }
+
+  return playFrequencySweepAt(
     context,
-    context.createOscillator(),
     options,
     destination,
+    context.currentTime,
+    durationSeconds,
   );
-  const now = context.currentTime;
-  const sweepDurationSeconds = durationToSeconds(options.durationMs, true);
-  const end = now + sweepDurationSeconds;
-
-  graph.source.frequency.cancelScheduledValues(now);
-  graph.source.frequency.setValueAtTime(clampFrequency(options.from), now);
-  graph.source.frequency.linearRampToValueAtTime(
-    clampFrequency(options.to),
-    end,
-  );
-  graph.source.start(now);
-  graph.source.stop(end);
-
-  return createPlaybackHandle(context, graph);
 }
 
 export function playNoise(
@@ -184,7 +203,92 @@ export function playNoise(
   options: NoiseOptions,
   destination: AudioNode = context.destination,
 ): PlaybackHandle {
+  const pattern = normalizePlaybackPattern(options.pattern);
   const durationSeconds = durationToSeconds(options.durationMs, true);
+
+  if (pattern.repeat > 1) {
+    return createPatternPlaybackHandle(
+      context,
+      pattern,
+      durationSeconds,
+      (at) => playNoiseAt(context, options, destination, at, durationSeconds),
+    );
+  }
+
+  return playNoiseAt(
+    context,
+    options,
+    destination,
+    context.currentTime,
+    durationSeconds,
+  );
+}
+
+function playToneAt(
+  context: AudioContext,
+  options: ToneOptions,
+  destination: AudioNode,
+  startTime: number,
+  durationSeconds: number | undefined,
+): PlaybackHandle {
+  const graph = createSourcePlaybackGraph(
+    context,
+    context.createOscillator(),
+    options,
+    destination,
+    startTime,
+  );
+
+  graph.source.frequency.setValueAtTime(
+    clampFrequency(options.frequency),
+    startTime,
+  );
+  graph.source.start(startTime);
+  if (durationSeconds !== undefined) {
+    graph.source.stop(startTime + durationSeconds);
+  }
+
+  return createPlaybackHandle(context, graph);
+}
+
+function playFrequencySweepAt(
+  context: AudioContext,
+  options: FrequencySweepOptions,
+  destination: AudioNode,
+  startTime: number,
+  sweepDurationSeconds: number,
+): PlaybackHandle {
+  const graph = createSourcePlaybackGraph(
+    context,
+    context.createOscillator(),
+    options,
+    destination,
+    startTime,
+  );
+  const end = startTime + sweepDurationSeconds;
+
+  graph.source.frequency.cancelScheduledValues(startTime);
+  graph.source.frequency.setValueAtTime(
+    clampFrequency(options.from),
+    startTime,
+  );
+  graph.source.frequency.linearRampToValueAtTime(
+    clampFrequency(options.to),
+    end,
+  );
+  graph.source.start(startTime);
+  graph.source.stop(end);
+
+  return createPlaybackHandle(context, graph);
+}
+
+function playNoiseAt(
+  context: AudioContext,
+  options: NoiseOptions,
+  destination: AudioNode,
+  startTime: number,
+  durationSeconds: number,
+): PlaybackHandle {
   const source = context.createBufferSource();
   source.buffer = createNoiseBuffer(
     context,
@@ -197,11 +301,11 @@ export function playNoise(
     source,
     options,
     destination,
+    startTime,
   );
-  const now = context.currentTime;
-  const end = now + durationSeconds;
+  const end = startTime + durationSeconds;
 
-  graph.source.start(now);
+  graph.source.start(startTime);
   graph.source.stop(end);
 
   return createPlaybackHandle(context, graph);
@@ -218,22 +322,22 @@ function createSourcePlaybackGraph<TSource extends AudioScheduledSourceNode>(
   source: TSource,
   options: PlaybackGraphOptions,
   destination: AudioNode,
+  startTime = context.currentTime,
 ): PlaybackGraph<TSource> {
   const gain = context.createGain();
   const panner =
     typeof context.createStereoPanner === "function"
       ? context.createStereoPanner()
       : undefined;
-  const now = context.currentTime;
 
   if ("type" in source && typeof options.type === "string") {
     source.type = options.type;
   }
-  gain.gain.setValueAtTime(normalizeGain(options.gain), now);
+  gain.gain.setValueAtTime(normalizeGain(options.gain), startTime);
 
   source.connect(gain);
   if (panner) {
-    panner.pan.setValueAtTime(normalizePan(options.pan), now);
+    panner.pan.setValueAtTime(normalizePan(options.pan), startTime);
     gain.connect(panner);
     panner.connect(destination);
   } else {
@@ -248,6 +352,47 @@ type PlaybackGraphOptions = {
   pan?: number;
   type?: string;
 };
+
+type NormalizedPlaybackPattern = {
+  repeat: number;
+  gapSeconds: number;
+};
+
+function createPatternPlaybackHandle(
+  context: AudioContext,
+  pattern: NormalizedPlaybackPattern,
+  durationSeconds: number,
+  playAt: (startTime: number) => PlaybackHandle,
+): PlaybackHandle {
+  const handles: PlaybackHandle[] = [];
+  const intervalSeconds = durationSeconds + pattern.gapSeconds;
+  const firstStartTime = context.currentTime;
+
+  for (let index = 0; index < pattern.repeat; index += 1) {
+    handles.push(playAt(firstStartTime + index * intervalSeconds));
+  }
+
+  return createCompositePlaybackHandle(handles);
+}
+
+function createCompositePlaybackHandle(
+  handles: PlaybackHandle[],
+): PlaybackHandle {
+  let stopped = false;
+
+  return {
+    stop() {
+      if (stopped) {
+        return;
+      }
+
+      stopped = true;
+      for (const handle of handles) {
+        handle.stop();
+      }
+    },
+  };
+}
 
 function createPlaybackHandle<TSource extends AudioScheduledSourceNode>(
   context: AudioContext,
@@ -368,6 +513,23 @@ function normalizeNoiseType(value: NoiseType | undefined): NoiseType {
   return "white";
 }
 
+function normalizePlaybackPattern(
+  pattern: PlaybackPattern | undefined,
+): NormalizedPlaybackPattern {
+  const repeat = pattern?.repeat ?? 1;
+  const gapMs = pattern?.gapMs ?? 0;
+
+  if (!Number.isInteger(repeat) || repeat < 1) {
+    throw new Error("pattern.repeat must be a positive integer");
+  }
+
+  if (!Number.isFinite(gapMs) || gapMs < 0) {
+    throw new Error("pattern.gapMs must be a non-negative number");
+  }
+
+  return { repeat, gapSeconds: gapMs / 1000 };
+}
+
 function randomBipolar(): number {
   return Math.random() * 2 - 1;
 }
@@ -384,7 +546,10 @@ function positiveModulo(value: number, divisor: number): number {
   return ((value % divisor) + divisor) % divisor;
 }
 
-function durationToSeconds(durationMs: number, required: true): number;
+function durationToSeconds(
+  durationMs: number | undefined,
+  required: true,
+): number;
 function durationToSeconds(
   durationMs: number | undefined,
   required?: false,
