@@ -123,10 +123,12 @@ describe("site pages", () => {
       "href",
       "http://localhost:3000/docs/recipes",
     );
-    expect(screen.getByRole("link", { name: "Example apps" })).toHaveProperty(
-      "href",
-      "http://localhost:3000/docs/examples",
-    );
+    expect(
+      screen.getAllByRole("link", { name: "Example apps" })[0],
+    ).toHaveProperty("href", "http://localhost:3000/docs/examples");
+    expect(
+      screen.getAllByRole("link", { name: "Framework comparison" })[0],
+    ).toHaveProperty("href", "http://localhost:3000/docs/frameworks");
 
     const docsDirectoryLink = screen.getByRole("link", {
       name: "Markdown docs directory",
@@ -234,6 +236,9 @@ describe("site pages", () => {
     expect(screen.getByText("examples/next-app-router")).toBeTruthy();
     expect(screen.getByText("examples/plain-react")).toBeTruthy();
     expect(screen.getByText("pnpm examples:check")).toBeTruthy();
+    expect(
+      screen.getAllByRole("link", { name: "Framework comparison" })[0],
+    ).toHaveProperty("href", "http://localhost:3000/docs/frameworks");
 
     cleanup();
     render(createElement(RecipeDocsPage));
@@ -263,6 +268,35 @@ describe("site pages", () => {
     ).toBeTruthy();
   });
 
+  test("site exposes framework comparison docs for setup differences", async () => {
+    expect(existsSync("apps/site/app/docs/frameworks/page.tsx")).toBe(true);
+
+    const { default: FrameworkDocsPage } =
+      await import("./docs/frameworks/page");
+    render(createElement(FrameworkDocsPage));
+
+    expect(
+      screen.getByRole("heading", { name: "Framework setup comparison." }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { name: "Provider placement" }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("heading", {
+        name: "Next App Router client boundary",
+      }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { name: "Browser autoplay impact" }),
+    ).toBeTruthy();
+    expect(screen.getByText("examples/vite-react")).toBeTruthy();
+    expect(screen.getByText("examples/next-app-router")).toBeTruthy();
+    expect(screen.getByText("examples/plain-react")).toBeTruthy();
+    expect(
+      screen.getAllByRole("link", { name: "Example apps" })[0],
+    ).toHaveProperty("href", "http://localhost:3000/docs/examples");
+  });
+
   test("site exposes dedicated demo routes", () => {
     for (const slug of [
       "tone",
@@ -287,19 +321,19 @@ describe("site pages", () => {
     expect(
       screen.getByRole("heading", { name: "Release history." }),
     ).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "1.5.6" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "1.5.7" })).toBeTruthy();
     expect(screen.getByText("npm Trusted Publishing")).toBeTruthy();
     expect(
-      screen.getByRole("link", { name: "GitHub release v1.5.6" }),
+      screen.getByRole("link", { name: "GitHub release v1.5.7" }),
     ).toHaveProperty(
       "href",
-      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.5.6",
+      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.5.7",
     );
     expect(
-      screen.getByRole("link", { name: "@webaudio-kit/react 1.5.6" }),
+      screen.getByRole("link", { name: "@webaudio-kit/react 1.5.7" }),
     ).toHaveProperty(
       "href",
-      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.5.6",
+      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.5.7",
     );
   });
 

@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.5.7 - 2026-05-26
+
+### Added
+
+- Add framework comparison docs for Vite React, Next App Router, and plain
+  React provider placement.
+- Document Next.js client component boundaries and browser autoplay behavior
+  across framework setups.
+- Link framework comparison docs from the examples and docs pages.
+
+### Changed
+
+- Extend site QA coverage to include the framework comparison route.
+
 ## 1.5.6 - 2026-05-26
 
 ### Added

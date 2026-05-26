@@ -59,16 +59,16 @@ test("buildReleaseNotes includes package links and release references", () => {
   assert.match(notes, /https:\/\/webaudio-kit\.afaqrashid\.com\/docs/);
 });
 
-test("current release notes include package README example work", () => {
+test("current release notes include framework comparison docs work", () => {
   const rootChangelog = readFileSync("CHANGELOG.md", "utf8");
-  const notes = buildReleaseNotes({ changelog: rootChangelog, tag: "v1.5.6" });
+  const notes = buildReleaseNotes({ changelog: rootChangelog, tag: "v1.5.7" });
 
-  assert.match(notes, /framework install snippets/i);
+  assert.match(notes, /framework comparison docs/i);
   assert.match(notes, /Vite React/);
   assert.match(notes, /Next App Router/);
-  assert.match(notes, /browser gesture setup/i);
-  assert.match(notes, /agent brief CLI/i);
-  assert.match(notes, /@webaudio-kit\/cli@1\.5\.6/);
+  assert.match(notes, /plain\s+React/);
+  assert.match(notes, /browser autoplay behavior/i);
+  assert.match(notes, /@webaudio-kit\/cli@1\.5\.7/);
 });
 
 test("getReleasePackages reflects package history", () => {
