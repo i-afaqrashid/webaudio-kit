@@ -8,6 +8,51 @@ React primitives for browser audio apps.
 pnpm add @webaudio-kit/core @webaudio-kit/react
 ```
 
+## Framework Install Snippets
+
+### Vite React
+
+```sh
+pnpm create vite my-audio-app --template react-ts
+cd my-audio-app
+pnpm add @webaudio-kit/core @webaudio-kit/react
+```
+
+### Next App Router
+
+Install in the app root, then keep audio controls inside a client component.
+
+```sh
+pnpm add @webaudio-kit/core @webaudio-kit/react
+```
+
+```tsx
+"use client";
+
+import { AudioProvider, useTone } from "@webaudio-kit/react";
+
+export function AudioControls() {
+  return (
+    <AudioProvider>
+      <ToneButton />
+    </AudioProvider>
+  );
+}
+```
+
+### Plain React
+
+```tsx
+import { createRoot } from "react-dom/client";
+import { AudioProvider } from "@webaudio-kit/react";
+
+createRoot(document.getElementById("root")!).render(
+  <AudioProvider>
+    <App />
+  </AudioProvider>,
+);
+```
+
 ## Example
 
 ```tsx

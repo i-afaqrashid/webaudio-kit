@@ -8,6 +8,14 @@ CLI helpers for webaudio-kit projects.
 pnpm dlx @webaudio-kit/cli agent-brief
 ```
 
+## Package Manager Snippets
+
+```sh
+pnpm dlx @webaudio-kit/cli@latest agent-brief
+npx @webaudio-kit/cli@latest agent-brief
+bunx @webaudio-kit/cli@latest agent-brief
+```
+
 The command writes `AGENTS.md` by default. The generated brief points coding
 agents at the webaudio-kit docs, npm packages, examples, browser autoplay
 constraints, safe gain defaults, and the project boundary that this is not
