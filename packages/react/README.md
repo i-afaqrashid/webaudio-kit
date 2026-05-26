@@ -10,6 +10,10 @@ pnpm add @webaudio-kit/core @webaudio-kit/react
 yarn add @webaudio-kit/core @webaudio-kit/react
 ```
 
+`@webaudio-kit/core` is a peer dependency of `@webaudio-kit/react`. Install both
+packages together so React hooks and any direct core imports share one explicit
+core version in your app.
+
 ## Framework Install Snippets
 
 ### Vite React

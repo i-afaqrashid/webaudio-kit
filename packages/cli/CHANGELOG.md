@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.9.5 - 2026-05-26
+
+### Changed
+
+- Lower the documented Node support floor from `>=22.13` to `>=20.19` and add
+  CI coverage for the Node 20 floor across quality, build, audit, and benchmark
+  workflows.
+- Pin the workspace package manager to `pnpm@10.33.4`, the latest pnpm line
+  that supports Node 20 without engine warnings.
+- Move `@webaudio-kit/core` to an explicit peer dependency of
+  `@webaudio-kit/react`, while keeping it as a workspace dev dependency for
+  package builds.
+- Document why React apps should install both packages together to avoid
+  duplicate-core version confusion.
+
 ## 1.9.4 - 2026-05-26
 
 ### Added

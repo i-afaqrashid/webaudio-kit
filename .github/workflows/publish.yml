@@ -36,8 +36,7 @@ jobs:
 
       - name: Setup pnpm
         run: |
-          corepack enable
-          corepack prepare pnpm@11.3.0 --activate
+          npm install --global pnpm@10.33.4
           pnpm --version
 
       - name: Tool versions

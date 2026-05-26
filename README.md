@@ -47,9 +47,10 @@ pnpm dlx @webaudio-kit/cli agent-brief
 yarn dlx @webaudio-kit/cli@latest agent-brief
 ```
 
-The packages target browser runtimes and Node `>=22.13` for local tooling.
-`@webaudio-kit/react` supports React `>=18.3` and ships as a client entry for
-Next.js App Router projects.
+The packages target browser runtimes and Node `>=20.19` for local tooling.
+`@webaudio-kit/react` supports React `>=18.3`, ships as a client entry for
+Next.js App Router projects, and declares `@webaudio-kit/core` as a peer
+dependency so apps keep one explicit core version.
 
 ## Live demos
 

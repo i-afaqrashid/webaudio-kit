@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [22, 24]
+        node-version: [20.19, 22, 24]
     steps:
       - name: Configure git defaults
         run: git config --global init.defaultBranch main
@@ -37,8 +37,7 @@ jobs:
 
       - name: Setup pnpm
         run: |
-          corepack enable
-          corepack prepare pnpm@11.3.0 --activate
+          npm install --global pnpm@10.33.4
           pnpm --version
 
       - name: Prepare pnpm store
@@ -85,12 +84,11 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6.4.0
         with:
-          node-version: 22
+          node-version: 20.19
 
       - name: Setup pnpm
         run: |
-          corepack enable
-          corepack prepare pnpm@11.3.0 --activate
+          npm install --global pnpm@10.33.4
           pnpm --version
 
       - name: Prepare pnpm store
@@ -103,9 +101,9 @@ jobs:
         uses: actions/cache@v5.0.5
         with:
           path: ${{ env.PNPM_STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-build-node-22-${{ hashFiles('pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-pnpm-build-node-20.19-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-build-node-22-
+            ${{ runner.os }}-pnpm-build-node-20.19-
             ${{ runner.os }}-pnpm-build-
 
       - name: Install
@@ -162,12 +160,11 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6.4.0
         with:
-          node-version: 22
+          node-version: 20.19
 
       - name: Setup pnpm
         run: |
-          corepack enable
-          corepack prepare pnpm@11.3.0 --activate
+          npm install --global pnpm@10.33.4
           pnpm --version
 
       - name: Prepare pnpm store
@@ -180,9 +177,9 @@ jobs:
         uses: actions/cache@v5.0.5
         with:
           path: ${{ env.PNPM_STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-audit-node-22-${{ hashFiles('pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-pnpm-audit-node-20.19-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-audit-node-22-
+            ${{ runner.os }}-pnpm-audit-node-20.19-
             ${{ runner.os }}-pnpm-audit-
 
       - name: Install

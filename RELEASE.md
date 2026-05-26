@@ -2,8 +2,8 @@
 
 ## Requirements
 
-- Node `>=22.13`
-- pnpm `11.3.0`
+- Node `>=20.19`
+- pnpm `10.33.4`
 - npm account with publish access to the `@webaudio-kit` scope
 - GitHub environment `npm`
 - npm trusted publishing configured for every published package
