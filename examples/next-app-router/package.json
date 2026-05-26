@@ -9,8 +9,8 @@
     "start": "next start"
   },
   "dependencies": {
-    "@webaudio-kit/core": "^1.9.5",
-    "@webaudio-kit/react": "^1.9.5",
+    "@webaudio-kit/core": "^1.9.6",
+    "@webaudio-kit/react": "^1.9.6",
     "next": "^16.2.6",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"

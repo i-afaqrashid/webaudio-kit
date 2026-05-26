@@ -399,6 +399,9 @@ pnpm dlx @webaudio-kit/cli agent-brief --target codex --out AGENTS.md`}</CodeBlo
                     presses a key. Call <code>play</code> from a user action and
                     let the provider resume the context there.
                   </p>
+                  <Link href="/docs/api#audio-provider-state-machine">
+                    AudioProvider state machine
+                  </Link>
                 </div>
                 <div className="noteCard">
                   <strong>Safety boundary</strong>

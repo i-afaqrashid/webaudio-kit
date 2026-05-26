@@ -43,6 +43,9 @@ If sound does not play:
 - confirm system volume is low but audible
 - check the console for Web Audio errors
 
+For the full AudioProvider state model, including the custom `idle` value, see
+the [AudioProvider state machine](./api.md#audioprovider-state-machine).
+
 ## Safari Notes
 
 Safari can be stricter about user gestures and device routing. Keep playback
