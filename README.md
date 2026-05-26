@@ -240,6 +240,7 @@ a certified audiology or medical testing system.
 - [Live demos](https://webaudio-kit.afaqrashid.com/demos)
 - [Architecture](./docs/architecture.md)
 - [API reference](./docs/api.md)
+- [Recipes](./docs/recipes.md)
 - [Browser audio guide](./docs/browser-audio.md)
 - [AI agent brief CLI](./docs/agent-brief.md)
 - [Examples](./docs/examples.md)
