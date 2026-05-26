@@ -823,6 +823,29 @@ select {
   padding: 0;
 }
 
+.exampleDocList {
+  display: grid;
+  gap: 0;
+  margin: 24px 0 0;
+}
+
+.exampleDocItem {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 0.68fr) minmax(280px, 0.52fr);
+  padding: 28px 0;
+}
+
+.exampleDocItem h3 {
+  font-size: 24px;
+  margin: 12px 0 8px;
+}
+
+.exampleDocItem p {
+  margin: 0;
+}
+
 .noteStack {
   display: grid;
   gap: 14px;
@@ -1224,6 +1247,10 @@ select {
   }
 
   .apiExampleGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .exampleDocItem {
     grid-template-columns: minmax(0, 1fr);
   }
 }

@@ -725,6 +725,12 @@ export default function ApiDocsPage() {
               <Link className="button buttonPrimary" href="/docs">
                 Back to docs
               </Link>
+              <Link className="button" href="/docs/recipes">
+                Recipes
+              </Link>
+              <Link className="button" href="/docs/examples">
+                Examples
+              </Link>
               <Link className="button" href="/demos">
                 Open demos
               </Link>

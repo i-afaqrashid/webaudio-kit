@@ -64,6 +64,14 @@ export default function DocsPage() {
               sweeps, short noise bursts, pitch helpers, volume control, and
               analyser output for React applications.
             </p>
+            <div className="heroActions">
+              <Link className="button buttonPrimary" href="/docs/recipes">
+                Recipes
+              </Link>
+              <Link className="button" href="/docs/examples">
+                Example apps
+              </Link>
+            </div>
           </div>
         </section>
 

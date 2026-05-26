@@ -9,7 +9,9 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import ChangelogPage from "./changelog/page";
 import { DemoDetail, DemoIndex } from "./demos/demo-pages";
 import ApiDocsPage from "./docs/api/page";
+import ExampleDocsPage from "./docs/examples/page";
 import DocsPage from "./docs/page";
+import RecipeDocsPage from "./docs/recipes/page";
 import HomePage from "./page";
 
 type MockLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"> & {
@@ -117,6 +119,14 @@ describe("site pages", () => {
       "href",
       "http://localhost:3000/docs/api",
     );
+    expect(screen.getByRole("link", { name: "Recipes" })).toHaveProperty(
+      "href",
+      "http://localhost:3000/docs/recipes",
+    );
+    expect(screen.getByRole("link", { name: "Example apps" })).toHaveProperty(
+      "href",
+      "http://localhost:3000/docs/examples",
+    );
 
     const docsDirectoryLink = screen.getByRole("link", {
       name: "Markdown docs directory",
@@ -179,6 +189,41 @@ describe("site pages", () => {
     expect(
       screen.getAllByRole("link", { name: "Open tone demo" })[0],
     ).toHaveProperty("href", "http://localhost:3000/demos/tone");
+    expect(screen.getByRole("link", { name: "Recipes" })).toHaveProperty(
+      "href",
+      "http://localhost:3000/docs/recipes",
+    );
+    expect(screen.getByRole("link", { name: "Examples" })).toHaveProperty(
+      "href",
+      "http://localhost:3000/docs/examples",
+    );
+  });
+
+  test("site exposes public examples and recipes docs routes", () => {
+    expect(existsSync("apps/site/app/docs/examples/page.tsx")).toBe(true);
+    expect(existsSync("apps/site/app/docs/recipes/page.tsx")).toBe(true);
+
+    render(createElement(ExampleDocsPage));
+
+    expect(
+      screen.getByRole("heading", { name: "Standalone example apps." }),
+    ).toBeTruthy();
+    expect(screen.getByText("examples/vite-react")).toBeTruthy();
+    expect(screen.getByText("examples/next-app-router")).toBeTruthy();
+    expect(screen.getByText("examples/plain-react")).toBeTruthy();
+    expect(screen.getByText("pnpm examples:check")).toBeTruthy();
+
+    cleanup();
+    render(createElement(RecipeDocsPage));
+
+    expect(
+      screen.getByRole("heading", { name: "Copy-paste audio recipes." }),
+    ).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Tone Button" })).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { name: "Safe Autoplay Pattern" }),
+    ).toBeTruthy();
+    expect(screen.getByText("browser autoplay behavior")).toBeTruthy();
   });
 
   test("site exposes dedicated demo routes", () => {
@@ -240,6 +285,14 @@ describe("site pages", () => {
     expect(screen.getByRole("link", { name: "API reference" })).toHaveProperty(
       "href",
       "http://localhost:3000/docs/api",
+    );
+    expect(screen.getByRole("link", { name: "Recipes" })).toHaveProperty(
+      "href",
+      "http://localhost:3000/docs/recipes",
+    );
+    expect(screen.getByRole("link", { name: "Examples" })).toHaveProperty(
+      "href",
+      "http://localhost:3000/docs/examples",
     );
     expect(
       screen.getByRole("region", { name: "Live analyser panel" }),
