@@ -8,6 +8,9 @@ medical or audiology software.
 
 Browser autoplay behavior is the main rule these recipes follow.
 
+Live recipe demos for each pattern are available on the public recipes page:
+<https://webaudio-kit.afaqrashid.com/docs/recipes>.
+
 Not medical software: these recipes are not diagnosis, screening, or calibrated
 audiology workflows.
 
