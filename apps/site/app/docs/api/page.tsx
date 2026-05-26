@@ -213,6 +213,12 @@ function useTone(options: ToneOptions): {
         notes: "Optional duration. Omit it for manual stop control.",
       },
       {
+        name: "ToneOptions.envelope",
+        type: "{ attackMs?: number; decayMs?: number; sustain?: number; releaseMs?: number }",
+        notes:
+          "Optional gain envelope. Durations are milliseconds; sustain is a 0..1 gain multiplier.",
+      },
+      {
         name: "ToneOptions.pattern",
         type: "{ repeat?: number; gapMs?: number }",
         notes:
@@ -252,6 +258,7 @@ function AlertCueButton() {
         durationMs: 120,
         gain: 0.12,
         type: "square",
+        envelope: { attackMs: 8, releaseMs: 45 },
         pattern: { repeat: 3, gapMs: 90 },
       })}>
         Play alert cue
@@ -318,6 +325,11 @@ function useFrequencySweep(options: FrequencySweepOptions): {
         defaultValue: "0",
         notes:
           "Stereo pan from -1 left to 1 right when supported by the browser.",
+      },
+      {
+        name: "FrequencySweepOptions.envelope",
+        type: "{ attackMs?: number; decayMs?: number; sustain?: number; releaseMs?: number }",
+        notes: "Optional gain envelope for softer sweep starts and stops.",
       },
       {
         name: "FrequencySweepOptions.pattern",
@@ -401,6 +413,12 @@ function useNoise(options: NoiseOptions): {
         type: '"white" | "pink" | "brown"',
         defaultValue: '"white"',
         notes: "Noise color used when generating the buffer.",
+      },
+      {
+        name: "NoiseOptions.envelope",
+        type: "{ attackMs?: number; decayMs?: number; sustain?: number; releaseMs?: number }",
+        notes:
+          "Optional gain envelope for noise bursts that should fade in or out.",
       },
       {
         name: "NoiseOptions.pattern",
@@ -706,6 +724,12 @@ function AudioSelfCheck() {
 ];
 
 const coreRows: ApiRow[] = [
+  {
+    name: "PlaybackEnvelope",
+    type: "{ attackMs?: number; decayMs?: number; sustain?: number; releaseMs?: number }",
+    notes:
+      "Optional gain envelope shared by tone, sweep, and noise options. Durations use milliseconds.",
+  },
   {
     name: "dbToGain(db)",
     type: "(db: number) => number",

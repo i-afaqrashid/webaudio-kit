@@ -299,6 +299,45 @@ describe("playTone", () => {
     expect(context.oscillators[0]?.stoppedAt).toBe(5.25);
   });
 
+  test("schedules tone gain with an ADSR envelope", () => {
+    const context = new FakeAudioContext();
+
+    playTone(context as unknown as AudioContext, {
+      frequency: 440,
+      gain: 0.5,
+      durationMs: 1000,
+      envelope: { attackMs: 20, decayMs: 80, sustain: 0.4, releaseMs: 120 },
+    });
+
+    expect(context.gains[0]?.gain.events).toEqual([
+      { method: "cancelScheduledValues", value: 1, time: 5 },
+      { method: "setValueAtTime", value: 0, time: 5 },
+      { method: "linearRampToValueAtTime", value: 0.5, time: 5.02 },
+      { method: "linearRampToValueAtTime", value: 0.2, time: 5.1 },
+      { method: "setValueAtTime", value: 0.2, time: 5.88 },
+      { method: "linearRampToValueAtTime", value: 0, time: 6 },
+    ]);
+  });
+
+  test("manual stop uses envelope release before stopping indefinite tones", () => {
+    const context = new FakeAudioContext();
+
+    const handle = playTone(context as unknown as AudioContext, {
+      frequency: 440,
+      gain: 0.4,
+      envelope: { attackMs: 10, releaseMs: 50 },
+    });
+
+    handle.stop();
+
+    expect(context.oscillators[0]?.stoppedAt).toBeCloseTo(5.05);
+    expect(context.gains[0]?.gain.events).toContainEqual({
+      method: "linearRampToValueAtTime",
+      value: 0,
+      time: 5.05,
+    });
+  });
+
   test("schedules repeat patterns with duration and gap spacing", () => {
     const context = new FakeAudioContext();
 
@@ -429,6 +468,29 @@ describe("playTone", () => {
     expect(context.oscillators[0]?.disconnected).toBe(true);
     expect(context.gains[0]?.disconnectCalls).toBe(1);
     expect(context.panners[0]?.disconnected).toBe(true);
+  });
+
+  test("rejects invalid envelope values", () => {
+    const context = new FakeAudioContext();
+
+    expect(() =>
+      playTone(context as unknown as AudioContext, {
+        frequency: 440,
+        envelope: { attackMs: -1 },
+      }),
+    ).toThrow("envelope.attackMs must be a non-negative number");
+    expect(() =>
+      playTone(context as unknown as AudioContext, {
+        frequency: 440,
+        envelope: { sustain: 1.2 },
+      }),
+    ).toThrow("envelope.sustain must be between 0 and 1");
+    expect(() =>
+      playTone(context as unknown as AudioContext, {
+        frequency: 440,
+        envelope: { releaseMs: Number.POSITIVE_INFINITY },
+      }),
+    ).toThrow("envelope.releaseMs must be a non-negative number");
   });
 
   test("requires finite tone durations and valid spacing for repeat patterns", () => {
@@ -603,6 +665,24 @@ describe("playNoise", () => {
     expect(context.buffers).toHaveLength(2);
     expect(context.buffers[0]?.length).toBe(14_400);
     expect(context.buffers[1]?.length).toBe(14_400);
+  });
+
+  test("schedules noise gain with attack and release envelope", () => {
+    const context = new FakeAudioContext();
+
+    playNoise(context as unknown as AudioContext, {
+      durationMs: 500,
+      gain: 0.1,
+      envelope: { attackMs: 10, releaseMs: 80 },
+    });
+
+    expect(context.gains[0]?.gain.events).toEqual([
+      { method: "cancelScheduledValues", value: 1, time: 5 },
+      { method: "setValueAtTime", value: 0, time: 5 },
+      { method: "linearRampToValueAtTime", value: 0.1, time: 5.01 },
+      { method: "setValueAtTime", value: 0.1, time: 5.42 },
+      { method: "linearRampToValueAtTime", value: 0, time: 5.5 },
+    ]);
   });
 
   test("supports pink and brown noise buffers with graph options", () => {

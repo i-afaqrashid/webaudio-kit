@@ -349,6 +349,36 @@ function PatternToneHarness() {
   );
 }
 
+function EnvelopeToneHarness() {
+  const tone = useTone({
+    frequency: 440,
+    gain: 0.2,
+    durationMs: 200,
+    envelope: { attackMs: 10, releaseMs: 40 },
+  });
+
+  return (
+    <div>
+      <span data-testid="envelope-playing">{String(tone.isPlaying)}</span>
+      <button
+        type="button"
+        onClick={() =>
+          void tone.play({
+            envelope: {
+              attackMs: 20,
+              decayMs: 30,
+              sustain: 0.5,
+              releaseMs: 60,
+            },
+          })
+        }
+      >
+        play envelope tone
+      </button>
+    </div>
+  );
+}
+
 function AudioTestModeHarness() {
   const testMode = useAudioTestMode({
     gapMs: 20,
@@ -754,6 +784,31 @@ describe("AudioProvider", () => {
     });
 
     expect(screen.getByTestId("pattern-playing").textContent).toBe("false");
+  });
+
+  test("passes envelope overrides through tone playback", async () => {
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <EnvelopeToneHarness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "play envelope tone" }).click();
+    });
+
+    const context = FakeAudioContext.instances[0]!;
+    expect(screen.getByTestId("envelope-playing").textContent).toBe("true");
+    expect(context.gains[1]?.gain.events).toEqual([
+      { method: "cancelScheduledValues", value: 1, time: 0 },
+      { method: "setValueAtTime", value: 0, time: 0 },
+      { method: "linearRampToValueAtTime", value: 0.2, time: 0.02 },
+      { method: "linearRampToValueAtTime", value: 0.1, time: 0.05 },
+      { method: "setValueAtTime", value: 0.1, time: 0.14 },
+      { method: "linearRampToValueAtTime", value: 0, time: 0.2 },
+    ]);
   });
 
   test("runs audio test mode steps sequentially with conservative playback", async () => {

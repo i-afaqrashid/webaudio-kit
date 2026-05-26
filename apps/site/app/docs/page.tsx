@@ -21,7 +21,7 @@ const apiCards = [
   {
     icon: "sliders" as const,
     title: "useTone",
-    copy: "Plays one oscillator with optional gain, pan, waveform, duration, and repeat pattern controls.",
+    copy: "Plays one oscillator with optional gain, pan, waveform, duration, envelope, and repeat pattern controls.",
   },
   {
     icon: "radio" as const,
@@ -89,6 +89,7 @@ export default function DocsPage() {
               <a href="#copy-paste">Copy-paste</a>
               <a href="#provider">Provider</a>
               <a href="#tone">Tone hook</a>
+              <a href="#envelopes">Envelopes</a>
               <a href="#patterns">Repeat patterns</a>
               <a href="#sweep">Sweep hook</a>
               <a href="#noise">Noise hook</a>
@@ -188,6 +189,20 @@ tone.stop();`}</CodeBlock>
                 </Link>
               </div>
 
+              <h2 id="envelopes">Envelopes</h2>
+              <p>
+                Use <code>envelope</code> on tones, sweeps, and noise bursts to
+                fade generated audio in and out. Attack, decay, and release are
+                milliseconds; sustain is a <code>0..1</code> gain multiplier.
+              </p>
+              <CodeBlock title="soft cue envelope">{`const sweep = useFrequencySweep({
+  from: 440,
+  to: 880,
+  durationMs: 500,
+  gain: 0.12,
+  envelope: { attackMs: 10, decayMs: 40, sustain: 0.7, releaseMs: 80 },
+});`}</CodeBlock>
+
               <h2 id="patterns">Repeat patterns</h2>
               <p>
                 Tones, sweeps, and noise bursts accept{" "}
@@ -202,6 +217,7 @@ await alertTone.play({
   durationMs: 120,
   gain: 0.12,
   type: "square",
+  envelope: { attackMs: 8, releaseMs: 45 },
   pattern: { repeat: 3, gapMs: 90 },
 });
 
