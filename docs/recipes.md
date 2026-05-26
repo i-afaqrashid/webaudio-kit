@@ -332,7 +332,10 @@ function SignalPanel() {
         aria-label="Waveform analyser"
         backgroundColor="#10110f"
         height={160}
+        idleStrokeColor="#394135"
+        lineWidth={2}
         strokeColor="#c8ea3a"
+        style={{ width: "100%", height: 140 }}
         width={720}
       />
       <SpectrumCanvas
@@ -340,7 +343,11 @@ function SignalPanel() {
         backgroundColor="#10110f"
         barColor="#8ed8ff"
         barCount={48}
+        barGap={2}
         height={120}
+        idleBarColor="#394135"
+        minBarHeight={2}
+        style={{ width: "100%", height: 120 }}
         width={720}
       />
     </section>

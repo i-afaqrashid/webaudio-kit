@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.9.2 - 2026-05-26
+
+### Changed
+
+- Document responsive `WaveformCanvas` and `SpectrumCanvas` usage in the root
+  and React README paths.
+- Surface `idleStrokeColor`, `idleBarColor`, `lineWidth`, `barCount`, `barGap`,
+  and `minBarHeight` from npm-facing docs.
+- Explain the difference between canvas backing buffer dimensions and CSS
+  `style` sizing for responsive panels.
+
 ## 1.9.1 - 2026-05-26
 
 ### Changed

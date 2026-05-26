@@ -168,6 +168,44 @@ function AlertControls() {
 }
 ```
 
+## Responsive Visualizers
+
+`WaveformCanvas` and `SpectrumCanvas` forward standard canvas attributes, so
+you can keep the drawing backing buffer stable with `width`/`height` while using
+CSS `style` for responsive layout. The backing buffer controls analyser drawing
+resolution; CSS sizing controls how the canvas fits its container.
+
+```tsx
+import { SpectrumCanvas, WaveformCanvas } from "@webaudio-kit/react";
+
+function SignalPanel() {
+  return (
+    <div style={{ maxWidth: 720 }}>
+      <WaveformCanvas
+        backgroundColor="#10110f"
+        height={180}
+        idleStrokeColor="#394135"
+        lineWidth={2}
+        strokeColor="#c8ea3a"
+        style={{ width: "100%", height: 140 }}
+        width={720}
+      />
+      <SpectrumCanvas
+        backgroundColor="#10110f"
+        barColor="#8ed8ff"
+        barCount={48}
+        barGap={2}
+        height={140}
+        idleBarColor="#394135"
+        minBarHeight={2}
+        style={{ width: "100%", height: 120 }}
+        width={720}
+      />
+    </div>
+  );
+}
+```
+
 ## Next.js App Router
 
 Keep controls that call hooks in a client component. The package entry includes

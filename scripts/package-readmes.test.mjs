@@ -104,6 +104,26 @@ test("React README keeps framework install snippets copy-paste ready", () => {
   assert.match(contents, /createRoot/);
 });
 
+test("README visualizer docs expose responsive sizing and all canvas props", () => {
+  for (const readmePath of ["README.md", "packages/react/README.md"]) {
+    const contents = readFileSync(readmePath, "utf8");
+
+    assert.match(contents, /Responsive Visualizers/i, readmePath);
+    assert.match(contents, /style=\{\{ width: "100%"/, readmePath);
+    assert.match(contents, /backing buffer/i, readmePath);
+    for (const prop of [
+      "idleStrokeColor",
+      "idleBarColor",
+      "lineWidth",
+      "barCount",
+      "barGap",
+      "minBarHeight",
+    ]) {
+      assert.match(contents, new RegExp(prop), readmePath);
+    }
+  }
+});
+
 test("Core README shows browser gesture setup and helper usage", () => {
   const contents = readFileSync("packages/core/README.md", "utf8");
 

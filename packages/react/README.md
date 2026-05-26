@@ -172,7 +172,11 @@ already scheduled tones, sweeps, noise bursts, patterns, or test-mode steps.
 - `createDefaultAudioTestModeSteps`
 - re-exported helpers from `@webaudio-kit/core`
 
-## Visualizers
+## Responsive Visualizers
+
+`width` and `height` set the canvas backing buffer that analyser data is drawn
+into. Use `style`, `className`, or other forwarded canvas attributes for CSS
+layout when the panel needs to stretch with its container.
 
 ```tsx
 import { SpectrumCanvas, WaveformCanvas } from "@webaudio-kit/react";
@@ -183,19 +187,35 @@ function AnalyserPanel() {
       <WaveformCanvas
         backgroundColor="#10110f"
         height={180}
+        idleStrokeColor="#394135"
+        lineWidth={2}
         strokeColor="#c8ea3a"
+        style={{ width: "100%", height: 140 }}
         width={720}
       />
       <SpectrumCanvas
         backgroundColor="#10110f"
         barColor="#8ed8ff"
+        barCount={48}
+        barGap={2}
         height={140}
+        idleBarColor="#394135"
+        minBarHeight={2}
+        style={{ width: "100%", height: 120 }}
         width={720}
       />
     </>
   );
 }
 ```
+
+Useful props:
+
+- `WaveformCanvas`: `strokeColor`, `idleStrokeColor`, `backgroundColor`,
+  `lineWidth`, plus standard canvas props such as `className` and `style`.
+- `SpectrumCanvas`: `barColor`, `idleBarColor`, `backgroundColor`, `barCount`,
+  `barGap`, `minBarHeight`, plus standard canvas props such as `className` and
+  `style`.
 
 ## Docs And Examples
 
