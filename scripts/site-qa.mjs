@@ -8,6 +8,12 @@ export const SITE_QA_ROUTES = [
   {
     path: "/",
     heading: "Browser tones and sweeps without fighting AudioContext.",
+    metadata: {
+      title: "webaudio-kit",
+      description:
+        "React hooks and browser-safe Web Audio primitives for tone tools, frequency sweeps, noise bursts, volume control, and analyser-driven UI.",
+      ogTitle: "webaudio-kit",
+    },
     checks: [
       { role: "button", name: "Play tone" },
       { label: "Waveform analyser" },
@@ -17,6 +23,12 @@ export const SITE_QA_ROUTES = [
   {
     path: "/docs",
     heading: "Install, wrap, play, stop.",
+    metadata: {
+      title: "Docs | webaudio-kit",
+      description:
+        "Install webaudio-kit, wire AudioProvider, use tone, sweep, and noise hooks, and understand browser audio safety constraints.",
+      ogTitle: "Docs | webaudio-kit",
+    },
     checks: [
       { role: "link", name: "API reference" },
       { role: "link", name: "Release history" },
@@ -26,6 +38,12 @@ export const SITE_QA_ROUTES = [
   {
     path: "/docs/api",
     heading: "Public API reference.",
+    metadata: {
+      title: "API Reference | webaudio-kit",
+      description:
+        "Public API reference for webaudio-kit React hooks, visualizer components, audio test mode, and core Web Audio helpers.",
+      ogTitle: "API Reference | webaudio-kit",
+    },
     checks: [
       { text: "AudioProviderProps.initialGain" },
       { text: "ToneOptions.frequency" },
@@ -38,6 +56,12 @@ export const SITE_QA_ROUTES = [
   {
     path: "/docs/examples",
     heading: "Standalone example apps.",
+    metadata: {
+      title: "Examples | webaudio-kit",
+      description:
+        "Standalone webaudio-kit example apps for Vite React, Next App Router, plain React, and audio test mode.",
+      ogTitle: "Examples | webaudio-kit",
+    },
     checks: [
       { text: "examples/vite-react" },
       { text: "examples/next-app-router" },
@@ -49,6 +73,12 @@ export const SITE_QA_ROUTES = [
   {
     path: "/docs/frameworks",
     heading: "Framework setup comparison.",
+    metadata: {
+      title: "Framework Setup Comparison | webaudio-kit",
+      description:
+        "Compare webaudio-kit setup patterns for Vite React, Next App Router, and plain React applications.",
+      ogTitle: "Framework Setup Comparison | webaudio-kit",
+    },
     checks: [
       { text: "Provider placement" },
       { text: "Next App Router client boundary" },
@@ -60,6 +90,12 @@ export const SITE_QA_ROUTES = [
   {
     path: "/docs/recipes",
     heading: "Copy-paste audio recipes.",
+    metadata: {
+      title: "Recipes | webaudio-kit",
+      description:
+        "Copy-paste webaudio-kit recipes for tone buttons, sweeps, volume controls, visualizers, test mode, and browser autoplay.",
+      ogTitle: "Recipes | webaudio-kit",
+    },
     checks: [
       { text: "Tone Button" },
       { text: "Safe Autoplay Pattern" },
@@ -70,6 +106,12 @@ export const SITE_QA_ROUTES = [
   {
     path: "/demos",
     heading: "Focused browser audio workspaces.",
+    metadata: {
+      title: "Demos | webaudio-kit",
+      description:
+        "Focused webaudio-kit demos for tone generation, frequency sweeps, noise bursts, volume, pan, pitch helpers, and visualizer output.",
+      ogTitle: "Demos | webaudio-kit",
+    },
     checks: [
       { role: "link", name: /Tone generator/ },
       { text: "Frequency sweep" },
@@ -78,6 +120,12 @@ export const SITE_QA_ROUTES = [
   {
     path: "/demos/tone",
     heading: "Tone generator.",
+    metadata: {
+      title: "Tone generator | webaudio-kit",
+      description:
+        "Change frequency, gain, pan, and waveform while the analyser confirms the provider graph is live.",
+      ogTitle: "Tone generator | webaudio-kit",
+    },
     checks: [
       { role: "button", name: "Play tone" },
       { label: "Waveform analyser" },
@@ -87,6 +135,12 @@ export const SITE_QA_ROUTES = [
   {
     path: "/demos/visualizer",
     heading: "Visualizer lab.",
+    metadata: {
+      title: "Visualizer lab | webaudio-kit",
+      description:
+        "Render waveform and spectrum canvases as the primary surface with a small pulse control for analyser verification.",
+      ogTitle: "Visualizer lab | webaudio-kit",
+    },
     checks: [
       { role: "button", name: "Pulse visualizer" },
       { label: "Focused waveform analyser" },
@@ -96,6 +150,12 @@ export const SITE_QA_ROUTES = [
   {
     path: "/demos/pitch",
     heading: "Pitch helper.",
+    metadata: {
+      title: "Pitch helper | webaudio-kit",
+      description:
+        "Use frequency clamping and note-name helpers next to playback so pitch UI stays readable.",
+      ogTitle: "Pitch helper | webaudio-kit",
+    },
     checks: [
       { role: "button", name: "Play pitch" },
       { label: "Pitch frequency" },
@@ -105,6 +165,12 @@ export const SITE_QA_ROUTES = [
   {
     path: "/changelog",
     heading: "Release history.",
+    metadata: {
+      title: "Changelog | webaudio-kit",
+      description:
+        "Versioned release history for webaudio-kit packages, GitHub Releases, and npm package pages.",
+      ogTitle: "Changelog | webaudio-kit",
+    },
     checks: [
       { role: "link", name: /GitHub release v\d+\.\d+\.\d+/ },
       { role: "link", name: /@webaudio-kit\/react \d+\.\d+\.\d+/ },
@@ -262,6 +328,10 @@ async function checkRoute(browser, viewport, route) {
       }
     }
 
+    if (route.metadata) {
+      await checkMetadata(page, route.metadata);
+    }
+
     const overflow = await page.evaluate(() => {
       const rootElement = globalThis.document.documentElement;
 
@@ -281,6 +351,76 @@ async function checkRoute(browser, viewport, route) {
     }
   } finally {
     await context.close();
+  }
+}
+
+async function checkMetadata(page, expected) {
+  await expectEqual(await page.title(), expected.title, "title");
+  await expectMeta(
+    page,
+    'meta[name="description"]',
+    expected.description,
+    "description",
+  );
+  await expectMeta(
+    page,
+    'meta[property="og:title"]',
+    expected.ogTitle,
+    "og:title",
+  );
+  await expectMeta(
+    page,
+    'meta[property="og:description"]',
+    expected.description,
+    "og:description",
+  );
+  await expectMeta(
+    page,
+    'meta[name="twitter:card"]',
+    "summary_large_image",
+    "twitter:card",
+  );
+  await expectMeta(
+    page,
+    'meta[name="twitter:title"]',
+    expected.ogTitle,
+    "twitter:title",
+  );
+  await expectMeta(
+    page,
+    'meta[name="twitter:description"]',
+    expected.description,
+    "twitter:description",
+  );
+
+  const ogImage = await page
+    .locator('meta[property="og:image"]')
+    .first()
+    .getAttribute("content");
+  if (!ogImage?.includes("/opengraph-image")) {
+    throw new Error(`og:image mismatch: ${ogImage ?? "missing"}`);
+  }
+
+  const twitterImage = await page
+    .locator('meta[name="twitter:image"]')
+    .first()
+    .getAttribute("content");
+  if (!twitterImage?.includes("/opengraph-image")) {
+    throw new Error(`twitter:image mismatch: ${twitterImage ?? "missing"}`);
+  }
+}
+
+async function expectMeta(page, selector, expected, label) {
+  const value = await page.locator(selector).first().getAttribute("content");
+
+  await expectEqual(value, expected, label);
+}
+
+async function expectEqual(actual, expected, label) {
+  if (actual !== expected) {
+    throw new Error(
+      `${label} mismatch: expected "${expected}", got "${actual}"`,
+    );
   }
 }
 

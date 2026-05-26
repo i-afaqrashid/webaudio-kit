@@ -1,14 +1,23 @@
 import type { Metadata, Viewport } from "next";
+import {
+  HOME_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+  SOCIAL_IMAGE,
+} from "./metadata";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  applicationName: SITE_NAME,
+  authors: [{ name: "Afaq Rashid", url: "https://github.com/i-afaqrashid" }],
+  creator: "Afaq Rashid",
+  publisher: "Afaq Rashid",
   title: {
-    default: "webaudio-kit",
-    template: "%s | webaudio-kit",
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
   },
-  description:
-    "Small React and TypeScript primitives for safe browser tone generation, frequency sweeps, noise bursts, volume control, and analyser-driven UI.",
-  metadataBase: new URL("https://webaudio-kit.afaqrashid.com"),
+  description: HOME_DESCRIPTION,
+  metadataBase: SITE_URL,
   icons: {
     icon: [
       { url: "/favicon.ico" },
@@ -17,10 +26,18 @@ export const metadata: Metadata = {
     shortcut: "/favicon.ico",
   },
   openGraph: {
-    title: "webaudio-kit",
-    description:
-      "React hooks and browser-safe Web Audio primitives for tone tools, frequency sweeps, and noise-burst prototypes.",
-    images: ["/assets/demo-screenshot.png"],
+    title: SITE_NAME,
+    description: HOME_DESCRIPTION,
+    siteName: SITE_NAME,
+    type: "website",
+    url: "/",
+    images: [SOCIAL_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: HOME_DESCRIPTION,
+    images: [SOCIAL_IMAGE.url],
   },
 };
 

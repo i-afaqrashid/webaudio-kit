@@ -6,12 +6,16 @@ import {
   getPackageLinks,
 } from "./changelog-data";
 import { PageShell } from "../components";
+import { createPageMetadata } from "../metadata";
 
-export const metadata: Metadata = {
+const description =
+  "Versioned release history for webaudio-kit packages, GitHub Releases, and npm package pages.";
+
+export const metadata: Metadata = createPageMetadata({
   title: "Changelog",
-  description:
-    "Versioned release history for webaudio-kit packages, GitHub Releases, and npm package pages.",
-};
+  description,
+  path: "/changelog",
+});
 
 export default function ChangelogPage() {
   const releases = getChangelogReleases();

@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CodeBlock, PageShell, SectionHeader } from "../../components";
+import { createPageMetadata } from "../../metadata";
 
-export const metadata: Metadata = {
+const description =
+  "Public API reference for webaudio-kit React hooks, visualizer components, audio test mode, and core Web Audio helpers.";
+
+export const metadata: Metadata = createPageMetadata({
   title: "API Reference",
-  description:
-    "Public API reference for webaudio-kit React hooks, visualizer components, audio test mode, and core Web Audio helpers.",
-};
+  description,
+  path: "/docs/api",
+});
 
 type ApiRow = {
   name: string;

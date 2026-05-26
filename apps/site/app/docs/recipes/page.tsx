@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CodeBlock, PageShell, SectionHeader } from "../../components";
+import { createPageMetadata } from "../../metadata";
 import { RecipeLiveDemo, type RecipeDemoKind } from "./RecipeLiveDemo";
 
-export const metadata: Metadata = {
+const description =
+  "Copy-paste webaudio-kit recipes for tone buttons, sweeps, volume controls, visualizers, test mode, and browser autoplay.";
+
+export const metadata: Metadata = createPageMetadata({
   title: "Recipes",
-  description:
-    "Copy-paste webaudio-kit recipes for tone buttons, sweeps, volume controls, visualizers, test mode, and browser autoplay.",
-};
+  description,
+  path: "/docs/recipes",
+});
 
 type Recipe = {
   code: string;

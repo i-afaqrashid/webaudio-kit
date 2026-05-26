@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CodeBlock, PageShell, SectionHeader } from "../../components";
+import { createPageMetadata } from "../../metadata";
 
-export const metadata: Metadata = {
+const description =
+  "Standalone webaudio-kit example apps for Vite React, Next App Router, plain React, and audio test mode.";
+
+export const metadata: Metadata = createPageMetadata({
   title: "Examples",
-  description:
-    "Standalone webaudio-kit example apps for Vite React, Next App Router, plain React, and audio test mode.",
-};
+  description,
+  path: "/docs/examples",
+});
 
 const examples = [
   {

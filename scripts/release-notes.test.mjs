@@ -59,16 +59,16 @@ test("buildReleaseNotes includes package links and release references", () => {
   assert.match(notes, /https:\/\/webaudio-kit\.afaqrashid\.com\/docs/);
 });
 
-test("current release notes include framework comparison docs work", () => {
+test("current release notes include social metadata work", () => {
   const rootChangelog = readFileSync("CHANGELOG.md", "utf8");
-  const notes = buildReleaseNotes({ changelog: rootChangelog, tag: "v1.5.7" });
+  const notes = buildReleaseNotes({ changelog: rootChangelog, tag: "v1.5.8" });
 
-  assert.match(notes, /framework comparison docs/i);
-  assert.match(notes, /Vite React/);
-  assert.match(notes, /Next App Router/);
-  assert.match(notes, /plain\s+React/);
-  assert.match(notes, /browser autoplay behavior/i);
-  assert.match(notes, /@webaudio-kit\/cli@1\.5\.7/);
+  assert.match(notes, /centralized route metadata/i);
+  assert.match(notes, /Open Graph/);
+  assert.match(notes, /Twitter summary-card/i);
+  assert.match(notes, /social preview image/i);
+  assert.match(notes, /non-medical wording/i);
+  assert.match(notes, /@webaudio-kit\/cli@1\.5\.8/);
 });
 
 test("getReleasePackages reflects package history", () => {
