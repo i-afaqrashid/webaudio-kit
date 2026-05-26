@@ -66,6 +66,80 @@ function SweepControl() {
 }`,
   },
   {
+    id: "monitoring-alert-cues",
+    title: "Monitoring Alert Cues",
+    copy: "Map incident severity to conservative cue profiles, then fire playback only when severity changes.",
+    demo: "monitoring",
+    code: `import {
+  AudioProvider,
+  useAudioContext,
+  useFrequencySweep,
+  useTone,
+  useVolume,
+} from "@webaudio-kit/react";
+import { useEffect, useRef, useState } from "react";
+
+const severityProfiles = {
+  healthy: null,
+  warning: {
+    kind: "tone",
+    options: {
+      frequency: 760,
+      durationMs: 130,
+      gain: 0.09,
+      type: "triangle",
+      pattern: { repeat: 2, gapMs: 100 },
+    },
+  },
+  critical: {
+    kind: "sweep",
+    options: {
+      from: 520,
+      to: 1800,
+      durationMs: 620,
+      gain: 0.1,
+      type: "sawtooth",
+      pattern: { repeat: 2, gapMs: 140 },
+    },
+  },
+};
+
+function MonitoringAlertCues({ severity }) {
+  const audio = useAudioContext();
+  const tone = useTone();
+  const sweep = useFrequencySweep();
+  const volume = useVolume();
+  const previousSeverityRef = useRef("healthy");
+  const [muted, setMuted] = useState(false);
+
+  useEffect(() => {
+    const previousSeverity = previousSeverityRef.current;
+    previousSeverityRef.current = severity;
+
+    if (muted || previousSeverity === severity) return;
+
+    const profile = severityProfiles[severity];
+    if (!profile) return audio.stopAll();
+    if (profile.kind === "tone") void tone.play(profile.options);
+    else void sweep.play(profile.options);
+  }, [audio, muted, severity, sweep, tone]);
+
+  async function setMutedOutput(nextMuted) {
+    setMuted(nextMuted);
+    await volume.setGain(nextMuted ? 0 : 0.2);
+  }
+
+  return (
+    <>
+      <button onClick={() => audio.stopAll()}>Acknowledge</button>
+      <button onClick={() => void setMutedOutput(!muted)}>
+        {muted ? "Unmute" : "Mute"}
+      </button>
+    </>
+  );
+}`,
+  },
+  {
     id: "master-volume-slider",
     title: "Master Volume Slider",
     copy: "Use provider volume for one shared master gain across tone, sweep, and noise controls.",

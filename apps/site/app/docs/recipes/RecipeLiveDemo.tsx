@@ -14,6 +14,7 @@ import {
 
 export type RecipeDemoKind =
   | "autoplay"
+  | "monitoring"
   | "stop-all"
   | "sweep"
   | "test-mode"
@@ -23,6 +24,7 @@ export type RecipeDemoKind =
 
 const demoLabels: Record<RecipeDemoKind, string> = {
   autoplay: "Autoplay-safe start",
+  monitoring: "Severity cue profile",
   "stop-all": "Provider stop all",
   sweep: "250 Hz to 8000 Hz",
   "test-mode": "Low-gain sequence",
@@ -62,6 +64,8 @@ function RecipeLiveDemoControls({ kind }: { kind: RecipeDemoKind }) {
     gain: 0.08,
     type: "sine",
   });
+  const monitoringTone = useTone();
+  const monitoringSweep = useFrequencySweep();
   const testMode = useAudioTestMode();
 
   const stopAll = () => {
@@ -88,6 +92,32 @@ function RecipeLiveDemoControls({ kind }: { kind: RecipeDemoKind }) {
     await safeStart.play();
   };
 
+  const runWarningProfile = async () => {
+    stopAll();
+    await monitoringTone.play({
+      durationMs: 130,
+      envelope: { attackMs: 8, releaseMs: 55 },
+      frequency: 760,
+      gain: 0.09,
+      pattern: { repeat: 2, gapMs: 100 },
+      type: "triangle",
+    });
+  };
+
+  const runCriticalProfile = async () => {
+    stopAll();
+    await monitoringSweep.play({
+      durationMs: 620,
+      envelope: { attackMs: 12, releaseMs: 90 },
+      filter: { frequency: 2200, q: 0.8 },
+      from: 520,
+      gain: 0.1,
+      pattern: { repeat: 2, gapMs: 140 },
+      to: 1800,
+      type: "sawtooth",
+    });
+  };
+
   const runTestMode = async () => {
     stopAll();
     await testMode.run();
@@ -101,9 +131,13 @@ function RecipeLiveDemoControls({ kind }: { kind: RecipeDemoKind }) {
         ? "analyser"
         : safeStart.isPlaying
           ? "started"
-          : testMode.isRunning
-            ? "test"
-            : "idle";
+          : monitoringTone.isPlaying
+            ? "warning"
+            : monitoringSweep.isPlaying
+              ? "critical"
+              : testMode.isRunning
+                ? "test"
+                : "idle";
 
   return (
     <div className="recipeDemoCard" aria-label={`${demoLabels[kind]} demo`}>
@@ -188,6 +222,38 @@ function RecipeLiveDemoControls({ kind }: { kind: RecipeDemoKind }) {
             </button>
             <button className="button" onClick={stopAll} type="button">
               Stop
+            </button>
+          </div>
+        </div>
+      ) : null}
+      {kind === "monitoring" ? (
+        <div className="recipeDemoBody">
+          <p>
+            Runs warning or critical severity profiles with repeat patterns and
+            conservative gain. Use acknowledge to cancel scheduled cues.
+          </p>
+          <div className="recipeMetricGrid" aria-label="Monitoring profiles">
+            <span>warning</span>
+            <span>critical</span>
+            <span>stopAll()</span>
+          </div>
+          <div className="demoActions">
+            <button
+              className="button buttonPrimary"
+              onClick={() => void runWarningProfile()}
+              type="button"
+            >
+              Run warning profile
+            </button>
+            <button
+              className="button buttonPrimary"
+              onClick={() => void runCriticalProfile()}
+              type="button"
+            >
+              Run critical profile
+            </button>
+            <button className="button" onClick={stopAll} type="button">
+              Acknowledge
             </button>
           </div>
         </div>
