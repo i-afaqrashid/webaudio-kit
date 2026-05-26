@@ -8,6 +8,7 @@ shipping `webaudio-kit`.
 - [Quick start](./quick-start.md)
 - [Live demos](https://webaudio-kit.afaqrashid.com/demos)
 - [API reference](./api.md)
+- [Hooks vs Core](./hooks-vs-core.md)
 - [Recipes](./recipes.md)
 - [Architecture](./architecture.md)
 - [Browser audio guide](./browser-audio.md)

@@ -381,6 +381,7 @@ a certified audiology or medical testing system.
 - [Product plan](./product-plan.md)
 - [Publicity plan](./publicity-plan.md)
 - [Technical docs](./docs/README.md)
+- [Hooks vs Core](./docs/hooks-vs-core.md)
 - [Markdown docs fallback](https://github.com/i-afaqrashid/webaudio-kit/tree/main/docs)
 - [LLM docs index](https://webaudio-kit.afaqrashid.com/llms.txt)
 - [Live demos](https://webaudio-kit.afaqrashid.com/demos)

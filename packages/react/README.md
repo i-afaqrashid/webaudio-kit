@@ -224,6 +224,7 @@ Useful props:
 ## Docs And Examples
 
 - API reference: https://webaudio-kit.afaqrashid.com/docs/api
+- Hooks vs Core: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/hooks-vs-core.md
 - Recipes: https://webaudio-kit.afaqrashid.com/docs/recipes
 - Example apps: https://webaudio-kit.afaqrashid.com/docs/examples
 - Markdown docs: https://github.com/i-afaqrashid/webaudio-kit/tree/main/docs

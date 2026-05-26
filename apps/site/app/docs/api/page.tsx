@@ -901,6 +901,9 @@ export default function ApiDocsPage() {
               <Link className="button" href="/docs/examples">
                 Examples
               </Link>
+              <Link className="button" href="/docs/hooks-vs-core">
+                Hooks vs Core
+              </Link>
               <Link className="button" href="/demos">
                 Open demos
               </Link>
@@ -1047,6 +1050,9 @@ const note = frequencyToNoteName(440, { includeCents: true });`}</CodeBlock>
                 <div className="docActionLinks">
                   <Link className="button" href="/docs#helpers">
                     Back to helper overview
+                  </Link>
+                  <Link className="button" href="/docs/hooks-vs-core">
+                    Hooks vs Core
                   </Link>
                   <Link className="button" href="/demos/pitch">
                     Open pitch helper demo

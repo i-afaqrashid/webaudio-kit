@@ -240,6 +240,9 @@ export default function ExampleDocsPage() {
               <Link className="button" href="/docs/api">
                 API reference
               </Link>
+              <Link className="button" href="/docs/hooks-vs-core">
+                Hooks vs Core
+              </Link>
             </div>
           </div>
         </section>
@@ -326,6 +329,9 @@ export default function ExampleDocsPage() {
                 </Link>
                 <Link className="button" href="/docs/frameworks">
                   Framework comparison
+                </Link>
+                <Link className="button" href="/docs/hooks-vs-core">
+                  Hooks vs Core
                 </Link>
                 <Link className="button" href="/docs">
                   Docs guide
