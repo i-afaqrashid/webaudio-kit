@@ -1,6 +1,6 @@
 {
   "name": "@webaudio-kit/react",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "type": "module",
   "description": "React primitives for browser audio apps.",
   "license": "MIT",

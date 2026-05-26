@@ -5,7 +5,9 @@ React primitives for browser audio apps.
 ## Install
 
 ```sh
+npm install @webaudio-kit/core @webaudio-kit/react
 pnpm add @webaudio-kit/core @webaudio-kit/react
+yarn add @webaudio-kit/core @webaudio-kit/react
 ```
 
 ## Framework Install Snippets

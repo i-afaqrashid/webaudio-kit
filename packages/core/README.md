@@ -9,7 +9,9 @@ audio math.
 ## Install
 
 ```sh
+npm install @webaudio-kit/core
 pnpm add @webaudio-kit/core
+yarn add @webaudio-kit/core
 ```
 
 ## Example

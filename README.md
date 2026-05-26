@@ -14,13 +14,37 @@ lifecycles.
 ## Install
 
 ```sh
+npm install @webaudio-kit/core @webaudio-kit/react
 pnpm add @webaudio-kit/core @webaudio-kit/react
+yarn add @webaudio-kit/core @webaudio-kit/react
+```
+
+## Quick React Example
+
+```tsx
+import { AudioProvider, useTone } from "@webaudio-kit/react";
+
+function App() {
+  return (
+    <AudioProvider>
+      <ToneButton />
+    </AudioProvider>
+  );
+}
+
+function ToneButton() {
+  const tone = useTone({ frequency: 440, gain: 0.12, durationMs: 500 });
+
+  return <button onClick={() => void tone.play()}>Play 440Hz</button>;
+}
 ```
 
 Optional CLI helper:
 
 ```sh
+npx @webaudio-kit/cli@latest agent-brief
 pnpm dlx @webaudio-kit/cli agent-brief
+yarn dlx @webaudio-kit/cli@latest agent-brief
 ```
 
 The packages target browser runtimes and Node `>=22.13` for local tooling.

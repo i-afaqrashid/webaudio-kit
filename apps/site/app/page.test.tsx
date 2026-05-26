@@ -423,19 +423,19 @@ describe("site pages", () => {
     expect(
       screen.getByRole("heading", { name: "Release history." }),
     ).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "1.9.0" })).toBeTruthy();
-    expect(screen.getAllByText(/stopAll/).length).toBeGreaterThan(0);
+    expect(screen.getByRole("heading", { name: "1.9.1" })).toBeTruthy();
+    expect(screen.getByText(/npm\/pnpm\/yarn/)).toBeTruthy();
     expect(
-      screen.getByRole("link", { name: "GitHub release v1.9.0" }),
+      screen.getByRole("link", { name: "GitHub release v1.9.1" }),
     ).toHaveProperty(
       "href",
-      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.9.0",
+      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.9.1",
     );
     expect(
-      screen.getByRole("link", { name: "@webaudio-kit/react 1.9.0" }),
+      screen.getByRole("link", { name: "@webaudio-kit/react 1.9.1" }),
     ).toHaveProperty(
       "href",
-      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.9.0",
+      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.9.1",
     );
   });
 

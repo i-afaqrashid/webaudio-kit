@@ -26,6 +26,45 @@ const requiredLinks = [
   "https://github.com/i-afaqrashid/webaudio-kit/releases",
 ];
 
+const aboveFoldReadmes = [
+  {
+    path: "README.md",
+    commands: [
+      /npm install @webaudio-kit\/core @webaudio-kit\/react/,
+      /pnpm add @webaudio-kit\/core @webaudio-kit\/react/,
+      /yarn add @webaudio-kit\/core @webaudio-kit\/react/,
+    ],
+    example: [/AudioProvider/, /useTone/, /tone\.play/],
+  },
+  {
+    path: "packages/react/README.md",
+    commands: [
+      /npm install @webaudio-kit\/core @webaudio-kit\/react/,
+      /pnpm add @webaudio-kit\/core @webaudio-kit\/react/,
+      /yarn add @webaudio-kit\/core @webaudio-kit\/react/,
+    ],
+    example: [/AudioProvider/, /useTone/, /tone\.play/],
+  },
+  {
+    path: "packages/core/README.md",
+    commands: [
+      /npm install @webaudio-kit\/core/,
+      /pnpm add @webaudio-kit\/core/,
+      /yarn add @webaudio-kit\/core/,
+    ],
+    example: [/playTone/, /new AudioContext/, /handle\.stop/],
+  },
+  {
+    path: "packages/cli/README.md",
+    commands: [
+      /npx @webaudio-kit\/cli@latest agent-brief/,
+      /pnpm dlx @webaudio-kit\/cli@latest agent-brief/,
+      /yarn dlx @webaudio-kit\/cli@latest agent-brief/,
+    ],
+    example: [/agent-brief/, /--out docs\/AI_AGENT\.md/],
+  },
+];
+
 test("package READMEs expose public npm-facing docs links", () => {
   for (const readme of packageReadmes) {
     const contents = readFileSync(readme.path, "utf8");
@@ -34,6 +73,21 @@ test("package READMEs expose public npm-facing docs links", () => {
 
     for (const link of requiredLinks) {
       assert.match(contents, new RegExp(escapeRegExp(link)), readme.path);
+    }
+  }
+});
+
+test("README first screens explain the product and expose npm pnpm yarn commands", () => {
+  for (const readme of aboveFoldReadmes) {
+    const contents = readFileSync(readme.path, "utf8");
+    const firstScreen = contents.slice(0, 1600);
+
+    assert.match(firstScreen, /browser audio/i, readme.path);
+    for (const command of readme.commands) {
+      assert.match(firstScreen, command, readme.path);
+    }
+    for (const example of readme.example) {
+      assert.match(firstScreen, example, readme.path);
     }
   }
 });

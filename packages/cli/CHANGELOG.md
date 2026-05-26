@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.9.1 - 2026-05-26
+
+### Changed
+
+- Improve the root and package README first screens with clearer product copy,
+  npm/pnpm/yarn install commands, and compact copy-paste examples.
+- Add release-note coverage so npm-facing README openings keep showing the
+  package purpose, install commands, and real public API usage.
+
 ## 1.9.0 - 2026-05-26
 
 ### Added
