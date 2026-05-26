@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.9.13 - 2026-05-26
+
+### Added
+
+- Add `previewStep` and `previewStepIndex` to `useAudioTestMode()` so UIs can
+  render the first planned diagnostic step before a run starts without changing
+  `currentStep` active-step semantics.
+- Update API docs, recipes, public site snippets, and the audio test mode
+  example to use the preview state for first-render labels and step highlighting.
+
 ## 1.9.12 - 2026-05-26
 
 ### Added

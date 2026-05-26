@@ -156,14 +156,16 @@ function AudioSelfCheck() {
         {testMode.isRunning ? "Restart test mode" : "Run test mode"}
       </button>
       <button onClick={testMode.stop}>Stop</button>
-      <p>{testMode.currentStep?.label ?? "Idle"}</p>
+      <p>{testMode.previewStep?.label ?? "Idle"}</p>
     </>
   );
 }
 ```
 
 The default sequence uses short low-gain steps for tone output, stereo pan,
-sweep scheduling, noise buffers, and analyser routing.
+sweep scheduling, noise buffers, and analyser routing. `previewStep` and
+`previewStepIndex` show the first planned step before run; `currentStep`
+remains `null` until a step is actively playing.
 
 ## Important Browser Rule
 

@@ -533,7 +533,7 @@ function AudioSelfCheck() {
 
   return (
     <section>
-      <p>{testMode.currentStep?.label ?? "Idle"}</p>
+      <p>{testMode.previewStep?.label ?? "Idle"}</p>
       <button type="button" onClick={() => void testMode.run()}>
         {testMode.isRunning ? "Restart test mode" : "Run test mode"}
       </button>
@@ -541,8 +541,15 @@ function AudioSelfCheck() {
         Stop
       </button>
       <ol>
-        {testMode.steps.map((step) => (
-          <li key={step.id}>{step.label}</li>
+        {testMode.steps.map((step, index) => (
+          <li
+            aria-current={
+              testMode.previewStepIndex === index ? "step" : undefined
+            }
+            key={step.id}
+          >
+            {step.label}
+          </li>
         ))}
       </ol>
     </section>
@@ -557,6 +564,10 @@ export function App() {
   );
 }
 ```
+
+Use `currentStep` when you need the step actively playing right now. Use
+`previewStep` when the UI should show the first planned step before the run
+starts.
 
 ## Safe Autoplay Pattern
 

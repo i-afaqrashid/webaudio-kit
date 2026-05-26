@@ -190,12 +190,19 @@ function AudioTestModePanel() {
 
   return (
     <section>
-      <p>{testMode.currentStep?.label ?? "Idle"}</p>
+      <p>{testMode.previewStep?.label ?? "Idle"}</p>
       <button onClick={() => void testMode.run()}>Run test mode</button>
       <button onClick={testMode.stop}>Stop</button>
       <ol>
-        {testMode.steps.map((step) => (
-          <li key={step.id}>{step.label}</li>
+        {testMode.steps.map((step, index) => (
+          <li
+            aria-current={
+              testMode.previewStepIndex === index ? "step" : undefined
+            }
+            key={step.id}
+          >
+            {step.label}
+          </li>
         ))}
       </ol>
     </section>
@@ -204,7 +211,9 @@ function AudioTestModePanel() {
 ```
 
 `useAudioTestMode()` is a developer diagnostic helper. It runs only after a user
-action and uses conservative default gains.
+action and uses conservative default gains. `previewStep` renders the first
+planned step before playback starts, while `currentStep` stays reserved for the
+step actively playing.
 
 ## Metronome Prototype
 

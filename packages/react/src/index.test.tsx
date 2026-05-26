@@ -602,6 +602,10 @@ function AudioTestModeHarness() {
       <span data-testid="test-label">
         {testMode.currentStep?.label ?? "idle"}
       </span>
+      <span data-testid="test-preview-index">{testMode.previewStepIndex}</span>
+      <span data-testid="test-preview-label">
+        {testMode.previewStep?.label ?? "none"}
+      </span>
       <span data-testid="test-count">{testMode.steps.length}</span>
       <button type="button" onClick={() => void testMode.run()}>
         run test mode
@@ -1314,6 +1318,10 @@ describe("AudioProvider", () => {
 
     expect(screen.getByTestId("test-count").textContent).toBe("3");
     expect(screen.getByTestId("test-label").textContent).toBe("idle");
+    expect(screen.getByTestId("test-preview-index").textContent).toBe("0");
+    expect(screen.getByTestId("test-preview-label").textContent).toBe(
+      "Center tone",
+    );
 
     await act(async () => {
       screen.getByRole("button", { name: "run test mode" }).click();
@@ -1322,6 +1330,9 @@ describe("AudioProvider", () => {
     expect(screen.getByTestId("test-running").textContent).toBe("true");
     expect(screen.getByTestId("test-index").textContent).toBe("0");
     expect(screen.getByTestId("test-label").textContent).toBe("Center tone");
+    expect(screen.getByTestId("test-preview-label").textContent).toBe(
+      "Center tone",
+    );
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(70);
@@ -1329,6 +1340,10 @@ describe("AudioProvider", () => {
 
     expect(screen.getByTestId("test-index").textContent).toBe("1");
     expect(screen.getByTestId("test-label").textContent).toBe("Left tone");
+    expect(screen.getByTestId("test-preview-index").textContent).toBe("1");
+    expect(screen.getByTestId("test-preview-label").textContent).toBe(
+      "Left tone",
+    );
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(70);
@@ -1343,6 +1358,10 @@ describe("AudioProvider", () => {
 
     expect(screen.getByTestId("test-running").textContent).toBe("false");
     expect(screen.getByTestId("test-label").textContent).toBe("idle");
+    expect(screen.getByTestId("test-preview-index").textContent).toBe("0");
+    expect(screen.getByTestId("test-preview-label").textContent).toBe(
+      "Center tone",
+    );
 
     const context = FakeAudioContext.instances[0]!;
     expect(context.oscillators).toHaveLength(2);
@@ -1388,6 +1407,9 @@ describe("AudioProvider", () => {
     const context = FakeAudioContext.instances[0]!;
     expect(screen.getByTestId("test-running").textContent).toBe("false");
     expect(screen.getByTestId("test-label").textContent).toBe("idle");
+    expect(screen.getByTestId("test-preview-label").textContent).toBe(
+      "Center tone",
+    );
     expect(context.oscillators[0]?.stopCalls).toBeGreaterThan(0);
     expect(context.oscillators).toHaveLength(1);
     expect(context.bufferSources).toHaveLength(0);

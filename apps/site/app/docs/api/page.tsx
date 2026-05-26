@@ -953,6 +953,8 @@ type AudioTestModeControls = {
   currentStep: AudioTestModeStep | null;
   currentStepIndex: number;
   isRunning: boolean;
+  previewStep: AudioTestModeStep | null;
+  previewStepIndex: number;
   run(): Promise<void>;
   stop(): void;
   steps: AudioTestModeStep[];
@@ -973,7 +975,20 @@ type AudioTestModeControls = {
       {
         name: "AudioTestModeControls.currentStep",
         type: "AudioTestModeStep | null",
-        notes: "The active step while the sequence is running.",
+        notes:
+          "The active step while the sequence is running. currentStep remains null before run.",
+      },
+      {
+        name: "AudioTestModeControls.previewStep",
+        type: "AudioTestModeStep | null",
+        notes:
+          "previewStep points at the first planned step before run, follows the active step while running, and resets to the first planned step after stop.",
+      },
+      {
+        name: "AudioTestModeControls.previewStepIndex",
+        type: "number",
+        notes:
+          "Index for previewStep. Use it to highlight the initial or active planned step without guessing.",
       },
       {
         name: "AudioTestModeControls.run()",
@@ -992,7 +1007,7 @@ function AudioSelfCheck() {
     <>
       <button onClick={() => void testMode.run()}>Run test</button>
       <button onClick={testMode.stop}>Stop</button>
-      <span>{testMode.currentStep?.label ?? "Idle"}</span>
+      <span>{testMode.previewStep?.label ?? "Idle"}</span>
     </>
   );
 }`,

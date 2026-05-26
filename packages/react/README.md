@@ -212,6 +212,17 @@ Call `unlock()` from a click, tap, or keyboard handler. `status` can be `idle`,
 `unlocking`, `suspended`, `running`, `closed`, or `error`, which lets an app
 separate browser autoplay policy from library behavior.
 
+Audio test mode exposes both active and preview state. `currentStep` remains
+`null` before a run starts because it means the step actively playing right now.
+Use `previewStep` and `previewStepIndex` for initial UI that should show the
+first planned diagnostic step.
+
+```tsx
+const testMode = useAudioTestMode();
+
+<p>{testMode.previewStep?.label ?? "Idle"}</p>;
+```
+
 Provider-scoped playback helpers are available through `useAudioEngine()` when
 custom or layered sounds still need the shared master gain and analyser graph:
 
