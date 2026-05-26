@@ -85,6 +85,7 @@ import {
   useAudioTestMode,
   useNoise,
   useTone,
+  useVolumeControl,
 } from "@webaudio-kit/react";
 
 if (!buildAgentBrief().includes("webaudio-kit Agent Brief")) {
@@ -115,7 +116,8 @@ if (
   typeof useAudioUnlock !== "function" ||
   typeof useAudioTestMode !== "function" ||
   typeof useNoise !== "function" ||
-  typeof useTone !== "function"
+  typeof useTone !== "function" ||
+  typeof useVolumeControl !== "function"
 ) {
   throw new Error("react exports failed");
 }

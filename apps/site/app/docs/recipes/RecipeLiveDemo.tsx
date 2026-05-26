@@ -4,13 +4,12 @@ import {
   AudioProvider,
   SpectrumCanvas,
   WaveformCanvas,
-  gainToDb,
   useAudioContext,
   useAudioTestMode,
   useAudioUnlock,
   useFrequencySweep,
   useTone,
-  useVolume,
+  useVolumeControl,
 } from "@webaudio-kit/react";
 
 export type RecipeDemoKind =
@@ -47,7 +46,11 @@ export function RecipeLiveDemo({ kind }: { kind: RecipeDemoKind }) {
 function RecipeLiveDemoControls({ kind }: { kind: RecipeDemoKind }) {
   const audio = useAudioContext();
   const unlock = useAudioUnlock();
-  const volume = useVolume();
+  const volumeControl = useVolumeControl({
+    label: "Recipe master volume",
+    maxGain: 0.5,
+    storageKey: "webaudio-kit-recipe-volume",
+  });
   const tone = useTone({ frequency: 440, gain: 0.14, type: "sine" });
   const sweep = useFrequencySweep({
     durationMs: 2400,
@@ -200,20 +203,10 @@ function RecipeLiveDemoControls({ kind }: { kind: RecipeDemoKind }) {
         <div className="recipeDemoBody">
           <label className="rangeControl">
             <span>Recipe master volume</span>
-            <input
-              aria-label="Recipe master volume"
-              max="0.5"
-              min="0"
-              onChange={(event) =>
-                void volume.setGain(Number(event.currentTarget.value))
-              }
-              step="0.01"
-              type="range"
-              value={volume.gain}
-            />
+            <input {...volumeControl.inputProps} />
             <small>
-              gain {volume.gain.toFixed(2)} / {gainToDb(volume.gain).toFixed(1)}{" "}
-              dB
+              gain {volumeControl.gain.toFixed(2)} /{" "}
+              {volumeControl.db.toFixed(1)} dB
             </small>
           </label>
           <div className="demoActions">
@@ -226,6 +219,13 @@ function RecipeLiveDemoControls({ kind }: { kind: RecipeDemoKind }) {
             </button>
             <button className="button" onClick={stopAll} type="button">
               Stop
+            </button>
+            <button
+              className="button"
+              onClick={() => void volumeControl.resetGain()}
+              type="button"
+            >
+              Reset volume
             </button>
           </div>
         </div>

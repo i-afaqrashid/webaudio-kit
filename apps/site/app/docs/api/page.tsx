@@ -693,6 +693,78 @@ function VolumeSlider() {
     demo: { href: "/demos/volume", label: "Open volume demo" },
   },
   {
+    id: "use-volume-control",
+    title: "useVolumeControl",
+    packageName: "@webaudio-kit/react",
+    summary:
+      "Builds a controlled volume slider from provider gain, safe bounds, and optional persisted browser preference storage.",
+    signature: `function useVolumeControl(options?: VolumeControlOptions): VolumeControlControls;
+
+type VolumeControlOptions = {
+  defaultGain?: number;
+  label?: string;
+  maxGain?: number;
+  minGain?: number;
+  step?: number;
+  storageKey?: string;
+};
+
+type VolumeControlControls = {
+  gain: number;
+  db: number;
+  inputProps: VolumeControlInputProps;
+  resetGain(): Promise<void>;
+  setGain(gain: number): Promise<void>;
+};`,
+    rows: [
+      {
+        name: "inputProps",
+        type: "range input props",
+        notes:
+          "Spread onto an input to keep provider gain as the controlled value without duplicate React state.",
+      },
+      {
+        name: "storageKey",
+        type: "string | undefined",
+        notes:
+          "Optional localStorage key for persisting a browser preference. Omit it when volume should reset each session.",
+      },
+      {
+        name: "minGain / maxGain / step",
+        type: "number",
+        notes:
+          "Safe bounds for the controlled slider. Defaults are 0, 1, and 0.01.",
+      },
+      {
+        name: "resetGain()",
+        type: "Promise<void>",
+        notes:
+          "Removes the stored preference and restores defaultGain through provider gain.",
+      },
+    ],
+    example: {
+      title: "Controlled Volume Slider",
+      code: `import { useVolumeControl } from "@webaudio-kit/react";
+
+function ControlledVolumeSlider() {
+  const volume = useVolumeControl({
+    label: "Master volume",
+    maxGain: 0.5,
+    storageKey: "app-master-gain",
+  });
+
+  return (
+    <>
+      <input {...volume.inputProps} />
+      <span>{volume.gain.toFixed(2)}</span>
+      <button onClick={() => void volume.resetGain()}>Reset volume</button>
+    </>
+  );
+}`,
+    },
+    demo: { href: "/demos/volume", label: "Open volume demo" },
+  },
+  {
     id: "use-analyser",
     title: "useAnalyser",
     packageName: "@webaudio-kit/react",
@@ -1056,6 +1128,7 @@ export default function ApiDocsPage() {
               <a href="#use-frequency-sweep">useFrequencySweep</a>
               <a href="#use-noise">useNoise</a>
               <a href="#use-volume">useVolume</a>
+              <a href="#use-volume-control">useVolumeControl</a>
               <a href="#use-analyser">useAnalyser</a>
               <a href="#waveform-canvas">WaveformCanvas</a>
               <a href="#spectrum-canvas">SpectrumCanvas</a>

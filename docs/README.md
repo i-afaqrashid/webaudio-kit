@@ -50,6 +50,7 @@ The current public surface is intentionally small:
 - `useNoise`
 - `useAudioTestMode`
 - `useVolume`
+- `useVolumeControl`
 - `useAnalyser`
 - `WaveformCanvas`
 - `SpectrumCanvas`

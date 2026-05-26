@@ -194,6 +194,35 @@ function AlertControls() {
 }
 ```
 
+## Controlled Volume Slider
+
+Use `useVolumeControl()` when a slider should read and write provider gain
+directly. This avoids duplicate app state for volume controls, keeps safe bounds
+in one place, and can persist a preference with `storageKey`.
+
+```tsx
+import { useVolumeControl } from "@webaudio-kit/react";
+
+function ControlledVolumeSlider() {
+  const volume = useVolumeControl({
+    maxGain: 0.5,
+    storageKey: "app-master-gain",
+  });
+
+  return (
+    <>
+      <input {...volume.inputProps} />
+      <span>{volume.gain.toFixed(2)}</span>
+      <button onClick={() => void volume.resetGain()}>Reset volume</button>
+    </>
+  );
+}
+```
+
+Keep app-level state only for product preferences outside audio output, such as
+whether a workspace is muted by policy. For normal master volume UI, provider
+gain should be the source of truth.
+
 ## Provider-scoped playback
 
 Use `useAudioEngine()` when a React screen needs custom or layered sounds but
@@ -328,6 +357,7 @@ export function AudioIsland() {
   - `useNoise`
   - `useAudioTestMode`
   - `useVolume`
+  - `useVolumeControl`
   - `useAnalyser`
   - `WaveformCanvas`
   - `SpectrumCanvas`
