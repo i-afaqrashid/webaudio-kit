@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
   buildReleaseNotes,
@@ -56,6 +57,22 @@ test("buildReleaseNotes includes package links and release references", () => {
   assert.match(notes, /@webaudio-kit\/cli@1\.5\.1/);
   assert.match(notes, /Full changelog/);
   assert.match(notes, /https:\/\/webaudio-kit\.afaqrashid\.com\/docs/);
+});
+
+test("current release notes include docs and examples launch work", () => {
+  const rootChangelog = readFileSync("CHANGELOG.md", "utf8");
+  const notes = buildReleaseNotes({ changelog: rootChangelog, tag: "v1.5.3" });
+
+  assert.match(notes, /standalone example apps/i);
+  assert.match(notes, /recipe documentation/);
+  assert.match(notes, /package README/);
+  assert.match(
+    notes,
+    /https:\/\/webaudio-kit\.afaqrashid\.com\/docs\/examples/,
+  );
+  assert.match(notes, /https:\/\/webaudio-kit\.afaqrashid\.com\/docs\/recipes/);
+  assert.match(notes, /https:\/\/webaudio-kit\.afaqrashid\.com\/demos/);
+  assert.match(notes, /@webaudio-kit\/cli@1\.5\.3/);
 });
 
 test("getReleasePackages reflects package history", () => {

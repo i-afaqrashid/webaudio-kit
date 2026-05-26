@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.5.3 - 2026-05-26
+
+### Added
+
+- Add standalone example apps for Vite React, Next App Router, plain React, and
+  audio test mode, with package-tarball checks before release.
+- Add public example and recipe documentation for tone buttons, sweeps, master
+  volume, visualizers, audio test mode, and safe browser autoplay behavior.
+
+### Changed
+
+- Link examples and recipes from the public docs, API reference, and focused
+  demo pages, with desktop and mobile site QA coverage for the new routes.
+- Point every package README at the public API reference, recipes, examples,
+  demos, changelog, GitHub Releases, and npm package pages.
+- Expand generated GitHub Release notes with direct API, recipe, example, and
+  demo links.
+
 ## 1.5.2 - 2026-05-25
 
 ### Changed
