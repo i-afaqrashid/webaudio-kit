@@ -34,6 +34,15 @@ Next.js App Router projects.
 - [Noise burst](https://webaudio-kit.afaqrashid.com/demos/noise)
 - [Audio test mode](https://webaudio-kit.afaqrashid.com/demos/test-mode)
 
+## Run in browser
+
+- [Vite React starter](https://stackblitz.com/fork/github/i-afaqrashid/webaudio-kit/tree/main/examples/vite-react?title=webaudio-kit%20Vite%20React%20starter) - Run in StackBlitz
+- [Next App Router starter](https://stackblitz.com/fork/github/i-afaqrashid/webaudio-kit/tree/main/examples/next-app-router?title=webaudio-kit%20Next%20App%20Router%20starter) - Run in StackBlitz
+- [Incident Alert Console](https://stackblitz.com/fork/github/i-afaqrashid/webaudio-kit/tree/main/examples/incident-alert-console?title=webaudio-kit%20Incident%20Alert%20Console) - Run in StackBlitz
+- [Audio test mode](https://stackblitz.com/fork/github/i-afaqrashid/webaudio-kit/tree/main/examples/audio-test-mode?title=webaudio-kit%20Audio%20test%20mode) - Run in StackBlitz
+
+Default starter: https://webaudio-kit.afaqrashid.com/new
+
 ## 30-second example
 
 ```tsx
@@ -248,6 +257,7 @@ a certified audiology or medical testing system.
 - [AI agent brief CLI](./docs/agent-brief.md)
 - [Examples](./docs/examples.md)
 - [Example apps](./examples/README.md)
+- [Run in StackBlitz](https://webaudio-kit.afaqrashid.com/new)
 - [Design references](./design/README.md)
 - [Deployment](./docs/deployment.md)
 - [Safety](./docs/safety.md)

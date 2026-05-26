@@ -83,7 +83,9 @@ export const SITE_QA_ROUTES = [
     checks: [
       { text: "examples/vite-react" },
       { text: "examples/next-app-router" },
+      { text: "examples/incident-alert-console" },
       { text: "pnpm examples:check" },
+      { role: "link", name: "Run in StackBlitz" },
       { role: "link", name: "Framework comparison" },
       { role: "link", name: "Recipes" },
     ],

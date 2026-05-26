@@ -10,6 +10,10 @@ It shows:
 - `useVolume` for master gain
 - waveform and spectrum canvases with default styling
 
+## Run in StackBlitz
+
+https://stackblitz.com/fork/github/i-afaqrashid/webaudio-kit/tree/main/examples/plain-react?title=webaudio-kit%20Plain%20React%20starter
+
 ## Run
 
 ```sh

@@ -15,6 +15,8 @@ Each page includes a copy-paste snippet and the full analyser-backed workspace.
 
 The repository keeps standalone examples under `examples/`:
 
+- `examples/incident-alert-console`: product-style monitoring console with
+  severity cues, volume control, context state, waveform, and spectrum output.
 - `examples/vite-react`: main Vite React tone, sweep, noise, volume, waveform,
   and spectrum controls.
 - `examples/next-app-router`: Next App Router server/client boundary for
@@ -31,6 +33,21 @@ The repository keeps standalone examples under `examples/`:
 Run `pnpm examples:check` from the repository root to pack local packages into
 tarballs, install them into temporary copies of the examples, and build each
 example app without workspace shortcuts.
+
+## Run in browser
+
+These StackBlitz links open standalone GitHub example folders. GitHub remains
+the source of truth, so the examples stay aligned with the code that CI checks.
+
+| Example                 | Browser link                                                                                                                                                                |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Vite React starter      | [Run in StackBlitz](https://stackblitz.com/fork/github/i-afaqrashid/webaudio-kit/tree/main/examples/vite-react?title=webaudio-kit%20Vite%20React%20starter)                 |
+| Next App Router starter | [Run in StackBlitz](https://stackblitz.com/fork/github/i-afaqrashid/webaudio-kit/tree/main/examples/next-app-router?title=webaudio-kit%20Next%20App%20Router%20starter)     |
+| Incident Alert Console  | [Run in StackBlitz](https://stackblitz.com/fork/github/i-afaqrashid/webaudio-kit/tree/main/examples/incident-alert-console?title=webaudio-kit%20Incident%20Alert%20Console) |
+| Audio test mode         | [Run in StackBlitz](https://stackblitz.com/fork/github/i-afaqrashid/webaudio-kit/tree/main/examples/audio-test-mode?title=webaudio-kit%20Audio%20test%20mode)               |
+
+The default starter is also available at
+https://webaudio-kit.afaqrashid.com/new.
 
 ## Tone Generator
 
