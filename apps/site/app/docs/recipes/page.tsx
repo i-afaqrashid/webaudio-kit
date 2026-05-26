@@ -23,6 +23,39 @@ type Recipe = {
 
 const recipes: Recipe[] = [
   {
+    id: "enable-audio-button",
+    title: "Enable Audio Button",
+    copy: "Use this when alert cues or monitoring sounds need an explicit first-run user gesture and visible browser autoplay status for idle, suspended, running, and failed unlock states.",
+    demo: "unlock",
+    code: `import { AudioProvider, useAudioUnlock } from "@webaudio-kit/react";
+
+function EnableAudioButton() {
+  const audio = useAudioUnlock();
+
+  return (
+    <div>
+      <button
+        disabled={audio.isUnlocking || audio.isUnlocked}
+        onClick={() => void audio.unlock().catch(() => undefined)}
+        type="button"
+      >
+        {audio.isUnlocked ? "Audio enabled" : "Enable Audio"}
+      </button>
+      <p>Status: {audio.status}</p>
+      {audio.error ? <p>unlock failed</p> : null}
+    </div>
+  );
+}
+
+export function App() {
+  return (
+    <AudioProvider>
+      <EnableAudioButton />
+    </AudioProvider>
+  );
+}`,
+  },
+  {
     id: "tone-button",
     title: "Tone Button",
     copy: "Use this when a UI needs one audible confirmation tone.",

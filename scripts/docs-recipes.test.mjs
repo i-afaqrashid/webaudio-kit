@@ -10,6 +10,7 @@ test("recipe documentation covers common audio patterns", () => {
   const rootReadme = readFileSync("README.md", "utf8");
 
   for (const heading of [
+    "Enable Audio Button",
     "Tone Button",
     "Frequency Sweep Control",
     "Monitoring Alert Cues",
@@ -23,6 +24,7 @@ test("recipe documentation covers common audio patterns", () => {
 
   for (const importName of [
     "AudioProvider",
+    "useAudioUnlock",
     "useTone",
     "useFrequencySweep",
     "useVolume",

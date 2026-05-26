@@ -176,6 +176,67 @@ function AudioStateControls() {
     },
   },
   {
+    id: "use-audio-unlock",
+    title: "useAudioUnlock",
+    packageName: "@webaudio-kit/react",
+    summary:
+      "Returns a small UX primitive for explicit browser audio enablement from a button, tap target, or keyboard action.",
+    signature: `function useAudioUnlock(): AudioUnlockControls;
+
+type AudioUnlockControls = {
+  unlock(): Promise<AudioRuntime>;
+  status: "idle" | "unlocking" | "suspended" | "running" | "closed" | "error";
+  state: AudioContextState | "idle";
+  isUnlocked: boolean;
+  isUnlocking: boolean;
+  error: Error | null;
+};`,
+    rows: [
+      {
+        name: "unlock()",
+        type: "Promise<AudioRuntime>",
+        notes:
+          "Creates/resumes the provider runtime. Call it from a click, tap, or keyboard handler because browser autoplay policy still requires a user gesture.",
+      },
+      {
+        name: "status",
+        type: '"idle" | "unlocking" | "suspended" | "running" | "closed" | "error"',
+        notes:
+          "Display label for the current unlock UI. Use suspended for blocked browser audio and error for a failed unlock attempt.",
+      },
+      {
+        name: "isUnlocked",
+        type: "boolean",
+        notes:
+          "True when the provider state is running and audio can be used for subsequent cues.",
+      },
+      {
+        name: "error",
+        type: "Error | null",
+        notes:
+          "Stores the last failed unlock error so apps can show retry UI without losing the provider state label.",
+      },
+    ],
+    example: {
+      title: "Enable Audio button",
+      code: `import { useAudioUnlock } from "@webaudio-kit/react";
+
+function EnableAudioButton() {
+  const audio = useAudioUnlock();
+
+  return (
+    <>
+      <button disabled={audio.isUnlocked} onClick={() => void audio.unlock()}>
+        {audio.isUnlocked ? "Audio enabled" : "Enable Audio"}
+      </button>
+      <span>{audio.status}</span>
+      {audio.error ? <span>unlock failed</span> : null}
+    </>
+  );
+}`,
+    },
+  },
+  {
     id: "use-audio-engine",
     title: "useAudioEngine",
     packageName: "@webaudio-kit/react",
@@ -989,6 +1050,7 @@ export default function ApiDocsPage() {
               <a href="#audio-provider">AudioProvider</a>
               <a href="#audio-provider-state-machine">Provider state</a>
               <a href="#use-audio-context">useAudioContext</a>
+              <a href="#use-audio-unlock">useAudioUnlock</a>
               <a href="#use-audio-engine">useAudioEngine</a>
               <a href="#use-tone">useTone</a>
               <a href="#use-frequency-sweep">useFrequencySweep</a>

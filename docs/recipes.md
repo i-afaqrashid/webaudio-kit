@@ -14,6 +14,43 @@ Live recipe demos for each pattern are available on the public recipes page:
 Not medical software: these recipes are not diagnosis, screening, or calibrated
 audiology workflows.
 
+## Enable Audio Button
+
+Use this when alert cues or monitoring sounds need an explicit first-run user
+gesture. The button keeps status visible for `idle`, `suspended`, `running`, and
+failed unlock states so the UI can explain browser autoplay behavior without
+claiming the library can bypass it.
+
+```tsx
+import { AudioProvider, useAudioUnlock } from "@webaudio-kit/react";
+
+function EnableAudioButton() {
+  const audio = useAudioUnlock();
+
+  return (
+    <div>
+      <button
+        disabled={audio.isUnlocking || audio.isUnlocked}
+        onClick={() => void audio.unlock().catch(() => undefined)}
+        type="button"
+      >
+        {audio.isUnlocked ? "Audio enabled" : "Enable Audio"}
+      </button>
+      <p>Status: {audio.status}</p>
+      {audio.error ? <p>unlock failed</p> : null}
+    </div>
+  );
+}
+
+export function App() {
+  return (
+    <AudioProvider>
+      <EnableAudioButton />
+    </AudioProvider>
+  );
+}
+```
+
 ## Tone Button
 
 Use this when a UI needs one audible confirmation tone.

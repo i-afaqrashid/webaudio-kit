@@ -100,6 +100,31 @@ Browsers require audio playback to begin from a user gesture. `AudioProvider`
 therefore creates and resumes `AudioContext` lazily when a hook action such as
 `tone.play()` runs from a click or similar interaction.
 
+## Enable Audio button
+
+Use `useAudioUnlock()` when a product needs an explicit first-run control before
+alert sounds or background UI cues feel reliable. The hook calls the provider
+from the button click and exposes labels for `idle`, `unlocking`, `suspended`,
+`running`, and failed unlock states.
+
+```tsx
+import { useAudioUnlock } from "@webaudio-kit/react";
+
+function EnableAudioButton() {
+  const audio = useAudioUnlock();
+
+  return (
+    <>
+      <button disabled={audio.isUnlocked} onClick={() => void audio.unlock()}>
+        {audio.isUnlocked ? "Audio enabled" : "Enable Audio"}
+      </button>
+      <span>{audio.status}</span>
+      {audio.error ? <span>unlock failed</span> : null}
+    </>
+  );
+}
+```
+
 ## Alert cue pattern
 
 Use `pattern` when a UI needs repeated cues such as beep-beep-beep alerts. The
@@ -296,6 +321,7 @@ export function AudioIsland() {
 - `@webaudio-kit/react`
   - `AudioProvider`
   - `useAudioContext`
+  - `useAudioUnlock`
   - `useAudioEngine`
   - `useTone`
   - `useFrequencySweep`

@@ -204,6 +204,7 @@ describe("site pages", () => {
     for (const heading of [
       "AudioProvider",
       "useAudioContext",
+      "useAudioUnlock",
       "useTone",
       "useFrequencySweep",
       "useNoise",
@@ -348,11 +349,14 @@ describe("site pages", () => {
       screen.getByRole("heading", { name: "Monitoring Alert Cues" }),
     ).toBeTruthy();
     expect(
+      screen.getByRole("heading", { name: "Enable Audio Button" }),
+    ).toBeTruthy();
+    expect(
       screen.getByRole("heading", { name: "Safe Autoplay Pattern" }),
     ).toBeTruthy();
     expect(screen.getByText(/severityProfiles/)).toBeTruthy();
     expect(screen.getByText("browser autoplay behavior")).toBeTruthy();
-    expect(screen.getAllByText("Live recipe demo")).toHaveLength(8);
+    expect(screen.getAllByText("Live recipe demo")).toHaveLength(9);
     expect(
       screen.getByRole("button", { name: "Run critical profile" }),
     ).toBeTruthy();
@@ -370,6 +374,7 @@ describe("site pages", () => {
     expect(
       screen.getByRole("button", { name: "Start safe audio" }),
     ).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Enable Audio" })).toBeTruthy();
   });
 
   test("site exposes framework comparison docs for setup differences", async () => {
@@ -456,19 +461,19 @@ describe("site pages", () => {
     expect(
       screen.getByRole("heading", { name: "Release history." }),
     ).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "1.9.9" })).toBeTruthy();
-    expect(screen.getByText(/useAudioEngine/)).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "1.9.10" })).toBeTruthy();
+    expect(screen.getByText(/useAudioUnlock/)).toBeTruthy();
     expect(
-      screen.getByRole("link", { name: "GitHub release v1.9.9" }),
+      screen.getByRole("link", { name: "GitHub release v1.9.10" }),
     ).toHaveProperty(
       "href",
-      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.9.9",
+      "https://github.com/i-afaqrashid/webaudio-kit/releases/tag/v1.9.10",
     );
     expect(
-      screen.getByRole("link", { name: "@webaudio-kit/react 1.9.9" }),
+      screen.getByRole("link", { name: "@webaudio-kit/react 1.9.10" }),
     ).toHaveProperty(
       "href",
-      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.9.9",
+      "https://www.npmjs.com/package/@webaudio-kit/react/v/1.9.10",
     );
   });
 

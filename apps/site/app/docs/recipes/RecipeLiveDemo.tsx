@@ -7,6 +7,7 @@ import {
   gainToDb,
   useAudioContext,
   useAudioTestMode,
+  useAudioUnlock,
   useFrequencySweep,
   useTone,
   useVolume,
@@ -14,6 +15,7 @@ import {
 
 export type RecipeDemoKind =
   | "autoplay"
+  | "unlock"
   | "monitoring"
   | "stop-all"
   | "sweep"
@@ -24,6 +26,7 @@ export type RecipeDemoKind =
 
 const demoLabels: Record<RecipeDemoKind, string> = {
   autoplay: "Autoplay-safe start",
+  unlock: "Enable audio",
   monitoring: "Severity cue profile",
   "stop-all": "Provider stop all",
   sweep: "250 Hz to 8000 Hz",
@@ -43,6 +46,7 @@ export function RecipeLiveDemo({ kind }: { kind: RecipeDemoKind }) {
 
 function RecipeLiveDemoControls({ kind }: { kind: RecipeDemoKind }) {
   const audio = useAudioContext();
+  const unlock = useAudioUnlock();
   const volume = useVolume();
   const tone = useTone({ frequency: 440, gain: 0.14, type: "sine" });
   const sweep = useFrequencySweep({
@@ -360,6 +364,29 @@ function RecipeLiveDemoControls({ kind }: { kind: RecipeDemoKind }) {
             </button>
             <button className="button" onClick={stopAll} type="button">
               Stop
+            </button>
+          </div>
+        </div>
+      ) : null}
+      {kind === "unlock" ? (
+        <div className="recipeDemoBody">
+          <p>
+            Calls unlock from a user action and keeps browser autoplay status
+            visible before alert cues run.
+          </p>
+          <div className="recipeMetricGrid" aria-label="Audio unlock status">
+            <span>{unlock.status}</span>
+            <span>{unlock.isUnlocked ? "ready" : "not ready"}</span>
+            <span>{unlock.error ? "unlock failed" : "no error"}</span>
+          </div>
+          <div className="demoActions">
+            <button
+              className="button buttonPrimary"
+              disabled={unlock.isUnlocking || unlock.isUnlocked}
+              onClick={() => void unlock.unlock().catch(() => undefined)}
+              type="button"
+            >
+              {unlock.isUnlocked ? "Audio enabled" : "Enable Audio"}
             </button>
           </div>
         </div>

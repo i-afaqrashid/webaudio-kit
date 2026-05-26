@@ -19,6 +19,11 @@ const apiCards = [
     copy: "Creates AudioContext lazily, owns master gain, connects analyser, and exposes audio state to hooks.",
   },
   {
+    icon: "shield" as const,
+    title: "useAudioUnlock",
+    copy: "Build an explicit Enable Audio control with idle, suspended, running, and failed unlock status labels.",
+  },
+  {
     icon: "sliders" as const,
     title: "useTone",
     copy: "Plays oscillator cues with gain, pan, waveform, duration, envelope, filter, detune, voice, and repeat controls.",
