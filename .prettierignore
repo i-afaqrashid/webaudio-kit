@@ -11,5 +11,6 @@ packages/*/dist
 apps/demo/dist
 apps/site/.next
 apps/site/out
+apps/site/public/docs-search-index.json
 product-plan.md
 publicity-plan.md

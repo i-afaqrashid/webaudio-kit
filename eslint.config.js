@@ -22,7 +22,7 @@ export default [
     },
   },
   {
-    files: ["scripts/*.mjs"],
+    files: ["scripts/*.mjs", "apps/*/scripts/*.mjs"],
     languageOptions: {
       globals: {
         console: "readonly",
