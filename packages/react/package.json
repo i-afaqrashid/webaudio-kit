@@ -27,6 +27,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js"
     }
   },
   "files": [
@@ -43,7 +47,7 @@
   "author": "i-afaqrashid <i.afaqrashid@gmail.com>",
   "sideEffects": false,
   "scripts": {
-    "build": "tsup src/index.tsx --format esm --dts --clean --external react --tsconfig ../../tsconfig.base.json"
+    "build": "tsup src/index.tsx src/server.ts --format esm --dts --clean --external react --tsconfig ../../tsconfig.base.json"
   },
   "peerDependencies": {
     "@webaudio-kit/core": "^1.9.13",
