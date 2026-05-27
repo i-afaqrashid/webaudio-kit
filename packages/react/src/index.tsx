@@ -100,6 +100,8 @@ export type VolumeControlControls = {
 export type AudioProviderProps = {
   children: ReactNode;
   initialGain?: number;
+  latencyHint?: AudioContextLatencyCategory | number;
+  sampleRate?: number;
 };
 
 export type CanvasMotionMode = "auto" | "always" | "off";
@@ -265,13 +267,24 @@ const DEFAULT_AUDIO_TEST_STEPS: AudioTestModeStep[] = [
 export function AudioProvider({
   children,
   initialGain = DEFAULT_GAIN,
+  latencyHint,
+  sampleRate,
 }: AudioProviderProps) {
   const runtimeRef = useRef<AudioRuntime | null>(null);
   const gainRef = useRef(normalizeGain(initialGain));
   const playbackStopsRef = useRef(new Map<PlaybackRegistration, () => void>());
+  const latencyHintRef = useRef(latencyHint);
+  const sampleRateRef = useRef(sampleRate);
   const [runtime, setRuntime] = useState<AudioRuntime | null>(null);
   const [state, setState] = useState<AudioContextState | "idle">("idle");
   const [gain, setGainState] = useState(gainRef.current);
+
+  useEffect(() => {
+    latencyHintRef.current = latencyHint;
+  }, [latencyHint]);
+  useEffect(() => {
+    sampleRateRef.current = sampleRate;
+  }, [sampleRate]);
 
   const ensureAudioContext = useCallback(async (): Promise<AudioRuntime> => {
     const existing = runtimeRef.current;
@@ -284,7 +297,13 @@ export function AudioProvider({
     runtimeRef.current = null;
 
     const AudioContextConstructor = getAudioContextConstructor();
-    const audioContext = new AudioContextConstructor();
+    const contextOptions = buildAudioContextOptions(
+      latencyHintRef.current,
+      sampleRateRef.current,
+    );
+    const audioContext = contextOptions
+      ? new AudioContextConstructor(contextOptions)
+      : new AudioContextConstructor();
     const masterGain = audioContext.createGain();
     const analyser = audioContext.createAnalyser();
 
@@ -1315,6 +1334,24 @@ function clearEnginePlaybackTimer(record: EnginePlaybackRecord): void {
     globalThis.clearTimeout(record.timeout);
     record.timeout = undefined;
   }
+}
+
+function buildAudioContextOptions(
+  latencyHint: AudioContextLatencyCategory | number | undefined,
+  sampleRate: number | undefined,
+): AudioContextOptions | undefined {
+  const options: AudioContextOptions = {};
+  if (latencyHint !== undefined) {
+    options.latencyHint = latencyHint;
+  }
+  if (
+    sampleRate !== undefined &&
+    Number.isFinite(sampleRate) &&
+    sampleRate > 0
+  ) {
+    options.sampleRate = sampleRate;
+  }
+  return Object.keys(options).length > 0 ? options : undefined;
 }
 
 function getAudioContextConstructor(): typeof AudioContext {

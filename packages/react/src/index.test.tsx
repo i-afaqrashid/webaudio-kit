@@ -1647,6 +1647,53 @@ describe("AudioProvider", () => {
     expect(context.close).toHaveBeenCalledTimes(1);
   });
 
+  test("AudioProvider forwards latencyHint and sampleRate to the AudioContext constructor", async () => {
+    const recordedOptions: Array<AudioContextOptions | undefined> = [];
+    function RecordingAudioContext(options?: AudioContextOptions) {
+      recordedOptions.push(options);
+      return new FakeAudioContext();
+    }
+    vi.stubGlobal("AudioContext", RecordingAudioContext);
+
+    render(
+      <AudioProvider latencyHint="interactive" sampleRate={44_100}>
+        <Harness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "play tone" }).click();
+    });
+
+    expect(recordedOptions).toHaveLength(1);
+    expect(recordedOptions[0]).toEqual({
+      latencyHint: "interactive",
+      sampleRate: 44_100,
+    });
+  });
+
+  test("AudioProvider with no latency or sampleRate constructs without options", async () => {
+    const recordedOptions: Array<AudioContextOptions | undefined> = [];
+    function RecordingAudioContext(options?: AudioContextOptions) {
+      recordedOptions.push(options);
+      return new FakeAudioContext();
+    }
+    vi.stubGlobal("AudioContext", RecordingAudioContext);
+
+    render(
+      <AudioProvider>
+        <Harness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "play tone" }).click();
+    });
+
+    expect(recordedOptions).toHaveLength(1);
+    expect(recordedOptions[0]).toBeUndefined();
+  });
+
   test("stops active playback and closes the AudioContext on unmount", async () => {
     vi.stubGlobal("AudioContext", FakeAudioContext);
 
