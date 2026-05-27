@@ -1563,6 +1563,113 @@ describe("AudioProvider", () => {
     );
   });
 
+  test("WaveformCanvas pauses requestAnimationFrame when the page is hidden", async () => {
+    const context = createCanvasContext();
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
+      context,
+    );
+    const cancelRaf = vi.fn();
+    vi.stubGlobal(
+      "requestAnimationFrame",
+      vi.fn(() => 7),
+    );
+    vi.stubGlobal("cancelAnimationFrame", cancelRaf);
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    const addSpy = vi.spyOn(document, "addEventListener");
+
+    render(
+      <AudioProvider>
+        <Harness />
+        <WaveformCanvas data-testid="waveform-visibility" />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "play tone" }).click();
+    });
+
+    const visibilityCall = addSpy.mock.calls.find(
+      ([type]) => type === "visibilitychange",
+    );
+    expect(visibilityCall).toBeDefined();
+    const handler = visibilityCall![1] as () => void;
+
+    const originalHidden = Object.getOwnPropertyDescriptor(document, "hidden");
+    Object.defineProperty(document, "hidden", {
+      configurable: true,
+      get: () => true,
+    });
+
+    try {
+      handler();
+      expect(cancelRaf).toHaveBeenCalledWith(7);
+    } finally {
+      if (originalHidden) {
+        Object.defineProperty(document, "hidden", originalHidden);
+      } else {
+        Object.defineProperty(document, "hidden", {
+          configurable: true,
+          get: () => false,
+        });
+      }
+    }
+  });
+
+  test("SpectrumCanvas pauses requestAnimationFrame when the page is hidden", async () => {
+    const context = createCanvasContext();
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
+      context,
+    );
+    const cancelRaf = vi.fn();
+    vi.stubGlobal(
+      "requestAnimationFrame",
+      vi.fn(() => 11),
+    );
+    vi.stubGlobal("cancelAnimationFrame", cancelRaf);
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    const addSpy = vi.spyOn(document, "addEventListener");
+
+    render(
+      <AudioProvider>
+        <Harness />
+        <SpectrumCanvas data-testid="spectrum-visibility" />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "play tone" }).click();
+    });
+
+    const visibilityCalls = addSpy.mock.calls.filter(
+      ([type]) => type === "visibilitychange",
+    );
+    expect(visibilityCalls.length).toBeGreaterThan(0);
+
+    const originalHidden = Object.getOwnPropertyDescriptor(document, "hidden");
+    Object.defineProperty(document, "hidden", {
+      configurable: true,
+      get: () => true,
+    });
+
+    try {
+      for (const [, handler] of visibilityCalls) {
+        (handler as () => void)();
+      }
+      expect(cancelRaf).toHaveBeenCalledWith(11);
+    } finally {
+      if (originalHidden) {
+        Object.defineProperty(document, "hidden", originalHidden);
+      } else {
+        Object.defineProperty(document, "hidden", {
+          configurable: true,
+          get: () => false,
+        });
+      }
+    }
+  });
+
   test("WaveformCanvas scales the backing buffer to devicePixelRatio", () => {
     const context = createCanvasContext();
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
