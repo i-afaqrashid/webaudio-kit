@@ -719,6 +719,93 @@ describe("playFrequencySweep", () => {
   });
 });
 
+describe("playFrequencySweep safety caps", () => {
+  test("clamps sustained gain to safety.maxSustainedGain and warns once per context", () => {
+    const context = new FakeAudioContext();
+    const warnSpy = vi
+      .spyOn(console, "warn")
+      .mockImplementation(() => undefined);
+
+    playFrequencySweep(context as unknown as AudioContext, {
+      from: 200,
+      to: 800,
+      durationMs: 500,
+      gain: 0.9,
+      safety: { maxSustainedGain: 0.3 },
+    });
+
+    expect(context.gains[0]?.gain.events).toContainEqual({
+      method: "setValueAtTime",
+      value: 0.3,
+      time: 5,
+    });
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy).toHaveBeenCalledWith(
+      "[webaudio-kit] playFrequencySweep clamped to safety limits",
+    );
+
+    playFrequencySweep(context as unknown as AudioContext, {
+      from: 200,
+      to: 800,
+      durationMs: 500,
+      gain: 0.8,
+      safety: { maxSustainedGain: 0.3 },
+    });
+
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test("clamps duration to safety.maxDurationMs without affecting in-range calls", () => {
+    const context = new FakeAudioContext();
+    const warnSpy = vi
+      .spyOn(console, "warn")
+      .mockImplementation(() => undefined);
+
+    playFrequencySweep(context as unknown as AudioContext, {
+      from: 100,
+      to: 200,
+      durationMs: 60_000,
+      gain: 0.1,
+      safety: { maxDurationMs: 5_000 },
+    });
+
+    expect(context.oscillators[0]?.stoppedAt).toBeCloseTo(10);
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+
+    const inRangeContext = new FakeAudioContext();
+    playFrequencySweep(inRangeContext as unknown as AudioContext, {
+      from: 100,
+      to: 200,
+      durationMs: 1_000,
+      gain: 0.1,
+      safety: { maxDurationMs: 5_000 },
+    });
+    expect(inRangeContext.oscillators[0]?.stoppedAt).toBeCloseTo(6);
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test("does nothing when no safety options are supplied", () => {
+    const context = new FakeAudioContext();
+    const warnSpy = vi
+      .spyOn(console, "warn")
+      .mockImplementation(() => undefined);
+
+    playFrequencySweep(context as unknown as AudioContext, {
+      from: 100,
+      to: 200,
+      durationMs: 2_000,
+      gain: 0.9,
+    });
+
+    expect(context.gains[0]?.gain.events).toContainEqual({
+      method: "setValueAtTime",
+      value: 0.9,
+      time: 5,
+    });
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+});
+
 describe("playNoise", () => {
   test("creates a timed white-noise graph with safe defaults", () => {
     const context = new FakeAudioContext();

@@ -23,6 +23,12 @@ export type FrequencySweepOptions = {
   filter?: PlaybackFilter;
   pattern?: PlaybackPattern;
   voices?: PlaybackVoices;
+  safety?: PlaybackSafetyOptions;
+};
+
+export type PlaybackSafetyOptions = {
+  maxSustainedGain?: number;
+  maxDurationMs?: number;
 };
 
 export type NoiseType = "white" | "pink" | "brown";
@@ -198,8 +204,9 @@ export function playFrequencySweep(
   options: FrequencySweepOptions,
   destination: AudioNode = context.destination,
 ): PlaybackHandle {
-  const pattern = normalizePlaybackPattern(options.pattern);
-  const durationSeconds = durationToSeconds(options.durationMs, true);
+  const safeOptions = applySweepSafety(context, options);
+  const pattern = normalizePlaybackPattern(safeOptions.pattern);
+  const durationSeconds = durationToSeconds(safeOptions.durationMs, true);
 
   if (pattern.repeat > 1) {
     return createPatternPlaybackHandle(
@@ -209,7 +216,7 @@ export function playFrequencySweep(
       (at) =>
         playFrequencySweepAt(
           context,
-          options,
+          safeOptions,
           destination,
           at,
           durationSeconds,
@@ -219,7 +226,7 @@ export function playFrequencySweep(
 
   return playFrequencySweepAt(
     context,
-    options,
+    safeOptions,
     destination,
     context.currentTime,
     durationSeconds,
@@ -599,6 +606,58 @@ function getManualStopTime<TSource extends AudioScheduledSourceNode>(
   graph.gain.gain.linearRampToValueAtTime(0, stopTime);
 
   return stopTime;
+}
+
+const warnedSweepSafetyContexts = new WeakSet<AudioContext>();
+
+function applySweepSafety(
+  context: AudioContext,
+  options: FrequencySweepOptions,
+): FrequencySweepOptions {
+  const safety = options.safety;
+  if (!safety) {
+    return options;
+  }
+
+  let gain = options.gain;
+  let durationMs = options.durationMs;
+  let clamped = false;
+
+  const maxGain = safety.maxSustainedGain;
+  if (
+    maxGain !== undefined &&
+    Number.isFinite(maxGain) &&
+    maxGain >= 0 &&
+    gain !== undefined &&
+    Number.isFinite(gain) &&
+    gain > maxGain
+  ) {
+    gain = maxGain;
+    clamped = true;
+  }
+
+  const maxDurationMs = safety.maxDurationMs;
+  if (
+    maxDurationMs !== undefined &&
+    Number.isFinite(maxDurationMs) &&
+    maxDurationMs > 0 &&
+    Number.isFinite(durationMs) &&
+    durationMs > maxDurationMs
+  ) {
+    durationMs = maxDurationMs;
+    clamped = true;
+  }
+
+  if (clamped && !warnedSweepSafetyContexts.has(context)) {
+    warnedSweepSafetyContexts.add(context);
+    if (typeof console !== "undefined" && typeof console.warn === "function") {
+      console.warn(
+        "[webaudio-kit] playFrequencySweep clamped to safety limits",
+      );
+    }
+  }
+
+  return clamped ? { ...options, gain, durationMs } : options;
 }
 
 const NOISE_BUFFER_BUCKET_MS = 50;
