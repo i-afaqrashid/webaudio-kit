@@ -73,6 +73,30 @@ dependency so apps keep one explicit core version.
 
 Default starter: https://webaudio-kit.afaqrashid.com/new
 
+## Try It Without A Build
+
+For CodePen, JSFiddle, or a single static HTML page, load the core
+package directly through `esm.sh` — no bundler required. Audio still
+needs a user gesture to start playback:
+
+```html
+<!doctype html>
+<button id="play">Play 440Hz</button>
+<script type="module">
+  import { playTone } from "https://esm.sh/@webaudio-kit/core";
+
+  const audioContext = new AudioContext();
+  document.getElementById("play").addEventListener("click", async () => {
+    await audioContext.resume();
+    playTone(audioContext, { frequency: 440, durationMs: 500, gain: 0.12 });
+  });
+</script>
+```
+
+The React package can be loaded the same way through
+`https://esm.sh/@webaudio-kit/react` when used inside a CDN-style React
+runtime such as `https://esm.sh/react`.
+
 ## 30-second example
 
 ```tsx
