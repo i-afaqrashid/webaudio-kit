@@ -601,12 +601,23 @@ function getManualStopTime<TSource extends AudioScheduledSourceNode>(
   return stopTime;
 }
 
+const NOISE_BUFFER_BUCKET_MS = 50;
+const noiseBufferCaches = new WeakMap<AudioContext, Map<string, AudioBuffer>>();
+
 function createNoiseBuffer(
   context: AudioContext,
   type: NoiseType,
   durationSeconds: number,
 ): AudioBuffer {
-  const length = Math.max(1, Math.ceil(context.sampleRate * durationSeconds));
+  const bucketMs = bucketNoiseDurationMs(durationSeconds);
+  const cache = getNoiseBufferCache(context);
+  const cacheKey = `${type}:${context.sampleRate}:${bucketMs}`;
+  const cached = cache.get(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
+  const length = Math.max(1, Math.ceil((context.sampleRate * bucketMs) / 1000));
   const buffer = context.createBuffer(1, length, context.sampleRate);
   const samples = buffer.getChannelData(0);
 
@@ -618,7 +629,26 @@ function createNoiseBuffer(
     fillWhiteNoise(samples);
   }
 
+  cache.set(cacheKey, buffer);
   return buffer;
+}
+
+function bucketNoiseDurationMs(durationSeconds: number): number {
+  if (!Number.isFinite(durationSeconds) || durationSeconds <= 0) {
+    return NOISE_BUFFER_BUCKET_MS;
+  }
+  const durationMs = durationSeconds * 1000;
+  const buckets = Math.max(1, Math.ceil(durationMs / NOISE_BUFFER_BUCKET_MS));
+  return buckets * NOISE_BUFFER_BUCKET_MS;
+}
+
+function getNoiseBufferCache(context: AudioContext): Map<string, AudioBuffer> {
+  let cache = noiseBufferCaches.get(context);
+  if (!cache) {
+    cache = new Map();
+    noiseBufferCaches.set(context, cache);
+  }
+  return cache;
 }
 
 function fillWhiteNoise(samples: Float32Array): void {
