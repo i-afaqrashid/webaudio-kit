@@ -156,6 +156,41 @@ That means `WaveformCanvas`, `SpectrumCanvas`, and the provider master volume
 still react to the custom sound. Engine-created handles are registered with
 provider `stopAll()`; direct core handles remain yours to track.
 
+## Math helpers in React Server Components
+
+`@webaudio-kit/react` is a client module (`"use client"` is the first line),
+so importing any helper from it forces the whole tree onto the client. A
+React Server Component that just wants to render a "440 Hz / A4" badge can
+use one of two RSC-safe paths:
+
+- Import from `@webaudio-kit/react/server` for the pure math helpers and
+  value types. No client boundary, no AudioContext-touching code is
+  included.
+
+  ```tsx
+  // server component
+  import { frequencyToNoteName, gainToDb } from "@webaudio-kit/react/server";
+
+  export function NoteBadge({ frequency }: { frequency: number }) {
+    return (
+      <span>
+        {frequency} Hz · {frequencyToNoteName(frequency)}
+      </span>
+    );
+  }
+  ```
+
+- Or import directly from `@webaudio-kit/core`, which has no `"use client"`
+  directive at all. The same helpers live there:
+
+  ```tsx
+  // server component
+  import { frequencyToNoteName, gainToDb } from "@webaudio-kit/core";
+  ```
+
+The hooks (`useTone`, `useAudioContext`, etc.) remain client-only and must
+still be used from a client component wrapped in `AudioProvider`.
+
 ## Decision checklist
 
 Use hooks when:
