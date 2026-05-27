@@ -1563,6 +1563,56 @@ describe("AudioProvider", () => {
     );
   });
 
+  test("WaveformCanvas scales the backing buffer to devicePixelRatio", () => {
+    const context = createCanvasContext();
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
+      context,
+    );
+    vi.stubGlobal("devicePixelRatio", 2);
+
+    render(
+      <AudioProvider>
+        <WaveformCanvas
+          data-testid="waveform-hidpi"
+          height={80}
+          lineWidth={2}
+          width={320}
+        />
+      </AudioProvider>,
+    );
+
+    const canvas = screen.getByTestId("waveform-hidpi") as HTMLCanvasElement;
+    expect(canvas.width).toBe(640);
+    expect(canvas.height).toBe(160);
+    expect(context.fillRect).toHaveBeenCalledWith(0, 0, 640, 160);
+    expect(context.lineTo).toHaveBeenCalledWith(640, 80);
+  });
+
+  test("SpectrumCanvas scales the backing buffer and bar gap to devicePixelRatio", () => {
+    const context = createCanvasContext();
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
+      context,
+    );
+    vi.stubGlobal("devicePixelRatio", 2);
+
+    render(
+      <AudioProvider>
+        <SpectrumCanvas
+          barCount={8}
+          data-testid="spectrum-hidpi"
+          height={80}
+          width={320}
+        />
+      </AudioProvider>,
+    );
+
+    const canvas = screen.getByTestId("spectrum-hidpi") as HTMLCanvasElement;
+    expect(canvas.width).toBe(640);
+    expect(canvas.height).toBe(160);
+    expect(context.fillRect).toHaveBeenCalledWith(0, 0, 640, 160);
+    expect(context.fillRect).toHaveBeenCalledWith(0, 156, 76.5, 4);
+  });
+
   test("WaveformCanvas renders an idle waveform before playback creates an analyser", () => {
     const context = createCanvasContext();
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(

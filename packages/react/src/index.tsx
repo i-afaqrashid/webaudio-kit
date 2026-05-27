@@ -998,10 +998,17 @@ export function WaveformCanvas({
       return;
     }
 
+    const syncBackingStore = () =>
+      syncCanvasBackingStore(canvas, width, height);
+
+    syncBackingStore();
+    const disconnectResize = observeCanvasResize(canvas, syncBackingStore);
+
     const drawIdle = () => {
+      const ratio = getDevicePixelRatio();
       drawBackground(context, canvas, backgroundColor);
       context.strokeStyle = idleStrokeColor ?? strokeColor;
-      context.lineWidth = lineWidth;
+      context.lineWidth = lineWidth * ratio;
       context.beginPath();
       context.moveTo(0, canvas.height / 2);
       context.lineTo(canvas.width, canvas.height / 2);
@@ -1010,17 +1017,18 @@ export function WaveformCanvas({
 
     if (!analyser) {
       drawIdle();
-      return;
+      return disconnectResize;
     }
 
     const data = new Uint8Array(analyser.fftSize);
     let frame = 0;
 
     const draw = () => {
+      const ratio = getDevicePixelRatio();
       analyser.getByteTimeDomainData(data);
       drawBackground(context, canvas, backgroundColor);
       context.strokeStyle = strokeColor;
-      context.lineWidth = lineWidth;
+      context.lineWidth = lineWidth * ratio;
       context.beginPath();
 
       const slice = canvas.width / data.length;
@@ -1044,6 +1052,7 @@ export function WaveformCanvas({
       if (frame !== 0) {
         globalThis.cancelAnimationFrame(frame);
       }
+      disconnectResize();
     };
   }, [
     analyser,
@@ -1092,14 +1101,23 @@ export function SpectrumCanvas({
       return;
     }
 
+    const syncBackingStore = () =>
+      syncCanvasBackingStore(canvas, width, height);
+
+    syncBackingStore();
+    const disconnectResize = observeCanvasResize(canvas, syncBackingStore);
+
     const normalizedBarCount = normalizeBarCount(barCount);
     const normalizedBarGap = normalizeCanvasNumber(barGap, 2);
     const normalizedMinBarHeight = normalizeCanvasNumber(minBarHeight, 2);
     const drawBars = (data: Uint8Array | null) => {
+      const ratio = getDevicePixelRatio();
+      const scaledBarGap = normalizedBarGap * ratio;
+      const scaledMinBarHeight = normalizedMinBarHeight * ratio;
       drawBackground(context, canvas, backgroundColor);
       context.fillStyle = data ? barColor : (idleBarColor ?? barColor);
 
-      const totalGap = Math.max(0, normalizedBarCount - 1) * normalizedBarGap;
+      const totalGap = Math.max(0, normalizedBarCount - 1) * scaledBarGap;
       const barWidth = Math.max(
         1,
         (canvas.width - totalGap) / normalizedBarCount,
@@ -1109,10 +1127,10 @@ export function SpectrumCanvas({
         const value = data?.[index] ?? 0;
         const normalizedValue = value / 255;
         const barHeight = Math.max(
-          normalizedMinBarHeight,
+          scaledMinBarHeight,
           normalizedValue * canvas.height,
         );
-        const x = index * (barWidth + normalizedBarGap);
+        const x = index * (barWidth + scaledBarGap);
         const y = canvas.height - barHeight;
         context.fillRect(x, y, barWidth, barHeight);
       }
@@ -1120,7 +1138,7 @@ export function SpectrumCanvas({
 
     if (!analyser) {
       drawBars(null);
-      return;
+      return disconnectResize;
     }
 
     const data = new Uint8Array(
@@ -1140,6 +1158,7 @@ export function SpectrumCanvas({
       if (frame !== 0) {
         globalThis.cancelAnimationFrame(frame);
       }
+      disconnectResize();
     };
   }, [
     analyser,
@@ -1532,6 +1551,65 @@ function drawBackground(
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.fillStyle = backgroundColor;
   context.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function getDevicePixelRatio(): number {
+  const ratio = globalThis.devicePixelRatio;
+  return typeof ratio === "number" && ratio > 0 ? ratio : 1;
+}
+
+function syncCanvasBackingStore(
+  canvas: HTMLCanvasElement,
+  fallbackWidth: number | string | undefined,
+  fallbackHeight: number | string | undefined,
+): void {
+  const ratio = getDevicePixelRatio();
+  const rect =
+    typeof canvas.getBoundingClientRect === "function"
+      ? canvas.getBoundingClientRect()
+      : undefined;
+  const cssWidth =
+    rect && rect.width > 0 ? rect.width : coerceCanvasDimension(fallbackWidth);
+  const cssHeight =
+    rect && rect.height > 0
+      ? rect.height
+      : coerceCanvasDimension(fallbackHeight);
+  const targetWidth = Math.max(1, Math.round(cssWidth * ratio));
+  const targetHeight = Math.max(1, Math.round(cssHeight * ratio));
+  if (canvas.width !== targetWidth) {
+    canvas.width = targetWidth;
+  }
+  if (canvas.height !== targetHeight) {
+    canvas.height = targetHeight;
+  }
+}
+
+function coerceCanvasDimension(value: number | string | undefined): number {
+  if (typeof value === "number" && Number.isFinite(value) && value > 0) {
+    return value;
+  }
+  if (typeof value === "string") {
+    const parsed = Number.parseFloat(value);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      return parsed;
+    }
+  }
+  return 300;
+}
+
+function observeCanvasResize(
+  canvas: HTMLCanvasElement,
+  onResize: () => void,
+): () => void {
+  const ObserverConstructor = globalThis.ResizeObserver;
+  if (typeof ObserverConstructor !== "function") {
+    return () => undefined;
+  }
+  const observer = new ObserverConstructor(() => {
+    onResize();
+  });
+  observer.observe(canvas);
+  return () => observer.disconnect();
 }
 
 function normalizeBarCount(value: number): number {
