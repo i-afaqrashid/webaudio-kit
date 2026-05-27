@@ -879,6 +879,7 @@ export function useAudioTestMode(
   const activeHandleRef = useRef<PlaybackHandle | null>(null);
   const registrationRef = useRef<PlaybackRegistration | null>(null);
   const runTokenRef = useRef(0);
+  const abortControllerRef = useRef<AbortController | null>(null);
   const [currentStepIndex, setCurrentStepIndex] = useState(-1);
   const [isRunning, setIsRunning] = useState(false);
   const currentStep =
@@ -890,6 +891,8 @@ export function useAudioTestMode(
 
   const stop = useCallback(() => {
     runTokenRef.current += 1;
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = null;
     activeHandleRef.current?.stop();
     activeHandleRef.current = null;
     if (registrationRef.current) {
@@ -903,6 +906,9 @@ export function useAudioTestMode(
   const run = useCallback(async () => {
     const token = runTokenRef.current + 1;
     runTokenRef.current = token;
+    abortControllerRef.current?.abort();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
     activeHandleRef.current?.stop();
     activeHandleRef.current = null;
     if (registrationRef.current) {
@@ -927,8 +933,8 @@ export function useAudioTestMode(
         const handle = playAudioTestModeStep(runtime, step, durationMs);
         activeHandleRef.current = handle;
         registrationRef.current = registerPlayback(stop);
-        await wait(durationMs);
-        if (runTokenRef.current !== token) {
+        const stepWait = await waitOrAbort(durationMs, controller.signal);
+        if (stepWait.aborted || runTokenRef.current !== token) {
           return;
         }
 
@@ -942,11 +948,17 @@ export function useAudioTestMode(
         }
 
         if (index < nextSteps.length - 1 && nextGapMs > 0) {
-          await wait(nextGapMs);
+          const gapWait = await waitOrAbort(nextGapMs, controller.signal);
+          if (gapWait.aborted || runTokenRef.current !== token) {
+            return;
+          }
         }
       }
     } finally {
       if (runTokenRef.current === token) {
+        if (abortControllerRef.current === controller) {
+          abortControllerRef.current = null;
+        }
         activeHandleRef.current = null;
         if (registrationRef.current) {
           unregisterPlayback(registrationRef.current);
@@ -1545,9 +1557,24 @@ function playAudioTestModeStep(
   );
 }
 
-function wait(durationMs: number): Promise<void> {
+function waitOrAbort(
+  durationMs: number,
+  signal: AbortSignal,
+): Promise<{ aborted: boolean }> {
   return new Promise((resolve) => {
-    globalThis.setTimeout(resolve, durationMs);
+    if (signal.aborted) {
+      resolve({ aborted: true });
+      return;
+    }
+    const timerId = globalThis.setTimeout(() => {
+      signal.removeEventListener("abort", onAbort);
+      resolve({ aborted: false });
+    }, durationMs);
+    const onAbort = () => {
+      globalThis.clearTimeout(timerId);
+      resolve({ aborted: true });
+    };
+    signal.addEventListener("abort", onAbort, { once: true });
   });
 }
 

@@ -1430,6 +1430,41 @@ describe("AudioProvider", () => {
     expect(context.bufferSources).toHaveLength(0);
   });
 
+  test("useAudioTestMode.stop aborts the pending step delay without waiting for it", async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <AudioTestModeHarness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "run test mode" }).click();
+    });
+
+    expect(screen.getByTestId("test-running").textContent).toBe("true");
+    const oscillatorCountAfterStart =
+      FakeAudioContext.instances[0]!.oscillators.length;
+    expect(oscillatorCountAfterStart).toBe(1);
+
+    await act(async () => {
+      screen.getByRole("button", { name: "stop test mode" }).click();
+    });
+
+    expect(screen.getByTestId("test-running").textContent).toBe("false");
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1000);
+    });
+
+    expect(FakeAudioContext.instances[0]!.oscillators.length).toBe(
+      oscillatorCountAfterStart,
+    );
+    expect(screen.getByTestId("test-running").textContent).toBe("false");
+  });
+
   test("restarting audio test mode does not let a stale run stop the replacement playback", async () => {
     vi.useFakeTimers();
     vi.stubGlobal("AudioContext", DelayedFakeAudioContext);
