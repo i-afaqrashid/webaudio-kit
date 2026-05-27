@@ -8,6 +8,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -809,7 +810,7 @@ export function useVolumeControl(
     await volume.setGain(defaultGain);
   }, [defaultGain, storageKey, volume]);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!storageKey || restoredStorageRef.current === storageKey) {
       return;
     }
@@ -1246,6 +1247,9 @@ export function SpectrumCanvas({
     />
   );
 }
+
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 function useLatest<T>(value: T) {
   const ref = useRef(value);
