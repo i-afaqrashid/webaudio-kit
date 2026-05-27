@@ -1621,6 +1621,32 @@ describe("AudioProvider", () => {
     expect(FakeAudioContext.instances[0]?.oscillators[0]?.stopCalls).toBe(2);
   });
 
+  test("swallows audioContext.close rejection during unmount cleanup", async () => {
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    const rendered = render(
+      <AudioProvider>
+        <Harness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "play tone" }).click();
+    });
+
+    const context = FakeAudioContext.instances[0]!;
+    context.close = vi.fn(async () => {
+      context.state = "closed";
+      throw new Error("close failed");
+    });
+
+    await act(async () => {
+      rendered.unmount();
+    });
+
+    expect(context.close).toHaveBeenCalledTimes(1);
+  });
+
   test("stops active playback and closes the AudioContext on unmount", async () => {
     vi.stubGlobal("AudioContext", FakeAudioContext);
 

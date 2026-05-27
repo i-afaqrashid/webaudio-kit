@@ -340,7 +340,11 @@ export function AudioProvider({
       const current = runtimeRef.current;
       runtimeRef.current = null;
       if (current && current.audioContext.state !== "closed") {
-        void current.audioContext.close();
+        // close() may reject on platforms that change hardware mid-session
+        // or already-closing contexts. The provider has no surface for this
+        // failure, so swallow it explicitly to avoid an unhandled rejection
+        // reaching observability tooling.
+        current.audioContext.close().catch(() => undefined);
       }
     };
   }, []);
