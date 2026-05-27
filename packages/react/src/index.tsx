@@ -100,6 +100,8 @@ export type AudioProviderProps = {
   initialGain?: number;
 };
 
+export type CanvasMotionMode = "auto" | "always" | "off";
+
 export type WaveformCanvasProps = Omit<
   CanvasHTMLAttributes<HTMLCanvasElement>,
   "children"
@@ -107,6 +109,7 @@ export type WaveformCanvasProps = Omit<
   backgroundColor?: string;
   idleStrokeColor?: string;
   lineWidth?: number;
+  motion?: CanvasMotionMode;
   strokeColor?: string;
 };
 
@@ -120,6 +123,7 @@ export type SpectrumCanvasProps = Omit<
   barGap?: number;
   idleBarColor?: string;
   minBarHeight?: number;
+  motion?: CanvasMotionMode;
 };
 
 export type AudioTestModeStep =
@@ -979,6 +983,7 @@ export function WaveformCanvas({
   height = 180,
   idleStrokeColor,
   lineWidth = 2,
+  motion = "auto",
   strokeColor = "#c8ea3a",
   width = 720,
   ...canvasProps
@@ -1022,13 +1027,8 @@ export function WaveformCanvas({
 
     const data = new Uint8Array(analyser.fftSize);
     let frame = 0;
-    let visible = !isDocumentHidden();
 
-    const draw = () => {
-      if (!visible) {
-        frame = 0;
-        return;
-      }
+    const drawFrame = () => {
       const ratio = getDevicePixelRatio();
       analyser.getByteTimeDomainData(data);
       drawBackground(context, canvas, backgroundColor);
@@ -1048,31 +1048,40 @@ export function WaveformCanvas({
       }
 
       context.stroke();
-      frame = globalThis.requestAnimationFrame(draw);
     };
 
-    const handleVisibility = () => {
-      const nextVisible = !isDocumentHidden();
-      if (nextVisible === visible) {
+    const loop = () => {
+      if (isDocumentHidden() || !shouldAnimateCanvas(motion)) {
+        frame = 0;
         return;
       }
-      visible = nextVisible;
-      if (visible) {
-        draw();
-      } else if (frame !== 0) {
+      drawFrame();
+      frame = globalThis.requestAnimationFrame(loop);
+    };
+
+    const restart = () => {
+      if (frame !== 0) {
         globalThis.cancelAnimationFrame(frame);
         frame = 0;
       }
+      if (isDocumentHidden()) {
+        return;
+      }
+      if (shouldAnimateCanvas(motion)) {
+        loop();
+      } else {
+        drawFrame();
+      }
     };
 
-    const disconnectVisibility = observeDocumentVisibility(handleVisibility);
+    const disconnectVisibility = observeDocumentVisibility(restart);
+    const disconnectMotion = observeReducedMotion(restart);
 
-    if (visible) {
-      draw();
-    }
+    restart();
 
     return () => {
       disconnectVisibility();
+      disconnectMotion();
       if (frame !== 0) {
         globalThis.cancelAnimationFrame(frame);
       }
@@ -1084,6 +1093,7 @@ export function WaveformCanvas({
     height,
     idleStrokeColor,
     lineWidth,
+    motion,
     strokeColor,
     width,
   ]);
@@ -1107,6 +1117,7 @@ export function SpectrumCanvas({
   height = 180,
   idleBarColor,
   minBarHeight = 2,
+  motion = "auto",
   width = 720,
   ...canvasProps
 }: SpectrumCanvasProps) {
@@ -1169,40 +1180,44 @@ export function SpectrumCanvas({
       Math.min(normalizedBarCount, analyser.frequencyBinCount),
     );
     let frame = 0;
-    let visible = !isDocumentHidden();
 
-    const draw = () => {
-      if (!visible) {
+    const drawFrame = () => {
+      analyser.getByteFrequencyData(data);
+      drawBars(data);
+    };
+
+    const loop = () => {
+      if (isDocumentHidden() || !shouldAnimateCanvas(motion)) {
         frame = 0;
         return;
       }
-      analyser.getByteFrequencyData(data);
-      drawBars(data);
-      frame = globalThis.requestAnimationFrame(draw);
+      drawFrame();
+      frame = globalThis.requestAnimationFrame(loop);
     };
 
-    const handleVisibility = () => {
-      const nextVisible = !isDocumentHidden();
-      if (nextVisible === visible) {
-        return;
-      }
-      visible = nextVisible;
-      if (visible) {
-        draw();
-      } else if (frame !== 0) {
+    const restart = () => {
+      if (frame !== 0) {
         globalThis.cancelAnimationFrame(frame);
         frame = 0;
       }
+      if (isDocumentHidden()) {
+        return;
+      }
+      if (shouldAnimateCanvas(motion)) {
+        loop();
+      } else {
+        drawFrame();
+      }
     };
 
-    const disconnectVisibility = observeDocumentVisibility(handleVisibility);
+    const disconnectVisibility = observeDocumentVisibility(restart);
+    const disconnectMotion = observeReducedMotion(restart);
 
-    if (visible) {
-      draw();
-    }
+    restart();
 
     return () => {
       disconnectVisibility();
+      disconnectMotion();
       if (frame !== 0) {
         globalThis.cancelAnimationFrame(frame);
       }
@@ -1217,6 +1232,7 @@ export function SpectrumCanvas({
     height,
     idleBarColor,
     minBarHeight,
+    motion,
     width,
   ]);
 
@@ -1675,6 +1691,50 @@ function observeDocumentVisibility(onChange: () => void): () => void {
   return () => {
     document.removeEventListener("visibilitychange", onChange);
   };
+}
+
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+
+function prefersReducedMotion(): boolean {
+  if (typeof globalThis.matchMedia !== "function") {
+    return false;
+  }
+  return globalThis.matchMedia(REDUCED_MOTION_QUERY).matches === true;
+}
+
+function shouldAnimateCanvas(motion: CanvasMotionMode | undefined): boolean {
+  const mode = motion ?? "auto";
+  if (mode === "always") {
+    return true;
+  }
+  if (mode === "off") {
+    return false;
+  }
+  return !prefersReducedMotion();
+}
+
+function observeReducedMotion(onChange: () => void): () => void {
+  if (typeof globalThis.matchMedia !== "function") {
+    return () => undefined;
+  }
+  const mql = globalThis.matchMedia(REDUCED_MOTION_QUERY);
+  if (typeof mql.addEventListener === "function") {
+    mql.addEventListener("change", onChange);
+    return () => {
+      mql.removeEventListener("change", onChange);
+    };
+  }
+  const legacy = mql as MediaQueryList & {
+    addListener?: (listener: () => void) => void;
+    removeListener?: (listener: () => void) => void;
+  };
+  if (typeof legacy.addListener === "function") {
+    legacy.addListener(onChange);
+    return () => {
+      legacy.removeListener?.(onChange);
+    };
+  }
+  return () => undefined;
 }
 
 function normalizeBarCount(value: number): number {

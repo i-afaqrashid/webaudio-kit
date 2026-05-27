@@ -1563,6 +1563,121 @@ describe("AudioProvider", () => {
     );
   });
 
+  test("WaveformCanvas skips requestAnimationFrame when reduced motion is preferred", async () => {
+    const context = createCanvasContext();
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
+      context,
+    );
+    const requestRaf = vi.fn(() => 99);
+    vi.stubGlobal("requestAnimationFrame", requestRaf);
+    vi.stubGlobal("cancelAnimationFrame", vi.fn());
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn((query: string) => ({
+        matches: query === "(prefers-reduced-motion: reduce)",
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    );
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <Harness />
+        <WaveformCanvas data-testid="waveform-reduced" />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "play tone" }).click();
+    });
+
+    expect(requestRaf).not.toHaveBeenCalled();
+    expect(context.stroke).toHaveBeenCalled();
+  });
+
+  test('WaveformCanvas with motion="always" animates even under reduced motion', async () => {
+    const context = createCanvasContext();
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
+      context,
+    );
+    const requestRaf = vi.fn(() => 42);
+    vi.stubGlobal("requestAnimationFrame", requestRaf);
+    vi.stubGlobal("cancelAnimationFrame", vi.fn());
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn((query: string) => ({
+        matches: query === "(prefers-reduced-motion: reduce)",
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    );
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <Harness />
+        <WaveformCanvas data-testid="waveform-always" motion="always" />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "play tone" }).click();
+    });
+
+    expect(requestRaf).toHaveBeenCalled();
+  });
+
+  test("SpectrumCanvas skips requestAnimationFrame when reduced motion is preferred", async () => {
+    const context = createCanvasContext();
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
+      context,
+    );
+    const requestRaf = vi.fn(() => 99);
+    vi.stubGlobal("requestAnimationFrame", requestRaf);
+    vi.stubGlobal("cancelAnimationFrame", vi.fn());
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn((query: string) => ({
+        matches: query === "(prefers-reduced-motion: reduce)",
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    );
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <Harness />
+        <SpectrumCanvas data-testid="spectrum-reduced" />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "play tone" }).click();
+    });
+
+    expect(requestRaf).not.toHaveBeenCalled();
+    expect(
+      FakeAudioContext.instances[0]?.analysers[0]?.frequencyDataCalls ?? 0,
+    ).toBeGreaterThan(0);
+  });
+
   test("WaveformCanvas pauses requestAnimationFrame when the page is hidden", async () => {
     const context = createCanvasContext();
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
