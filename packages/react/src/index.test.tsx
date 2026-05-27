@@ -406,12 +406,19 @@ function EngineHarness() {
   );
 }
 
-function VolumeControlHarness({ storageKey }: { storageKey?: string }) {
+function VolumeControlHarness({
+  storageKey,
+  onStorageError,
+}: {
+  storageKey?: string;
+  onStorageError?: (error: Error) => void;
+}) {
   const volume = useVolumeControl({
     defaultGain: 0.2,
     label: "Alert volume",
     maxGain: 0.5,
     minGain: 0,
+    onStorageError,
     step: 0.01,
     storageKey,
   });
@@ -1059,6 +1066,75 @@ describe("AudioProvider", () => {
     });
 
     expect(screen.getByTestId("volume-control-gain").textContent).toBe("0.50");
+  });
+
+  test("useVolumeControl invokes onStorageError when localStorage.setItem throws", async () => {
+    const setItemSpy = vi
+      .spyOn(Storage.prototype, "setItem")
+      .mockImplementation(() => {
+        throw new Error("QuotaExceededError");
+      });
+    const onStorageError = vi.fn();
+
+    try {
+      render(
+        <AudioProvider initialGain={0.2}>
+          <VolumeControlHarness
+            onStorageError={onStorageError}
+            storageKey="wk-volume-err"
+          />
+        </AudioProvider>,
+      );
+
+      await act(async () => {
+        screen.getByRole("button", { name: "set high volume" }).click();
+      });
+
+      expect(setItemSpy).toHaveBeenCalled();
+      expect(onStorageError).toHaveBeenCalledTimes(1);
+      expect(onStorageError.mock.calls[0]?.[0]).toBeInstanceOf(Error);
+      expect(onStorageError.mock.calls[0]?.[0]?.message).toBe(
+        "QuotaExceededError",
+      );
+      expect(screen.getByTestId("volume-control-gain").textContent).toBe(
+        "0.50",
+      );
+    } finally {
+      setItemSpy.mockRestore();
+    }
+  });
+
+  test("useVolumeControl invokes onStorageError when localStorage.removeItem throws on reset", async () => {
+    window.localStorage.setItem("wk-volume-reset-err", "0.3");
+    const removeItemSpy = vi
+      .spyOn(Storage.prototype, "removeItem")
+      .mockImplementation(() => {
+        throw new Error("storage disabled");
+      });
+    const onStorageError = vi.fn();
+
+    try {
+      render(
+        <AudioProvider initialGain={0.2}>
+          <VolumeControlHarness
+            onStorageError={onStorageError}
+            storageKey="wk-volume-reset-err"
+          />
+        </AudioProvider>,
+      );
+
+      await act(async () => {
+        screen.getByRole("button", { name: "reset volume" }).click();
+      });
+
+      expect(removeItemSpy).toHaveBeenCalled();
+      expect(onStorageError).toHaveBeenCalledTimes(1);
+      expect(screen.getByTestId("volume-control-gain").textContent).toBe(
+        "0.20",
+      );
+    } finally {
+      removeItemSpy.mockRestore();
+    }
   });
 
   test("useVolumeControl restores the stored gain before the first paint", () => {
