@@ -269,11 +269,13 @@ export function AudioProvider({
 
   const ensureAudioContext = useCallback(async (): Promise<AudioRuntime> => {
     const existing = runtimeRef.current;
-    if (existing) {
+    if (existing && existing.audioContext.state !== "closed") {
       await resumeIfNeeded(existing.audioContext);
       setState(existing.audioContext.state);
       return existing;
     }
+
+    runtimeRef.current = null;
 
     const AudioContextConstructor = getAudioContextConstructor();
     const audioContext = new AudioContextConstructor();
@@ -330,6 +332,7 @@ export function AudioProvider({
     return () => {
       stopRegisteredPlayback(playbackStopsRef.current);
       const current = runtimeRef.current;
+      runtimeRef.current = null;
       if (current && current.audioContext.state !== "closed") {
         void current.audioContext.close();
       }
