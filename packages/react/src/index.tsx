@@ -1022,8 +1022,13 @@ export function WaveformCanvas({
 
     const data = new Uint8Array(analyser.fftSize);
     let frame = 0;
+    let visible = !isDocumentHidden();
 
     const draw = () => {
+      if (!visible) {
+        frame = 0;
+        return;
+      }
       const ratio = getDevicePixelRatio();
       analyser.getByteTimeDomainData(data);
       drawBackground(context, canvas, backgroundColor);
@@ -1046,9 +1051,28 @@ export function WaveformCanvas({
       frame = globalThis.requestAnimationFrame(draw);
     };
 
-    draw();
+    const handleVisibility = () => {
+      const nextVisible = !isDocumentHidden();
+      if (nextVisible === visible) {
+        return;
+      }
+      visible = nextVisible;
+      if (visible) {
+        draw();
+      } else if (frame !== 0) {
+        globalThis.cancelAnimationFrame(frame);
+        frame = 0;
+      }
+    };
+
+    const disconnectVisibility = observeDocumentVisibility(handleVisibility);
+
+    if (visible) {
+      draw();
+    }
 
     return () => {
+      disconnectVisibility();
       if (frame !== 0) {
         globalThis.cancelAnimationFrame(frame);
       }
@@ -1145,16 +1169,40 @@ export function SpectrumCanvas({
       Math.min(normalizedBarCount, analyser.frequencyBinCount),
     );
     let frame = 0;
+    let visible = !isDocumentHidden();
 
     const draw = () => {
+      if (!visible) {
+        frame = 0;
+        return;
+      }
       analyser.getByteFrequencyData(data);
       drawBars(data);
       frame = globalThis.requestAnimationFrame(draw);
     };
 
-    draw();
+    const handleVisibility = () => {
+      const nextVisible = !isDocumentHidden();
+      if (nextVisible === visible) {
+        return;
+      }
+      visible = nextVisible;
+      if (visible) {
+        draw();
+      } else if (frame !== 0) {
+        globalThis.cancelAnimationFrame(frame);
+        frame = 0;
+      }
+    };
+
+    const disconnectVisibility = observeDocumentVisibility(handleVisibility);
+
+    if (visible) {
+      draw();
+    }
 
     return () => {
+      disconnectVisibility();
       if (frame !== 0) {
         globalThis.cancelAnimationFrame(frame);
       }
@@ -1610,6 +1658,23 @@ function observeCanvasResize(
   });
   observer.observe(canvas);
   return () => observer.disconnect();
+}
+
+function isDocumentHidden(): boolean {
+  return typeof document !== "undefined" && document.hidden === true;
+}
+
+function observeDocumentVisibility(onChange: () => void): () => void {
+  if (
+    typeof document === "undefined" ||
+    typeof document.addEventListener !== "function"
+  ) {
+    return () => undefined;
+  }
+  document.addEventListener("visibilitychange", onChange);
+  return () => {
+    document.removeEventListener("visibilitychange", onChange);
+  };
 }
 
 function normalizeBarCount(value: number): number {
