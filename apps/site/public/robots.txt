@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 
+Sitemap: https://webaudio-kit.afaqrashid.com/sitemap.xml
+
 # Human and agent-readable docs index:
 # LLM docs index: https://webaudio-kit.afaqrashid.com/llms.txt
