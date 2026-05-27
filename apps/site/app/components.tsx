@@ -14,6 +14,7 @@ import {
   Waves,
   Zap,
 } from "lucide-react";
+import { SearchBox } from "./SearchBox";
 
 const icons = {
   activity: Activity,
@@ -92,6 +93,7 @@ export function PageShell({
           </span>
           <span>webaudio-kit</span>
         </Link>
+        <SearchBox />
         <nav aria-label="Primary navigation">
           <Link
             className={active === "docs" ? "active" : undefined}
