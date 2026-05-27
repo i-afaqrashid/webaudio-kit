@@ -1514,6 +1514,36 @@ describe("AudioProvider", () => {
     expect(FakeAudioContext.instances[0]?.state).toBe("closed");
   });
 
+  test("rebuilds the AudioContext when the cached one was closed externally", async () => {
+    vi.stubGlobal("AudioContext", FakeAudioContext);
+
+    render(
+      <AudioProvider>
+        <Harness />
+      </AudioProvider>,
+    );
+
+    await act(async () => {
+      screen.getByRole("button", { name: "play tone" }).click();
+    });
+
+    expect(FakeAudioContext.instances).toHaveLength(1);
+    expect(FakeAudioContext.instances[0]?.state).toBe("running");
+
+    const firstContext = FakeAudioContext.instances[0]!;
+    firstContext.state = "closed";
+
+    await act(async () => {
+      screen.getByRole("button", { name: "play tone" }).click();
+    });
+
+    expect(FakeAudioContext.instances).toHaveLength(2);
+    expect(FakeAudioContext.instances[1]?.state).toBe("running");
+    expect(FakeAudioContext.instances[1]?.oscillators.length).toBeGreaterThan(
+      0,
+    );
+  });
+
   test("surfaces a clear play error when Web Audio is unavailable", async () => {
     vi.stubGlobal("AudioContext", undefined);
     vi.stubGlobal("webkitAudioContext", undefined);
