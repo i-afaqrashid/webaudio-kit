@@ -71,6 +71,7 @@ export type VolumeControlOptions = {
   label?: string;
   maxGain?: number;
   minGain?: number;
+  onStorageError?: (error: Error) => void;
   step?: number;
   storageKey?: string;
 };
@@ -794,21 +795,23 @@ export function useVolumeControl(
   );
   const label = options.label ?? "Master volume";
   const storageKey = options.storageKey;
+  const onStorageError = options.onStorageError;
+  const onStorageErrorRef = useLatest(onStorageError);
   const restoredStorageRef = useRef<string | undefined>(undefined);
 
   const setGain = useCallback(
     async (nextGain: number) => {
       const boundedGain = clampGainToRange(nextGain, minGain, maxGain);
       await volume.setGain(boundedGain);
-      writeStoredGain(storageKey, boundedGain);
+      writeStoredGain(storageKey, boundedGain, onStorageErrorRef.current);
     },
-    [maxGain, minGain, storageKey, volume],
+    [maxGain, minGain, onStorageErrorRef, storageKey, volume],
   );
 
   const resetGain = useCallback(async () => {
-    removeStoredGain(storageKey);
+    removeStoredGain(storageKey, onStorageErrorRef.current);
     await volume.setGain(defaultGain);
-  }, [defaultGain, storageKey, volume]);
+  }, [defaultGain, onStorageErrorRef, storageKey, volume]);
 
   useIsomorphicLayoutEffect(() => {
     if (!storageKey || restoredStorageRef.current === storageKey) {
@@ -1408,27 +1411,49 @@ function readStoredGain(storageKey: string): number | null {
   }
 }
 
-function writeStoredGain(storageKey: string | undefined, gain: number): void {
+function writeStoredGain(
+  storageKey: string | undefined,
+  gain: number,
+  onError: ((error: Error) => void) | undefined,
+): void {
   if (!storageKey) {
     return;
   }
 
   try {
     globalThis.localStorage?.setItem(storageKey, String(gain));
-  } catch {
-    // Ignore unavailable or quota-limited storage; provider state remains valid.
+  } catch (caught) {
+    notifyStorageError(onError, caught);
   }
 }
 
-function removeStoredGain(storageKey: string | undefined): void {
+function removeStoredGain(
+  storageKey: string | undefined,
+  onError: ((error: Error) => void) | undefined,
+): void {
   if (!storageKey) {
     return;
   }
 
   try {
     globalThis.localStorage?.removeItem(storageKey);
+  } catch (caught) {
+    notifyStorageError(onError, caught);
+  }
+}
+
+function notifyStorageError(
+  onError: ((error: Error) => void) | undefined,
+  caught: unknown,
+): void {
+  if (!onError) {
+    return;
+  }
+  const error = caught instanceof Error ? caught : new Error(String(caught));
+  try {
+    onError(error);
   } catch {
-    // Ignore unavailable storage; reset still updates provider state.
+    // Consumer's error handler should not break provider state.
   }
 }
 
