@@ -1061,6 +1061,21 @@ describe("AudioProvider", () => {
     expect(screen.getByTestId("volume-control-gain").textContent).toBe("0.50");
   });
 
+  test("useVolumeControl restores the stored gain before the first paint", () => {
+    window.localStorage.setItem("wk-volume-first-paint", "0.42");
+
+    render(
+      <AudioProvider initialGain={0.2}>
+        <VolumeControlHarness storageKey="wk-volume-first-paint" />
+      </AudioProvider>,
+    );
+
+    expect(screen.getByTestId("volume-control-gain").textContent).toBe("0.42");
+    expect(
+      (screen.getByTestId("volume-control-input") as HTMLInputElement).value,
+    ).toBe("0.42");
+  });
+
   test("useVolumeControl restores and resets a persisted preference", async () => {
     window.localStorage.setItem("wk-volume", "0.33");
 
