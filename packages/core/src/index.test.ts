@@ -774,9 +774,10 @@ describe("playNoise", () => {
     ]);
     expect(context.bufferSources[0]?.stoppedAt).toBeCloseTo(5.3);
     expect(context.bufferSources[1]?.stoppedAt).toBeCloseTo(5.65);
-    expect(context.buffers).toHaveLength(2);
+    expect(context.buffers).toHaveLength(1);
     expect(context.buffers[0]?.length).toBe(14_400);
-    expect(context.buffers[1]?.length).toBe(14_400);
+    expect(context.bufferSources[0]?.buffer).toBe(context.buffers[0]);
+    expect(context.bufferSources[1]?.buffer).toBe(context.buffers[0]);
   });
 
   test("schedules noise gain with attack and release envelope", () => {
@@ -837,6 +838,52 @@ describe("playNoise", () => {
         durationMs: Number.NaN,
       }),
     ).toThrow("durationMs must be a positive number");
+  });
+
+  test("caches generated noise buffers per (type, sampleRate, duration bucket)", () => {
+    const context = new FakeAudioContext();
+
+    playNoise(context as unknown as AudioContext, {
+      durationMs: 200,
+      type: "pink",
+    });
+    playNoise(context as unknown as AudioContext, {
+      durationMs: 200,
+      type: "pink",
+    });
+    playNoise(context as unknown as AudioContext, {
+      durationMs: 200,
+      type: "white",
+    });
+    playNoise(context as unknown as AudioContext, {
+      durationMs: 320,
+      type: "pink",
+    });
+
+    expect(context.bufferSources).toHaveLength(4);
+    expect(context.buffers).toHaveLength(3);
+    expect(context.bufferSources[0]?.buffer).toBe(
+      context.bufferSources[1]?.buffer,
+    );
+    expect(context.bufferSources[0]?.buffer).not.toBe(
+      context.bufferSources[2]?.buffer,
+    );
+    expect(context.bufferSources[0]?.buffer).not.toBe(
+      context.bufferSources[3]?.buffer,
+    );
+  });
+
+  test("rounds noise durations up to the cache bucket so playback length is preserved", () => {
+    const context = new FakeAudioContext();
+
+    playNoise(context as unknown as AudioContext, {
+      durationMs: 174,
+      type: "white",
+    });
+
+    expect(context.buffers).toHaveLength(1);
+    expect(context.buffers[0]?.length).toBe(9_600);
+    expect(context.bufferSources[0]?.stoppedAt).toBeCloseTo(5.174);
   });
 
   test("cleans up the noise graph if manual stop throws", () => {
