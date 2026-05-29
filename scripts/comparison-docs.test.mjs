@@ -25,5 +25,8 @@ test("comparison site page mirrors the doc", () => {
 });
 
 test("comparison site page links back to its markdown source", () => {
-  assert.match(sitePage, /DocSource[\s\S]*docs\/comparison\.md/);
+  assert.match(
+    sitePage,
+    /github\.com\/i-afaqrashid\/webaudio-kit\/blob\/main\/docs\/comparison\.md/,
+  );
 });

@@ -1,68 +1,86 @@
 # webaudio-kit
 
-> React + TypeScript primitives for browser audio: tone generation, frequency
-> sweeps, noise bursts, volume control, and analyser canvases. Ships a
-> framework-agnostic core and React hooks. Sound is generated, so there are no
-> audio files to ship.
+React and TypeScript primitives for browser-safe Web Audio tone tools,
+frequency sweeps, noise bursts, volume control, analyser UI, and agent-friendly
+documentation. Sound is generated, so there are no audio files to ship.
 
 ## When to use
 
 Reach for webaudio-kit when you need to generate audio (beeps, chimes, alerts,
 frequency sweeps, shaped noise) or visualize live audio (waveform and spectrum
 canvases) without shipping audio assets. To play recorded sound files instead,
-use a file-playback library — see the comparison page below.
+use a file-playback library — see the comparison page.
 
-## Docs
+## Hosted docs
 
-- [Quick start](https://webaudio-kit.afaqrashid.com/docs/quick-start)
-- [Hooks vs core](https://webaudio-kit.afaqrashid.com/docs/hooks-vs-core)
-- [Recipes](https://webaudio-kit.afaqrashid.com/docs/recipes)
-- [Comparison (Tone.js, Howler, use-sound)](https://webaudio-kit.afaqrashid.com/docs/comparison)
-- [Frameworks](https://webaudio-kit.afaqrashid.com/docs/frameworks)
-- [Examples](https://webaudio-kit.afaqrashid.com/docs/examples)
-- [API reference](https://webaudio-kit.afaqrashid.com/docs/api)
-- [Benchmarks](https://webaudio-kit.afaqrashid.com/docs/benchmarks)
-- [Scope and limitations](https://webaudio-kit.afaqrashid.com/docs/scope)
+- Docs overview: https://webaudio-kit.afaqrashid.com/docs
+- API reference: https://webaudio-kit.afaqrashid.com/docs/api
+- Hooks vs Core: https://webaudio-kit.afaqrashid.com/docs/hooks-vs-core
+- Comparison: https://webaudio-kit.afaqrashid.com/docs/comparison
+- Recipes: https://webaudio-kit.afaqrashid.com/docs/recipes
+- Examples: https://webaudio-kit.afaqrashid.com/docs/examples
+- Framework setup: https://webaudio-kit.afaqrashid.com/docs/frameworks
+- Demos: https://webaudio-kit.afaqrashid.com/demos
+- Changelog: https://webaudio-kit.afaqrashid.com/changelog
 
-## Packages
+## Markdown docs
 
-- @webaudio-kit/core — framework-agnostic playback + math helpers
-- @webaudio-kit/react — provider, hooks, canvases
-- @webaudio-kit/cli — agent-brief generator
+- Docs directory: https://github.com/i-afaqrashid/webaudio-kit/tree/main/docs
+- Quick start: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/quick-start.md
+- API reference: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/api.md
+- Hooks vs Core: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/hooks-vs-core.md
+- Comparison: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/comparison.md
+- Recipes: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/recipes.md
+- Browser audio guide: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/browser-audio.md
+- Troubleshooting: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/troubleshooting.md
+- Agent brief CLI: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/agent-brief.md
+- Fetch access note: https://github.com/i-afaqrashid/webaudio-kit/blob/main/docs/fetch-access.md
+
+## Npm packages
+
+- @webaudio-kit/core: https://www.npmjs.com/package/@webaudio-kit/core
+- @webaudio-kit/react: https://www.npmjs.com/package/@webaudio-kit/react
+- @webaudio-kit/cli: https://www.npmjs.com/package/@webaudio-kit/cli
 
 ## Key React hooks
 
-- useTone — play a sustained tone
+- useTone — play a tone
 - useFrequencySweep — sweep between two frequencies
 - useNoise — play shaped noise bursts
-- useToneSequence — play a sequence of tones
-- useVolumeControl — persisted master volume control
+- useVolumeControl — provider-backed master volume control
 - useAnalyser — time- and frequency-domain data for visualizations
-- useAudioTestMode — step through tones for manual testing
+- useAudioTestMode — short low-gain diagnostic sequence
+- useAudioUnlock — explicit enable-audio control
 
 Canvases: `WaveformCanvas`, `SpectrumCanvas`. Provider: `AudioProvider`.
-
-## Install
-
-```
-npm install @webaudio-kit/core @webaudio-kit/react
-```
 
 ## Minimal example
 
 ```tsx
 import { AudioProvider, useTone } from "@webaudio-kit/react";
 
-function Beep() {
+function ToneButton() {
   const tone = useTone({ frequency: 440 });
-  return <button onClick={() => tone.play()}>Beep</button>;
+  return <button onClick={() => void tone.play()}>Play tone</button>;
 }
 
-function App() {
+export function App() {
   return (
     <AudioProvider>
-      <Beep />
+      <ToneButton />
     </AudioProvider>
   );
 }
 ```
+
+## Source and examples
+
+- Repository: https://github.com/i-afaqrashid/webaudio-kit
+- Example apps: https://github.com/i-afaqrashid/webaudio-kit/tree/main/examples
+- StackBlitz starter: https://webaudio-kit.afaqrashid.com/new
+
+## Scope boundary
+
+webaudio-kit is for browser audio UI, developer tools, demos, and prototypes.
+It is not certified medical, audiology, life-safety, or calibrated test
+software.
