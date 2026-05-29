@@ -26,7 +26,7 @@ export default function ComparisonDocsPage() {
               are building.
             </p>
             <div className="heroActions">
-              <Link className="button buttonPrimary" href="/docs/quick-start">
+              <Link className="button buttonPrimary" href="/docs">
                 Quick start
               </Link>
               <Link className="button" href="/docs/hooks-vs-core">
