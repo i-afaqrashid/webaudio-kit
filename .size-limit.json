@@ -1,0 +1,19 @@
+[
+  {
+    "name": "@webaudio-kit/core",
+    "path": "packages/core/dist/index.js",
+    "limit": "3.5 kB"
+  },
+  {
+    "name": "@webaudio-kit/react",
+    "path": "packages/react/dist/index.js",
+    "ignore": ["react", "react-dom"],
+    "limit": "9 kB"
+  },
+  {
+    "name": "@webaudio-kit/react/server",
+    "path": "packages/react/dist/server.js",
+    "ignore": ["react", "react-dom"],
+    "limit": "1 kB"
+  }
+]

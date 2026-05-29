@@ -16,6 +16,7 @@
   "author": "i-afaqrashid <i.afaqrashid@gmail.com>",
   "scripts": {
     "build": "pnpm -r --filter './packages/*' build",
+    "size": "size-limit",
     "bench": "node scripts/run-benchmarks.mjs",
     "site:dev": "pnpm --filter @webaudio-kit/site dev",
     "site:build": "pnpm --filter @webaudio-kit/site build",
@@ -42,13 +43,14 @@
     "test:watch": "vitest",
     "lint": "eslint . --max-warnings=0",
     "format:check": "prettier --check .",
-    "verify": "pnpm test && pnpm typecheck && pnpm build && pnpm demo:build && pnpm site:build && pnpm release:check-changelogs && pnpm lint && pnpm format:check"
+    "verify": "pnpm test && pnpm typecheck && pnpm build && pnpm size && pnpm demo:build && pnpm site:build && pnpm release:check-changelogs && pnpm lint && pnpm format:check"
   },
   "engines": {
     "node": ">=20.19"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@size-limit/preset-small-lib": "^12.1.0",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^25.9.1",
     "@types/react": "^19.2.15",
@@ -59,6 +61,7 @@
     "jsdom": "^29.1.1",
     "playwright": "^1.60.0",
     "prettier": "^3.8.3",
+    "size-limit": "^12.1.0",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.4",
