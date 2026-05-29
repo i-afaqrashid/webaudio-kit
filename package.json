@@ -38,11 +38,10 @@
     "typecheck": "tsc -p tsconfig.base.json --noEmit",
     "test": "vitest run && pnpm test:scripts",
     "test:scripts": "node --test scripts/*.test.mjs",
-    "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "lint": "eslint . --max-warnings=0",
     "format:check": "prettier --check .",
-    "verify": "pnpm test:coverage && pnpm test:scripts && pnpm typecheck && pnpm build && pnpm demo:build && pnpm site:build && pnpm release:check-changelogs && pnpm lint && pnpm format:check"
+    "verify": "pnpm test && pnpm typecheck && pnpm build && pnpm demo:build && pnpm site:build && pnpm release:check-changelogs && pnpm lint && pnpm format:check"
   },
   "engines": {
     "node": ">=20.19"
