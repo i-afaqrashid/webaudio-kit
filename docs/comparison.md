@@ -30,7 +30,7 @@ webaudio-kit is built around generating and analyzing audio rather than playing
 files. You get React hooks for tones, frequency sweeps, and noise bursts, plus
 canvases that wire themselves to an analyser to draw waveforms and spectrums.
 Under the hood there is a framework-agnostic core with the math helpers
-(`midiToFrequency`, `noteToFrequency`, `decibelsToGain`) so the same primitives
+(`midiToFrequency`, `frequencyToNoteName`, `dbToGain`) so the same primitives
 work outside React.
 
 Because the sound is synthesized, there are no audio assets to ship and nothing

@@ -17,10 +17,10 @@ test("llms.txt lists the public React hooks", () => {
     "useTone",
     "useFrequencySweep",
     "useNoise",
-    "useToneSequence",
     "useVolumeControl",
     "useAnalyser",
     "useAudioTestMode",
+    "useAudioUnlock",
   ]) {
     assert.match(llms, new RegExp(hook));
   }
