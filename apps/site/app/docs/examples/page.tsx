@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CodeBlock, PageShell, SectionHeader } from "../../components";
 import { createPageMetadata } from "../../metadata";
-import { playgroundExamples } from "../../playground-links";
+import { playgroundExamples, replitRepoUrl } from "../../playground-links";
 
 const description =
   "Standalone webaudio-kit example apps for Vite React, Next App Router, plain React, and audio test mode.";
@@ -270,9 +270,14 @@ export default function ExampleDocsPage() {
 
               <h2 id="run-in-browser">Run in browser</h2>
               <p>
-                These links open standalone GitHub example folders in
-                StackBlitz. The repository remains the source of truth, so the
-                browser examples follow the same package files that CI checks.
+                These links open standalone GitHub example folders in StackBlitz
+                or CodeSandbox. The repository remains the source of truth, so
+                the browser examples follow the same package files that CI
+                checks. You can also{" "}
+                <a href={replitRepoUrl} rel="noreferrer" target="_blank">
+                  import the repo on Replit
+                </a>
+                .
               </p>
               <div className="exampleDocList">
                 {playgroundExamples.map((example) => (
@@ -282,14 +287,24 @@ export default function ExampleDocsPage() {
                       <h3>{example.title}</h3>
                       <p>{example.copy}</p>
                     </div>
-                    <a
-                      className="button buttonPrimary"
-                      href={example.url}
-                      rel="noreferrer"
-                      target="_blank"
-                    >
-                      Run in StackBlitz
-                    </a>
+                    <div className="exampleDocActions">
+                      <a
+                        className="button buttonPrimary"
+                        href={example.url}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        Run in StackBlitz
+                      </a>
+                      <a
+                        className="button"
+                        href={example.codeSandboxUrl}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        Run in CodeSandbox
+                      </a>
+                    </div>
                   </article>
                 ))}
               </div>
