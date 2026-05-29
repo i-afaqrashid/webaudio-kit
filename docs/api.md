@@ -696,6 +696,8 @@ Useful props:
 - `backgroundColor`: fill color. Defaults to `#10110f`.
 - `barColor`: live spectrum bar color. Defaults to `#c8ea3a`.
 - `idleBarColor`: idle bar color. Defaults to `barColor`.
+- `scale`: `"log"` or `"linear"`. Defaults to `"log"`. Log spreads bars across
+  the full audible range; linear reads one consecutive FFT bin per bar.
 - `barCount`: number of rendered bars. Defaults to `48`.
 - `barGap`: gap between bars in canvas pixels. Defaults to `2`.
 - `minBarHeight`: minimum visible bar height. Defaults to `2`.

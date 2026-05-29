@@ -13,6 +13,7 @@ import {
   WaveformCanvas,
   createDefaultAudioTestModeSteps,
   type PlaybackHandle,
+  readSpectrumBarValue,
   useAnalyser,
   useAudioContext,
   useAudioEngine,
@@ -701,6 +702,35 @@ function createCanvasContext() {
     strokeStyle: "",
   } as unknown as CanvasRenderingContext2D;
 }
+
+describe("readSpectrumBarValue", () => {
+  test("returns zero for missing or empty data", () => {
+    expect(readSpectrumBarValue(null, 0, 48, "log")).toBe(0);
+    expect(readSpectrumBarValue(new Uint8Array(0), 0, 48, "log")).toBe(0);
+  });
+
+  test("reads one bin per bar on the linear scale", () => {
+    const data = Uint8Array.from([10, 20, 30, 40]);
+    expect(readSpectrumBarValue(data, 0, 4, "linear")).toBe(10);
+    expect(readSpectrumBarValue(data, 2, 4, "linear")).toBe(30);
+  });
+
+  test("takes the peak of log-mapped bins and covers the top of the range", () => {
+    const data = new Uint8Array(1024);
+    data[900] = 200;
+    // A high bin lands in the last bar on a log axis but is hidden on a small
+    // linear read that only covers the first `barCount` bins.
+    expect(readSpectrumBarValue(data, 47, 48, "log")).toBeGreaterThan(0);
+    expect(readSpectrumBarValue(data, 47, 48, "linear")).toBe(0);
+  });
+
+  test("keeps log bar ranges within the data bounds", () => {
+    const data = new Uint8Array(32).fill(128);
+    for (let index = 0; index < 48; index += 1) {
+      expect(readSpectrumBarValue(data, index, 48, "log")).toBe(128);
+    }
+  });
+});
 
 describe("AudioProvider", () => {
   test("throws a clear error when hooks are used outside AudioProvider", () => {
