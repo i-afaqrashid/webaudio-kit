@@ -128,7 +128,10 @@ export type SpectrumCanvasProps = Omit<
   idleBarColor?: string;
   minBarHeight?: number;
   motion?: CanvasMotionMode;
+  scale?: SpectrumScale;
 };
+
+export type SpectrumScale = "linear" | "log";
 
 export type AudioTestModeStep =
   | {
@@ -1148,6 +1151,42 @@ export function WaveformCanvas({
   );
 }
 
+export function readSpectrumBarValue(
+  data: Uint8Array | null,
+  index: number,
+  barCount: number,
+  scale: SpectrumScale,
+): number {
+  if (!data || data.length === 0) {
+    return 0;
+  }
+  if (scale === "linear") {
+    return data[index] ?? 0;
+  }
+  // Log scale: map bar [index, index + 1) across bins [1, length)
+  // logarithmically and take the peak of the covered bins. Bin index is
+  // linear in frequency, so a log spread over bins gives a log-frequency axis.
+  const minBin = 1;
+  const maxBin = Math.max(minBin + 1, data.length);
+  const ratio = maxBin / minBin;
+  const lo = Math.min(
+    data.length - 1,
+    Math.max(0, Math.floor(minBin * ratio ** (index / barCount))),
+  );
+  const hi = Math.min(
+    data.length,
+    Math.max(lo + 1, Math.ceil(minBin * ratio ** ((index + 1) / barCount))),
+  );
+  let peak = 0;
+  for (let bin = lo; bin < hi; bin += 1) {
+    const value = data[bin] ?? 0;
+    if (value > peak) {
+      peak = value;
+    }
+  }
+  return peak;
+}
+
 export function SpectrumCanvas({
   backgroundColor = "#10110f",
   barColor = "#c8ea3a",
@@ -1157,6 +1196,7 @@ export function SpectrumCanvas({
   idleBarColor,
   minBarHeight = 2,
   motion = "auto",
+  scale = "log",
   width = 720,
   ...canvasProps
 }: SpectrumCanvasProps) {
@@ -1184,6 +1224,8 @@ export function SpectrumCanvas({
     const normalizedBarCount = normalizeBarCount(barCount);
     const normalizedBarGap = normalizeCanvasNumber(barGap, 2);
     const normalizedMinBarHeight = normalizeCanvasNumber(minBarHeight, 2);
+    const normalizedScale: SpectrumScale =
+      scale === "linear" ? "linear" : "log";
     const drawBars = (data: Uint8Array | null) => {
       const ratio = getDevicePixelRatio();
       const scaledBarGap = normalizedBarGap * ratio;
@@ -1198,7 +1240,12 @@ export function SpectrumCanvas({
       );
 
       for (let index = 0; index < normalizedBarCount; index += 1) {
-        const value = data?.[index] ?? 0;
+        const value = readSpectrumBarValue(
+          data,
+          index,
+          normalizedBarCount,
+          normalizedScale,
+        );
         const normalizedValue = value / 255;
         const barHeight = Math.max(
           scaledMinBarHeight,
@@ -1216,7 +1263,9 @@ export function SpectrumCanvas({
     }
 
     const data = new Uint8Array(
-      Math.min(normalizedBarCount, analyser.frequencyBinCount),
+      normalizedScale === "log"
+        ? analyser.frequencyBinCount
+        : Math.min(normalizedBarCount, analyser.frequencyBinCount),
     );
     let frame = 0;
 
@@ -1272,6 +1321,7 @@ export function SpectrumCanvas({
     idleBarColor,
     minBarHeight,
     motion,
+    scale,
     width,
   ]);
 
