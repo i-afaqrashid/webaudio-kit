@@ -32,5 +32,16 @@ export default defineConfig({
     benchmark: {
       include: ["benchmarks/**/*.bench.ts", "benchmarks/**/*.bench.tsx"],
     },
+    coverage: {
+      provider: "v8",
+      include: ["packages/core/src/**", "packages/react/src/**"],
+      exclude: ["**/*.test.*", "**/*.d.ts"],
+      thresholds: {
+        statements: 90,
+        branches: 84,
+        functions: 92,
+        lines: 90,
+      },
+    },
   },
 });
