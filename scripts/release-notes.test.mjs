@@ -59,14 +59,14 @@ test("buildReleaseNotes includes package links and release references", () => {
   assert.match(notes, /https:\/\/webaudio-kit\.afaqrashid\.com\/docs/);
 });
 
-test("current release notes include audio test mode preview state work", () => {
+test("current release notes include the spectrum scale release work", () => {
   const rootChangelog = readFileSync("CHANGELOG.md", "utf8");
-  const notes = buildReleaseNotes({ changelog: rootChangelog, tag: "v1.9.13" });
+  const notes = buildReleaseNotes({ changelog: rootChangelog, tag: "v1.10.0" });
 
-  assert.match(notes, /previewStep/i);
-  assert.match(notes, /previewStepIndex/i);
-  assert.match(notes, /currentStep/i);
-  assert.match(notes, /@webaudio-kit\/cli@1\.9\.13/);
+  assert.match(notes, /SpectrumCanvas/);
+  assert.match(notes, /scale/);
+  assert.match(notes, /CodeSandbox/);
+  assert.match(notes, /@webaudio-kit\/cli@1\.10\.0/);
 });
 
 test("getReleasePackages reflects package history", () => {

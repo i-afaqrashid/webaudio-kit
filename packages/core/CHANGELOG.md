@@ -1,5 +1,37 @@
 # Changelog
 
+## 1.10.0 - 2026-05-31
+
+### Added
+
+- Add the `SpectrumCanvas` `scale` prop with `"log"` and `"linear"` modes so
+  frequency bars can spread across the audible range by default or read
+  consecutive FFT bins when needed.
+- Add `latencyHint` and `sampleRate` props to `AudioProvider` for apps that need
+  more control over browser `AudioContext` creation.
+- Add `FrequencySweepOptions.safety` with sustained-gain and duration caps for
+  runtime sweep loudness guardrails.
+- Expose math helpers from `@webaudio-kit/react/server` so React Server
+  Components can use frequency and gain helpers without crossing the client
+  boundary.
+- Add docs search, sitemap, expanded `llms.txt`, a library comparison page, and
+  runnable CodeSandbox/Replit links alongside the existing StackBlitz examples.
+- Add release quality gates for coverage thresholds and bundle-size budgets.
+
+### Fixed
+
+- Rebuild the provider runtime when a cached `AudioContext` has already closed.
+- Scale analyser canvas backing buffers to `devicePixelRatio`, pause animation
+  loops while the page is hidden, and respect `prefers-reduced-motion`.
+- Cache generated noise buffers per `AudioContext` instead of rebuilding the
+  same noise buffer on every matching play call.
+- Restore persisted `useVolumeControl()` gain before first paint, surface
+  storage write failures, and cancel pending `useAudioTestMode()` waits when
+  stopped.
+- Catch `audioContext.close()` cleanup rejections during provider unmount.
+- Keep the public API docs, docs search index, and site API reference aligned
+  for the new `SpectrumCanvasProps.scale` option.
+
 ## 1.9.13 - 2026-05-26
 
 ### Added

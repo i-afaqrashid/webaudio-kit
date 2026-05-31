@@ -875,6 +875,7 @@ type SpectrumCanvasProps = Omit<
   barGap?: number;
   idleBarColor?: string;
   minBarHeight?: number;
+  scale?: "log" | "linear";
 };`,
     rows: [
       {
@@ -893,6 +894,13 @@ type SpectrumCanvasProps = Omit<
         type: "string",
         defaultValue: '"#10110f"',
         notes: "Canvas fill color.",
+      },
+      {
+        name: "SpectrumCanvasProps.scale",
+        type: '"log" | "linear"',
+        defaultValue: '"log"',
+        notes:
+          "Log spreads bars across the audible range; linear reads consecutive FFT bins.",
       },
       {
         name: "SpectrumCanvasProps.barCount",

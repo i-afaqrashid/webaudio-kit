@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import {
   createElement,
   type AnchorHTMLAttributes,
@@ -462,8 +462,12 @@ describe("site pages", () => {
     expect(
       screen.getByRole("heading", { name: "Release history." }),
     ).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "1.9.11" })).toBeTruthy();
-    expect(screen.getByText(/useVolumeControl/)).toBeTruthy();
+    const volumeRelease = screen
+      .getByRole("heading", { name: "1.9.11" })
+      .closest("article");
+
+    expect(volumeRelease).toBeTruthy();
+    expect(within(volumeRelease!).getByText(/useVolumeControl/)).toBeTruthy();
     expect(
       screen.getByRole("link", { name: "GitHub release v1.9.11" }),
     ).toHaveProperty(
