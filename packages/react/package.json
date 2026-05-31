@@ -1,6 +1,6 @@
 {
   "name": "@webaudio-kit/react",
-  "version": "1.9.13",
+  "version": "1.10.0",
   "type": "module",
   "description": "React primitives for browser audio apps.",
   "license": "MIT",
@@ -50,7 +50,7 @@
     "build": "tsup src/index.tsx src/server.ts --format esm --dts --clean --external react --tsconfig ../../tsconfig.base.json"
   },
   "peerDependencies": {
-    "@webaudio-kit/core": "^1.9.13",
+    "@webaudio-kit/core": "^1.10.0",
     "react": ">=18.3.0"
   },
   "devDependencies": {

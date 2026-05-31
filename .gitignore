@@ -10,3 +10,7 @@ packages/*/dist
 apps/demo/dist
 apps/site/.next
 apps/site/out
+/HANDOFF.md
+/MARKETING-PLAN-*.md
+/ideas/
+/launch/
