@@ -47,7 +47,7 @@ jobs:
           echo "PNPM_STORE_PATH=$PNPM_STORE_PATH" >> "$GITHUB_ENV"
 
       - name: Restore pnpm store cache
-        uses: actions/cache@v5.0.5
+        uses: actions/cache@v6.1.0
         with:
           path: ${{ env.PNPM_STORE_PATH }}
           key: ${{ runner.os }}-pnpm-quality-node-${{ matrix.node-version }}-${{ hashFiles('pnpm-lock.yaml') }}
@@ -98,7 +98,7 @@ jobs:
           echo "PNPM_STORE_PATH=$PNPM_STORE_PATH" >> "$GITHUB_ENV"
 
       - name: Restore pnpm store cache
-        uses: actions/cache@v5.0.5
+        uses: actions/cache@v6.1.0
         with:
           path: ${{ env.PNPM_STORE_PATH }}
           key: ${{ runner.os }}-pnpm-build-node-20.19-${{ hashFiles('pnpm-lock.yaml') }}
@@ -110,7 +110,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v5.0.5
+        uses: actions/cache@v6.1.0
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
@@ -118,7 +118,7 @@ jobs:
             ${{ runner.os }}-playwright-
 
       - name: Cache Next.js build
-        uses: actions/cache@v5.0.5
+        uses: actions/cache@v6.1.0
         with:
           path: apps/site/.next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('apps/site/**/*.js', 'apps/site/**/*.jsx', 'apps/site/**/*.ts', 'apps/site/**/*.tsx', 'apps/site/**/*.css', 'apps/site/package.json') }}
@@ -174,7 +174,7 @@ jobs:
           echo "PNPM_STORE_PATH=$PNPM_STORE_PATH" >> "$GITHUB_ENV"
 
       - name: Restore pnpm store cache
-        uses: actions/cache@v5.0.5
+        uses: actions/cache@v6.1.0
         with:
           path: ${{ env.PNPM_STORE_PATH }}
           key: ${{ runner.os }}-pnpm-audit-node-20.19-${{ hashFiles('pnpm-lock.yaml') }}
